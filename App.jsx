@@ -353,6 +353,41 @@ function ScrollToTop() {
   return null;
 }
 
+// ─── SCROLL REVEAL HOOK ───
+function useScrollReveal() {
+  useEffect(() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); } });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+    const els = document.querySelectorAll(".sr-reveal,.sr-reveal-left,.sr-reveal-right,.sr-reveal-scale");
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+// ─── HERO BLOBS COMPONENT ───
+function HeroBlobs() {
+  return (
+    <>
+      <div className="hero-blob hero-blob-1" />
+      <div className="hero-blob hero-blob-2" />
+      <div className="hero-blob hero-blob-3" />
+    </>
+  );
+}
+
+// ─── WAVE DIVIDER ───
+function WaveDivider() {
+  return (
+    <div className="wave-div">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,40 L1440,60 L0,60 Z" opacity="0.6" />
+        <path d="M0,35 C360,5 720,55 1080,25 C1260,15 1380,35 1440,30 L1440,60 L0,60 Z" opacity="0.3" />
+      </svg>
+    </div>
+  );
+}
+
 async function sendEmail(data) {
   try {
     const fd = new FormData();
@@ -686,6 +721,232 @@ footer ul li:hover{color:var(--blue)}
 .mob a{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);transition:color .3s}
 .mob a:hover,.mob a.ac{color:var(--white)}
 .loading-box{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted);font-size:14px}
+
+/* ═══════════════════════════════════════════════════
+   LIQUID GLASS & PREMIUM EFFECTS
+   ═══════════════════════════════════════════════════ */
+
+/* ── LIQUID GLASS BASE ── */
+.srv,.feat,.why,.testi,.team,.about-val,.dash-stat,.price-card,.login-card,.ap-sidebar-card{
+  background:rgba(18,18,26,0.45)!important;
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border:1px solid rgba(255,255,255,0.06)!important;
+  box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);
+  position:relative;overflow:hidden
+}
+.srv::before,.why::before,.testi::before,.team::before,.about-val::before,.dash-stat::before,.price-card::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg at 50% 50%,transparent 0%,rgba(245,197,24,0.03) 25%,transparent 50%,rgba(230,57,70,0.02) 75%,transparent 100%);
+  animation:glassShimmer 8s linear infinite;pointer-events:none;z-index:0
+}
+@keyframes glassShimmer{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.srv>*,.why>*,.testi>*,.team>*,.about-val>*,.dash-stat>*,.price-card>*{position:relative;z-index:1}
+
+/* ── GLASS HOVER GLOW ── */
+.srv:hover,.why:hover,.testi:hover,.team:hover,.price-card:hover{
+  border-color:rgba(245,197,24,0.15)!important;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 60px rgba(245,197,24,0.06),inset 0 1px 0 rgba(255,255,255,0.08)
+}
+
+/* ── ICON AURA GLOW ── */
+.srv-ico,.feat-ico,.why-ico,.about-val-ico{
+  position:relative;
+  background:rgba(245,197,24,0.06)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.08);
+  transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)
+}
+.srv-ico::after,.why-ico::after{
+  content:'';position:absolute;inset:-4px;border-radius:inherit;
+  background:conic-gradient(from 0deg,rgba(245,197,24,0.15),transparent,rgba(230,57,70,0.1),transparent);
+  animation:iconAura 4s linear infinite;opacity:0;transition:opacity 0.4s;z-index:-1
+}
+@keyframes iconAura{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.srv:hover .srv-ico::after,.why:hover .why-ico::after{opacity:1}
+.srv:hover .srv-ico,.why:hover .why-ico{
+  box-shadow:0 0 30px rgba(245,197,24,0.2);transform:scale(1.08);
+  background:rgba(245,197,24,0.12)!important
+}
+
+/* ── 3D TILT ON CARDS ── */
+.srv{transform-style:preserve-3d;perspective:600px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)!important}
+.srv:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg)!important;
+  box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important}
+
+/* ── HERO LIQUID BLOBS ── */
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;mix-blend-mode:screen;z-index:0}
+.hero-blob-1{width:500px;height:500px;left:-10%;top:10%;background:rgba(230,57,70,0.06);animation:blobFloat1 12s ease-in-out infinite}
+.hero-blob-2{width:400px;height:400px;right:-5%;top:30%;background:rgba(245,197,24,0.05);animation:blobFloat2 15s ease-in-out infinite}
+.hero-blob-3{width:350px;height:350px;left:30%;bottom:5%;background:rgba(79,195,247,0.04);animation:blobFloat3 18s ease-in-out infinite}
+@keyframes blobFloat1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,30px) scale(0.95)}75%{transform:translate(40px,20px) scale(1.05)}}
+@keyframes blobFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,30px) scale(1.08)}66%{transform:translate(30px,-20px) scale(0.92)}}
+@keyframes blobFloat3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.1)}}
+
+/* ── HERO GLOW TITLE ── */
+.hero h1{text-shadow:0 0 80px rgba(245,197,24,0.08)}
+.hero h1 .gold{text-shadow:0 0 40px rgba(245,197,24,0.15)}
+.hero h1 .red{text-shadow:0 0 40px rgba(230,57,70,0.15)}
+
+/* ── NAVBAR LIQUID GLASS ── */
+nav.n{
+  background:rgba(10,10,15,0.4)!important;
+  backdrop-filter:blur(30px) saturate(1.5)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(1.5)!important;
+  border-bottom:1px solid rgba(255,255,255,0.04)!important;
+  box-shadow:0 4px 30px rgba(0,0,0,0.2)
+}
+nav.n.s{background:rgba(10,10,15,0.6)!important;box-shadow:0 4px 40px rgba(0,0,0,0.4)}
+
+/* ── BUTTON SHINE ── */
+.btn{position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  transition:left 0.6s ease}
+.btn:hover::after{left:100%}
+.btn-g{box-shadow:0 0 15px rgba(245,197,24,0.15)}
+.btn-g:hover{box-shadow:0 4px 30px rgba(245,197,24,0.3)!important}
+.btn-r{box-shadow:0 0 15px rgba(230,57,70,0.15)}
+.btn-r:hover{box-shadow:0 4px 30px rgba(230,57,70,0.3)!important}
+
+/* ── MARQUEE GLOW ── */
+.marquee{background:rgba(245,197,24,0.015);backdrop-filter:blur(10px)}
+.mq-item{transition:all 0.3s}
+.mq-dot{box-shadow:0 0 8px rgba(245,197,24,0.4);transition:all 0.3s}
+
+/* ── SCROLL REVEAL ANIMATIONS ── */
+.sr-reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+.sr-reveal.visible{opacity:1;transform:translateY(0)}
+.sr-reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-left.visible{opacity:1;transform:translateX(0)}
+.sr-reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-right.visible{opacity:1;transform:translateX(0)}
+.sr-reveal-scale{opacity:0;transform:scale(0.92);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* Stagger children */
+.srv-grid .srv:nth-child(1){transition-delay:0s}
+.srv-grid .srv:nth-child(2){transition-delay:0.08s}
+.srv-grid .srv:nth-child(3){transition-delay:0.16s}
+.srv-grid .srv:nth-child(4){transition-delay:0.24s}
+.srv-grid .srv:nth-child(5){transition-delay:0.32s}
+.srv-grid .srv:nth-child(6){transition-delay:0.4s}
+.why-grid .why:nth-child(1){transition-delay:0s}
+.why-grid .why:nth-child(2){transition-delay:0.08s}
+.why-grid .why:nth-child(3){transition-delay:0.1s}
+.why-grid .why:nth-child(4){transition-delay:0.16s}
+.why-grid .why:nth-child(5){transition-delay:0.2s}
+.why-grid .why:nth-child(6){transition-delay:0.24s}
+.art-grid .art-card:nth-child(n){transition:opacity 0.6s ease,transform 0.6s ease}
+.art-grid .art-card:nth-child(1){transition-delay:0s}
+.art-grid .art-card:nth-child(2){transition-delay:0.06s}
+.art-grid .art-card:nth-child(3){transition-delay:0.12s}
+.art-grid .art-card:nth-child(4){transition-delay:0.18s}
+.art-grid .art-card:nth-child(5){transition-delay:0.24s}
+.art-grid .art-card:nth-child(6){transition-delay:0.3s}
+
+/* ── WAVE SECTION DIVIDERS ── */
+.wave-div{position:relative;height:60px;overflow:hidden;margin-top:-1px}
+.wave-div svg{position:absolute;bottom:0;width:100%;height:60px}
+.wave-div path{fill:var(--bg)}
+
+/* ── LIQUID GLASS ON FORM INPUTS ── */
+.fm-i,.fm-s,.fm-t{
+  background:rgba(22,22,31,0.6)!important;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.05)!important;
+  transition:all 0.3s
+}
+.fm-i:focus,.fm-s:focus,.fm-t:focus{
+  border-color:rgba(245,197,24,0.3)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.06);
+  background:rgba(22,22,31,0.8)!important
+}
+
+/* ── TESTIMONIAL GLASS ── */
+.testi{backdrop-filter:blur(20px) saturate(1.3)}
+.testi::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,197,24,0.15),transparent)}
+
+/* ── PRICE CARD FEATURED GLASS ── */
+.price-card.ft{
+  background:rgba(245,197,24,0.04)!important;
+  border-color:rgba(245,197,24,0.2)!important;
+  box-shadow:0 4px 30px rgba(0,0,0,0.3),0 0 40px rgba(245,197,24,0.05),inset 0 1px 0 rgba(245,197,24,0.08)
+}
+
+/* ── DASHBOARD STAT GLASS ── */
+.dash-stat{backdrop-filter:blur(20px)}
+.dash-stat:hover{border-color:rgba(245,197,24,0.12)!important;transform:translateY(-2px);transition:all 0.3s}
+
+/* ── HERO BADGE GLASS ── */
+.hero-badge{
+  background:rgba(245,197,24,0.06)!important;
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(245,197,24,0.12)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.05)
+}
+
+/* ── SMOOTH PAGE TRANSITIONS ── */
+.pg{animation:pageIn 0.5s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ARTIST CARD GLASS OVERLAY ── */
+.art-card::after{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(135deg,rgba(245,197,24,0.03),transparent 50%);
+  opacity:0;transition:opacity 0.5s;pointer-events:none
+}
+.art-card:hover::after{opacity:1}
+
+/* ── TOAST GLASS ── */
+.toast{backdrop-filter:blur(20px);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.toast.ok{background:rgba(76,175,80,0.85)!important}
+.toast.err{background:rgba(230,57,70,0.85)!important}
+
+/* ── LOGIN GLASS ── */
+.login-card{
+  backdrop-filter:blur(30px) saturate(1.5)!important;
+  box-shadow:0 8px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)!important
+}
+
+/* ── FOOTER GLASS ── */
+footer.ft{
+  background:rgba(10,10,15,0.4)!important;
+  backdrop-filter:blur(20px) saturate(1.3);
+  border-top:1px solid rgba(255,255,255,0.04)!important
+}
+
+/* ── UPLOAD ZONE GLASS ── */
+.upload{
+  background:rgba(18,18,26,0.3);
+  backdrop-filter:blur(15px);
+  border:2px dashed rgba(255,255,255,0.08)!important
+}
+.upload:hover{
+  border-color:rgba(245,197,24,0.2)!important;
+  background:rgba(245,197,24,0.02);
+  box-shadow:0 0 30px rgba(245,197,24,0.04)
+}
+.upload.has-file{border-color:rgba(76,175,80,0.3)!important;background:rgba(76,175,80,0.03)}
+
+/* ── TABS GLASS ── */
+.tab{transition:all 0.3s}
+.tab.ac{text-shadow:0 0 12px rgba(245,197,24,0.3)}
+.tab:hover{background:rgba(255,255,255,0.02)}
+
+/* ── VINYL GLOW ── */
+.hero-vinyl{box-shadow:0 0 80px rgba(245,197,24,0.05);border:1px solid rgba(245,197,24,0.08)!important}
+
+/* ── STATS COUNTER GLOW ── */
+.stat-v{text-shadow:0 0 20px rgba(255,255,255,0.06)}
+.about-stat-v{text-shadow:0 0 30px rgba(245,197,24,0.12)}
+
+/* ── STEP LINE GLOW ── */
+.step-n{box-shadow:0 0 15px rgba(245,197,24,0.1)}
+
+/* ── MOBILE MENU GLASS ── */
+.mob{background:rgba(10,10,15,0.85)!important;backdrop-filter:blur(40px) saturate(1.5)!important}
+
 @media(max-width:900px){
   .n-links{display:none}.n-ham{display:flex}
   .hero{padding:100px 24px 40px}.hero-stats{gap:24px;flex-wrap:wrap}.hero-visual{display:none}
@@ -749,6 +1010,7 @@ function Toast({ msg, type, onClose }) {
 // ─── HOME ───
 function HomePage() {
   useSEO("/");
+  useScrollReveal();
   const { artists } = useArtists();
   const testimonials = useTestimonials();
   const platforms = ["SPOTIFY", "APPLE MUSIC", "DEEZER", "YOUTUBE MUSIC", "TIDAL", "AMAZON MUSIC", "AUDIOMACK", "BOOMPLAY"];
@@ -765,6 +1027,7 @@ function HomePage() {
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-grid" />
+        <HeroBlobs />
 
         {/* Visuel droit : onde + vinyle */}
         <div className="hero-visual">
@@ -802,13 +1065,15 @@ function HomePage() {
           <h2 className="sec-title">Tout pour lancer et développer votre carrière</h2>
           <p className="sec-desc">De la première maquette au concert sold-out, Sterkte Records vous fournit les outils et le réseau pour réussir.</p>
         </div>
-        <div className="srv-grid">{SERVICES_LIST.map((s) => <Link key={s.title} to={s.link} className="srv"><div className="srv-ico"><s.Icon size={24} /></div><h3>{s.title}</h3><p>{s.desc}</p><div className="srv-arr"><Icon.ArrowRight size={18} /></div></Link>)}</div>
+        <div className="srv-grid sr-reveal">{SERVICES_LIST.map((s) => <Link key={s.title} to={s.link} className="srv"><div className="srv-ico"><s.Icon size={24} /></div><h3>{s.title}</h3><p>{s.desc}</p><div className="srv-arr"><Icon.ArrowRight size={18} /></div></Link>)}</div>
       </section>
+
+      <WaveDivider />
 
       {/* Pourquoi nous */}
       <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
         <div className="sec-h"><div className="sec-tag">Pourquoi nous choisir</div><h2 className="sec-title">Ce qui nous différencie</h2></div>
-        <div className="why-grid">{[
+        <div className="why-grid sr-reveal">{[
           { Ico: Icon.Diamond, title: "Transparence totale", desc: "Accès en temps réel à vos statistiques et revenus. Pas de frais cachés." },
           { Ico: Icon.Globe, title: "Expertise Afrique + International", desc: "Basés en RDC avec un réseau en Europe et en Afrique." },
           { Ico: Icon.Handshake, title: "Accompagnement humain", desc: "Chaque artiste a un interlocuteur dédié qui connaît son projet." },
@@ -818,21 +1083,26 @@ function HomePage() {
         ].map((w) => <div key={w.title} className="why"><div className="why-ico"><w.Ico size={24} /></div><h4>{w.title}</h4><p>{w.desc}</p></div>)}</div>
       </section>
 
+      <WaveDivider />
+
       {/* Roster aperçu */}
       <section className="sec">
-        <div className="sec-h"><div className="sec-tag">Roster</div><h2 className="sec-title">Ils nous font confiance</h2></div>
-        <div className="art-grid" style={{ padding: 0 }}>{artists.slice(0, 6).map((a) => <div key={a.id} className="art-card"><img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" /><div className="art-ov"><div className="art-name">{a.name}</div><div className="art-genre">{(a.tags || []).join(" · ")}</div></div></div>)}</div>
+        <div className="sec-h sr-reveal"><div className="sec-tag">Roster</div><h2 className="sec-title">Ils nous font confiance</h2></div>
+        <div className="art-grid sr-reveal" style={{ padding: 0 }}>{artists.slice(0, 6).map((a) => <div key={a.id} className="art-card"><img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" /><div className="art-ov"><div className="art-name">{a.name}</div><div className="art-genre">{(a.tags || []).join(" · ")}</div></div></div>)}</div>
         <div style={{ textAlign: "center", marginTop: 40 }}><Link to="/artistes" className="btn btn-o btn-lg"><Icon.ArrowRight size={16} />Voir tous les artistes</Link></div>
       </section>
 
       {/* Témoignages */}
-      {testimonials.length > 0 && <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
+      {testimonials.length > 0 && <>
+        <WaveDivider />
+        <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
         <div className="sec-h"><div className="sec-tag">Témoignages</div><h2 className="sec-title">Ce que disent nos artistes</h2></div>
-        <div className="testi-grid">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
-      </section>}
+        <div className="testi-grid sr-reveal">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
+      </section>
+      </>}
 
       {/* CTA final */}
-      <section className="sec" style={{ textAlign: "center" }}>
+      <section className="sec sr-reveal" style={{ textAlign: "center" }}>
         <div className="sec-tag">Prêt à commencer ?</div>
         <h2 className="sec-title" style={{ marginBottom: 20 }}>Transformez votre talent en <span className="gold">carrière musicale</span></h2>
         <p className="sec-desc" style={{ marginBottom: 36, textAlign: "center" }}>Rejoignez un label qui investit dans votre réussite.</p>
@@ -848,6 +1118,7 @@ function HomePage() {
 // ─── ABOUT ───
 function AboutPage() {
   useSEO("/a-propos");
+  useScrollReveal();
   const team = [
     { i: "AK", name: "Axel l'or Kaumba", role: "Fondateur & Distribution digitale", desc: "Visionnaire et entrepreneur passionné, Axel a fondé Sterkte Records avec la conviction profonde que la musique africaine mérite une scène mondiale. Expert en marketing digital, il orchestre les stratégies de distribution et guide chaque artiste vers la réussite." },
     { i: "AA", name: "Abigail Angelani", role: "Directrice Marketing & Communication", desc: "Maîtresse des récits qui résonnent, Abigail construit l'image du label et de ses artistes sur tous les canaux digitaux. Ses campagnes créatives ont permis à plusieurs artistes de percer au-delà des frontières africaines." },
@@ -942,6 +1213,7 @@ function AboutPage() {
 // ─── ARTISTS PAGE ───
 function ArtistsPage() {
   useSEO("/artistes");
+  useScrollReveal();
   const { artists, loading } = useArtists();
   const [filter, setFilter] = useState("Tout");
   const [search, setSearch] = useState("");
