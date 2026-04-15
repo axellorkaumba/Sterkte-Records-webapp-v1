@@ -4,7 +4,7 @@ import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom"
 // ─── CONFIG ───
 const EMAIL_CONFIG = {
   // INSTRUCTIONS : Va sur https://web3forms.com → entre contact.sterkterecords@gmail.com → copie la clé ici
-  ACCESS_KEY: "REMPLACER_PAR_VOTRE_CLE_WEB3FORMS",
+  ACCESS_KEY: "fbc77d7c-6908-4bea-a57d-e267b09a8e76",
   ENDPOINT: "https://api.web3forms.com/submit",
 };
 
