@@ -4,7 +4,7 @@ import { supabase } from "./supabase.js";
 
 // ─── CONFIG ───
 const EMAIL_CONFIG = {
-  ACCESS_KEY: import.meta.env.VITE_WEB3FORMS_KEY || "REMPLACER_PAR_VOTRE_CLE",
+  ACCESS_KEY: import.meta.env.VITE_WEB3FORMS_KEY || "fbc77d7c-6908-4bea-a57d-e267b09a8e76",
   ENDPOINT: "https://api.web3forms.com/submit",
 };
 
