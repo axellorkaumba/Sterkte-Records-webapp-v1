@@ -417,7 +417,7 @@ function HomePage() {
   return (
     <>
       <section className="hero"><div className="hero-bg" /><div className="hero-grid" /><div className="hero-c">
-        <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · Lubumbashi, RDC</div>
+        <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
         <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
         <p className="hero-sub">Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management. Nous transformons votre talent en carrière.</p>
         <div className="hero-acts"><Link to="/distribution-musique" className="btn btn-r btn-lg">Distribuer mon titre</Link><Link to="/studio-enregistrement" className="btn btn-o btn-lg">Réserver une session studio</Link></div>
