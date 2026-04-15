@@ -58,24 +58,24 @@ const SEO = {
 // ─── MOCK DATA ───
 const ARTIST_GENRES = ["Tout", "Afrobeat", "Rap", "R&B", "Rumba", "Gospel", "Amapiano", "DJ"];
 const ARTISTS = [
-  { id: 1, name: "Eliel Luwala", tags: ["Afrobeat", "Gospel"], img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&crop=face", streams: "245K", tracks: 12 },
-  { id: 2, name: "Sarah Mbeki", tags: ["R&B"], img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&crop=face", streams: "189K", tracks: 8 },
-  { id: 3, name: "DJ Katanga", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&h=600&fit=crop&crop=face", streams: "520K", tracks: 24 },
-  { id: 4, name: "Malu Beats", tags: ["Rap"], img: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=600&h=600&fit=crop&crop=face", streams: "312K", tracks: 16 },
-  { id: 5, name: "Grace Tshala", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=600&h=600&fit=crop&crop=face", streams: "156K", tracks: 6 },
-  { id: 6, name: "Kenzo Flow", tags: ["Rap"], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=600&fit=crop&crop=face", streams: "410K", tracks: 19 },
-  { id: 7, name: "Naya Kiese", tags: ["R&B", "Afrobeat"], img: "https://images.unsplash.com/photo-1529518969858-8baa65152fc8?w=600&h=600&fit=crop&crop=face", streams: "178K", tracks: 9 },
-  { id: 8, name: "Tumba MC", tags: ["Rap"], img: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=600&h=600&fit=crop&crop=face", streams: "267K", tracks: 14 },
-  { id: 9, name: "Mukalay", tags: ["Gospel"], img: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=600&h=600&fit=crop&crop=face", streams: "132K", tracks: 7 },
-  { id: 10, name: "Shango Bass", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=600&h=600&fit=crop&crop=face", streams: "345K", tracks: 21 },
-  { id: 11, name: "Liya Moon", tags: ["Afrobeat", "R&B"], img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop&crop=face", streams: "289K", tracks: 11 },
-  { id: 12, name: "Papa Wemba Jr", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1501386761578-0a55b6ea6e42?w=600&h=600&fit=crop&crop=face", streams: "198K", tracks: 10 },
+  { id: 1, name: "13 A LA PROD", tags: ["Afrobeat", "Gospel"], img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&crop=face", streams: "245K", tracks: 12 },
+  { id: 2, name: "GIFT RAPKHA", tags: ["R&B"], img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&crop=face", streams: "189K", tracks: 8 },
+  { id: 3, name: "MAFIA", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&h=600&fit=crop&crop=face", streams: "520K", tracks: 24 },
+  { id: 4, name: "MESA", tags: ["Rap"], img: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=600&h=600&fit=crop&crop=face", streams: "312K", tracks: 16 },
+  { id: 5, name: "DREAZY YOUZOU", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=600&h=600&fit=crop&crop=face", streams: "156K", tracks: 6 },
+  { id: 6, name: "MR FREEZ", tags: ["Rap"], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=600&fit=crop&crop=face", streams: "410K", tracks: 19 },
+  { id: 7, name: "FEYME", tags: ["R&B", "Afrobeat"], img: "https://images.unsplash.com/photo-1529518969858-8baa65152fc8?w=600&h=600&fit=crop&crop=face", streams: "178K", tracks: 9 },
+  { id: 8, name: "KBG GAD", tags: ["Rap"], img: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=600&h=600&fit=crop&crop=face", streams: "267K", tracks: 14 },
+  { id: 9, name: "SAM KAYA", tags: ["Gospel"], img: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=600&h=600&fit=crop&crop=face", streams: "132K", tracks: 7 },
+  { id: 10, name: "CHMARLEY", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=600&h=600&fit=crop&crop=face", streams: "345K", tracks: 21 },
+  { id: 11, name: "KING DAVE", tags: ["Afrobeat", "R&B"], img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop&crop=face", streams: "289K", tracks: 11 },
+  { id: 12, name: "LOA30", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1501386761578-0a55b6ea6e42?w=600&h=600&fit=crop&crop=face", streams: "198K", tracks: 10 },
 ];
 
 const TESTIMONIALS = [
-  { name: "Eliel Luwala", role: "Artiste Afrobeat", text: "Sterkte Records a changé ma carrière. En 3 mois, mes streams ont été multipliés par 5 et ma musique est maintenant disponible partout dans le monde." },
-  { name: "DJ Katanga", role: "DJ / Producteur", text: "Le studio est incroyable et l'équipe comprend vraiment la vision de l'artiste. Le suivi est transparent, les royalties arrivent chaque mois." },
-  { name: "Grace Tshala", role: "Artiste Rumba", text: "Plus qu'un label, c'est une famille. Ils m'ont accompagnée du premier single jusqu'à mon premier concert sold-out à Lubumbashi." },
+  { name: "DAVTOR", role: "Artiste Afrobeat", text: "Sterkte Records a changé ma carrière. En 3 mois, mes streams ont été multipliés par 5 et ma musique est maintenant disponible partout dans le monde." },
+  { name: "13 A LA PROD", role: "DJ / Producteur", text: "Le studio est incroyable et l'équipe comprend vraiment la vision de l'artiste. Le suivi est transparent, les royalties arrivent chaque mois." },
+  { name: "SHIKE REBEL", role: "Artiste Rumba", text: "Plus qu'un label, c'est une famille. Ils m'ont accompagnée du premier single jusqu'à mon premier concert sold-out à Lubumbashi." },
 ];
 
 const SERVICES = [
@@ -505,7 +505,7 @@ function HomePage() {
         <div className="hero-bg" />
         <div className="hero-grid" />
         <div className="hero-c">
-          <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · Lubumbashi, RDC</div>
+          <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · FROM LUBUMBASHI TO THE WORLD</div>
           <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
           <p className="hero-sub">
             Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio d'enregistrement professionnel, booking et management. Nous transformons votre talent en carrière.
