@@ -33,18 +33,18 @@ const PAGES = {
 const ARTIST_GENRES = ["Tout", "Afrobeat", "Rap", "R&B", "Rumba", "Gospel", "Amapiano", "DJ"];
 
 const ARTISTS_DATA = [
-  { id: 1, name: "Eliel Luwala", genre: "Afrobeat", tags: ["Afrobeat", "Gospel"], img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&crop=face", streams: "245K", tracks: 12 },
-  { id: 2, name: "Sarah Mbeki", genre: "R&B", tags: ["R&B"], img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&crop=face", streams: "189K", tracks: 8 },
-  { id: 3, name: "DJ Katanga", genre: "Amapiano", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&h=600&fit=crop&crop=face", streams: "520K", tracks: 24 },
-  { id: 4, name: "Malu Beats", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=600&h=600&fit=crop&crop=face", streams: "312K", tracks: 16 },
-  { id: 5, name: "Grace Tshala", genre: "Rumba", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=600&h=600&fit=crop&crop=face", streams: "156K", tracks: 6 },
-  { id: 6, name: "Kenzo Flow", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=600&fit=crop&crop=face", streams: "410K", tracks: 19 },
-  { id: 7, name: "Naya Kiese", genre: "R&B", tags: ["R&B", "Afrobeat"], img: "https://images.unsplash.com/photo-1529518969858-8baa65152fc8?w=600&h=600&fit=crop&crop=face", streams: "178K", tracks: 9 },
-  { id: 8, name: "Tumba MC", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=600&h=600&fit=crop&crop=face", streams: "267K", tracks: 14 },
-  { id: 9, name: "Mukalay", genre: "Gospel", tags: ["Gospel"], img: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=600&h=600&fit=crop&crop=face", streams: "132K", tracks: 7 },
-  { id: 10, name: "Shango Bass", genre: "Amapiano", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=600&h=600&fit=crop&crop=face", streams: "345K", tracks: 21 },
-  { id: 11, name: "Liya Moon", genre: "Afrobeat", tags: ["Afrobeat", "R&B"], img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop&crop=face", streams: "289K", tracks: 11 },
-  { id: 12, name: "Papa Wemba Jr", genre: "Rumba", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1501386761578-0a55b6ea6e42?w=600&h=600&fit=crop&crop=face", streams: "198K", tracks: 10 },
+  { id: 1, name: "DAVTOR", genre: "Afrobeat", tags: ["Afrobeat", "Gospel"], img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&crop=face", streams: "245K", tracks: 12 },
+  { id: 2, name: "KBG GAD", genre: "R&B", tags: ["R&B"], img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&crop=face", streams: "189K", tracks: 8 },
+  { id: 3, name: "13 A LA PROD", genre: "Amapiano", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&h=600&fit=crop&crop=face", streams: "520K", tracks: 24 },
+  { id: 4, name: "MR FREEZ", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=600&h=600&fit=crop&crop=face", streams: "312K", tracks: 16 },
+  { id: 5, name: "LOA30", genre: "Rumba", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=600&h=600&fit=crop&crop=face", streams: "156K", tracks: 6 },
+  { id: 6, name: "SAM KAYA", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=600&fit=crop&crop=face", streams: "410K", tracks: 19 },
+  { id: 7, name: "FEYME", genre: "R&B", tags: ["R&B", "Afrobeat"], img: "https://images.unsplash.com/photo-1529518969858-8baa65152fc8?w=600&h=600&fit=crop&crop=face", streams: "178K", tracks: 9 },
+  { id: 8, name: "DREAZY YOUZOU", genre: "Rap", tags: ["Rap"], img: "https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=600&h=600&fit=crop&crop=face", streams: "267K", tracks: 14 },
+  { id: 9, name: "MESA", genre: "Gospel", tags: ["Gospel"], img: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=600&h=600&fit=crop&crop=face", streams: "132K", tracks: 7 },
+  { id: 10, name: "CHAMBA BOY", genre: "Amapiano", tags: ["Amapiano", "DJ"], img: "https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=600&h=600&fit=crop&crop=face", streams: "345K", tracks: 21 },
+  { id: 11, name: "KING DAVE", genre: "Afrobeat", tags: ["Afrobeat", "R&B"], img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&h=600&fit=crop&crop=face", streams: "289K", tracks: 11 },
+  { id: 12, name: "MEMSO", genre: "Rumba", tags: ["Rumba"], img: "https://images.unsplash.com/photo-1501386761578-0a55b6ea6e42?w=600&h=600&fit=crop&crop=face", streams: "198K", tracks: 10 },
 ];
 
 const SERVICES_DATA = [
