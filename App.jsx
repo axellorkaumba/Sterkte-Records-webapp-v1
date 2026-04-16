@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { Routes, Route, Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "./supabase.js";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
 
 // ─── CONFIG ───
 const EMAIL_CONFIG = {
@@ -356,200 +353,39 @@ function ScrollToTop() {
   return null;
 }
 
-// ─── HERO BLOBS ───
+// ─── SCROLL REVEAL HOOK ───
+function useScrollReveal() {
+  useEffect(() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); } });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+    const els = document.querySelectorAll(".sr-reveal,.sr-reveal-left,.sr-reveal-right,.sr-reveal-scale");
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+// ─── HERO BLOBS COMPONENT ───
 function HeroBlobs() {
-  return <><div className="hero-blob hero-blob-1" /><div className="hero-blob hero-blob-2" /><div className="hero-blob hero-blob-3" /></>;
+  return (
+    <>
+      <div className="hero-blob hero-blob-1" />
+      <div className="hero-blob hero-blob-2" />
+      <div className="hero-blob hero-blob-3" />
+    </>
+  );
 }
 
 // ─── WAVE DIVIDER ───
 function WaveDivider() {
   return (
     <div className="wave-div">
-      <svg viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,25 C240,65 480,5 720,35 C960,65 1200,15 1440,45 L1440,70 L0,70 Z" opacity="0.5" />
-        <path d="M0,40 C360,10 720,60 1080,30 C1260,18 1380,40 1440,35 L1440,70 L0,70 Z" opacity="0.25" />
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,40 L1440,60 L0,60 Z" opacity="0.6" />
+        <path d="M0,35 C360,5 720,55 1080,25 C1260,15 1380,35 1440,30 L1440,60 L0,60 Z" opacity="0.3" />
       </svg>
     </div>
   );
-}
-
-// ═══════════════════════════════════════════════════════════
-// GSAP MASTER — maximum artistique sur toutes les pages
-// ═══════════════════════════════════════════════════════════
-function useGSAP(deps = []) {
-  const loc = useLocation();
-  useEffect(() => {
-    ScrollTrigger.getAll().forEach(t => t.kill());
-    const timer = setTimeout(() => {
-      const ctx = gsap.context(() => {
-
-        // ── LETTER-BY-LETTER SPLIT ──
-        document.querySelectorAll(".g-split:not([data-gd])").forEach((el) => {
-          el.dataset.gd = "1";
-          const text = el.textContent;
-          el.innerHTML = text.split("").map((ch) =>
-            ch === " " ? " " : `<span class="gc" style="display:inline-block;opacity:0;transform:translateY(60px) rotateX(-90deg) scale(0.5);transform-origin:bottom">${ch}</span>`
-          ).join("");
-          gsap.to(el.querySelectorAll(".gc"), {
-            opacity: 1, y: 0, rotateX: 0, scale: 1,
-            duration: 0.5, stagger: 0.02, ease: "back.out(1.2)",
-            scrollTrigger: { trigger: el, start: "top 90%" },
-          });
-        });
-
-        // ── WORD-BY-WORD REVEAL ──
-        document.querySelectorAll(".g-words:not([data-gd])").forEach((el) => {
-          el.dataset.gd = "1";
-          const words = el.textContent.split(" ");
-          el.innerHTML = words.map((w) => `<span class="gw" style="display:inline-block;opacity:0;transform:translateY(30px) rotateX(-40deg);margin-right:0.3em;transform-origin:bottom">${w}</span>`).join("");
-          gsap.to(el.querySelectorAll(".gw"), {
-            opacity: 1, y: 0, rotateX: 0, duration: 0.6, stagger: 0.035, ease: "power4.out",
-            scrollTrigger: { trigger: el, start: "top 88%" },
-          });
-        });
-
-        // ── STAGGER GRID CHILDREN (cards, features, etc.) ──
-        document.querySelectorAll(".g-stagger").forEach((grid) => {
-          gsap.from(grid.children, {
-            opacity: 0, y: 70, scale: 0.88, rotateX: 12,
-            duration: 0.8, stagger: 0.1, ease: "power3.out",
-            scrollTrigger: { trigger: grid, start: "top 85%" },
-          });
-        });
-
-        // ── COUNTER ANIMATION ──
-        document.querySelectorAll(".g-count:not([data-gd])").forEach((el) => {
-          el.dataset.gd = "1";
-          const raw = el.textContent;
-          const m = raw.match(/[\d.]+/);
-          if (!m) return;
-          const num = parseFloat(m[0]);
-          const suffix = raw.replace(m[0], "");
-          const obj = { val: 0 };
-          gsap.to(obj, {
-            val: num, duration: 2.5, ease: "power2.out",
-            scrollTrigger: { trigger: el, start: "top 92%" },
-            onUpdate: () => { el.textContent = (num >= 100 ? Math.round(obj.val) : obj.val.toFixed(num < 10 ? 2 : 0)) + suffix; },
-          });
-        });
-
-        // ── FADE UP ──
-        document.querySelectorAll(".g-fade").forEach((el) => {
-          gsap.from(el, { opacity: 0, y: 50, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } });
-        });
-
-        // ── SLIDE FROM LEFT ──
-        document.querySelectorAll(".g-left").forEach((el) => {
-          gsap.from(el, { opacity: 0, x: -70, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } });
-        });
-
-        // ── SLIDE FROM RIGHT ──
-        document.querySelectorAll(".g-right").forEach((el) => {
-          gsap.from(el, { opacity: 0, x: 70, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } });
-        });
-
-        // ── SCALE BOUNCE ──
-        document.querySelectorAll(".g-scale").forEach((el) => {
-          gsap.from(el, { opacity: 0, scale: 0.6, duration: 1, ease: "back.out(1.6)", scrollTrigger: { trigger: el, start: "top 88%" } });
-        });
-
-        // ── CLIP REVEAL (cinematic) ──
-        document.querySelectorAll(".g-clip").forEach((el) => {
-          gsap.fromTo(el, { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.4, ease: "power4.inOut", scrollTrigger: { trigger: el, start: "top 85%" } });
-        });
-
-        // ── PARALLAX ──
-        document.querySelectorAll(".g-parallax").forEach((el) => {
-          const sp = parseFloat(el.dataset.speed || "0.3");
-          gsap.to(el, { y: () => -150 * sp, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 1.5 } });
-        });
-
-        // ── FORM FIELDS STAGGER ──
-        document.querySelectorAll(".g-form").forEach((form) => {
-          gsap.from(form.querySelectorAll(".fm-g,.fm-row,.upload,.btn"), {
-            opacity: 0, x: -50, rotateY: 5, duration: 0.6, stagger: 0.07, ease: "power3.out",
-            scrollTrigger: { trigger: form, start: "top 85%" },
-          });
-        });
-
-        // ── STEP ITEMS PROGRESSIVE ──
-        document.querySelectorAll(".g-step").forEach((el, i) => {
-          gsap.from(el, { opacity: 0, x: -40, scale: 0.95, duration: 0.7, delay: i * 0.12, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } });
-        });
-
-        // ── TIMELINE ITEMS ──
-        document.querySelectorAll(".g-tl-item").forEach((el, i) => {
-          gsap.from(el, { opacity: 0, x: -50, rotateZ: -2, duration: 0.8, delay: i * 0.08, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } });
-        });
-
-        // ── PRICING 3D ENTRANCE ──
-        document.querySelectorAll(".g-price").forEach((el, i) => {
-          gsap.from(el, { opacity: 0, y: 80, rotateY: i === 1 ? 0 : (i === 0 ? 12 : -12), scale: 0.9, duration: 1, delay: i * 0.15, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
-        });
-
-        // ── HORIZONTAL LINE DRAW ──
-        document.querySelectorAll(".g-line").forEach((el) => {
-          gsap.from(el, { scaleX: 0, transformOrigin: "left center", duration: 1.4, ease: "power3.inOut", scrollTrigger: { trigger: el, start: "top 90%" } });
-        });
-
-        // ── FLOATING DECORATIVE ──
-        document.querySelectorAll(".g-float").forEach((el) => {
-          gsap.to(el, { y: -12, rotation: 4, duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
-        });
-
-        // ── MAGNETIC HOVER ──
-        document.querySelectorAll(".g-magnetic").forEach((el) => {
-          const onMove = (e) => {
-            const r = el.getBoundingClientRect();
-            gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * 0.25, y: (e.clientY - r.top - r.height / 2) * 0.25, duration: 0.3, ease: "power2.out" });
-          };
-          const onLeave = () => gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" });
-          el.addEventListener("mousemove", onMove);
-          el.addEventListener("mouseleave", onLeave);
-        });
-
-        // ── HERO TITLE DRAMATIC ENTRANCE ──
-        const ht = document.querySelector(".g-hero-title:not([data-gd])");
-        if (ht) { ht.dataset.gd = "1"; gsap.from(ht, { opacity: 0, y: 100, scale: 0.92, rotateX: 8, duration: 1.4, delay: 0.2, ease: "power4.out" }); }
-
-        // ── HERO STATS COUNTER STAGGER ──
-        document.querySelectorAll(".g-stat-v:not([data-gd])").forEach((el, i) => {
-          el.dataset.gd = "1";
-          gsap.from(el, { opacity: 0, y: 30, duration: 0.7, delay: 0.6 + i * 0.1, ease: "power3.out" });
-        });
-
-        // ── BANNER TITLE ENTRANCE (sous-pages) ──
-        document.querySelectorAll(".g-banner-title:not([data-gd])").forEach((el) => {
-          el.dataset.gd = "1";
-          gsap.from(el, { opacity: 0, y: 60, clipPath: "inset(0 0 100% 0)", duration: 1.2, delay: 0.15, ease: "power4.out" });
-        });
-        document.querySelectorAll(".g-banner-sub:not([data-gd])").forEach((el) => {
-          el.dataset.gd = "1";
-          gsap.from(el, { opacity: 0, y: 35, duration: 0.9, delay: 0.45, ease: "power3.out" });
-        });
-
-        // ── SECTION TAGS ──
-        document.querySelectorAll(".g-tag").forEach((el) => {
-          gsap.from(el, { opacity: 0, y: 20, letterSpacing: "8px", duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } });
-        });
-
-        // ── PIN SECTION (hero scrolls into services) ──
-        const heroEl = document.querySelector(".hero");
-        if (heroEl) {
-          ScrollTrigger.create({
-            trigger: heroEl, start: "top top", end: "bottom top",
-            onUpdate: (self) => {
-              const p = self.progress;
-              gsap.set(heroEl, { scale: 1 - p * 0.05, opacity: 1 - p * 0.4 });
-            }
-          });
-        }
-
-      });
-      return () => ctx.revert();
-    }, 120);
-    return () => clearTimeout(timer);
-  }, [loc.pathname, ...deps]);
 }
 
 async function sendEmail(data) {
@@ -586,9 +422,9 @@ function PageBanner({ tag, title, subtitle, accent = C.red }) {
         <circle cx="1100" cy="220" r="80" stroke={`${C.gold}08`} strokeWidth="1" fill="none" />
       </svg>
       <div className="pg-banner-in">
-        <div className="sec-tag g-tag">{tag}</div>
-        <h1 className="g-banner-title" dangerouslySetInnerHTML={{ __html: title }} />
-        {subtitle && <p className="g-banner-sub">{subtitle}</p>}
+        <div className="sec-tag">{tag}</div>
+        <h1 dangerouslySetInnerHTML={{ __html: title }} />
+        {subtitle && <p>{subtitle}</p>}
       </div>
       {/* Dégradé vers le fond en bas */}
       <div className="pg-banner-fade" />
@@ -886,211 +722,230 @@ footer ul li:hover{color:var(--blue)}
 .mob a:hover,.mob a.ac{color:var(--white)}
 .loading-box{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted);font-size:14px}
 
-/* ═══════════════════════════════════════════════════════════
-   LIQUID GLASS + GSAP PREMIUM EFFECTS — GLOBAL
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   LIQUID GLASS & PREMIUM EFFECTS
+   ═══════════════════════════════════════════════════ */
 
-/* ── LIQUID GLASS ON ALL CARDS ── */
-.srv,.feat,.why,.testi,.team,.about-val,.dash-stat,.price-card,.login-card,.ap-sidebar-card,.upload{
-  background:rgba(18,18,26,0.35)!important;
-  backdrop-filter:blur(28px) saturate(1.5);
-  -webkit-backdrop-filter:blur(28px) saturate(1.5);
+/* ── LIQUID GLASS BASE ── */
+.srv,.feat,.why,.testi,.team,.about-val,.dash-stat,.price-card,.login-card,.ap-sidebar-card{
+  background:rgba(18,18,26,0.45)!important;
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
   border:1px solid rgba(255,255,255,0.06)!important;
-  box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);
   position:relative;overflow:hidden
 }
-/* Rotating iridescent shimmer layer */
-.srv::before,.why::before,.testi::after,.team::before,.about-val::after,.dash-stat::before,.price-card::before{
-  content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;
-  background:conic-gradient(from 0deg at 50% 50%,transparent,rgba(245,197,24,0.04) 20%,transparent 40%,rgba(79,195,247,0.03) 60%,transparent 80%,rgba(230,57,70,0.03));
-  animation:glassRotate 10s linear infinite;pointer-events:none;z-index:0;border-radius:inherit
+.srv::before,.why::before,.testi::before,.team::before,.about-val::before,.dash-stat::before,.price-card::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg at 50% 50%,transparent 0%,rgba(245,197,24,0.03) 25%,transparent 50%,rgba(230,57,70,0.02) 75%,transparent 100%);
+  animation:glassShimmer 8s linear infinite;pointer-events:none;z-index:0
 }
-@keyframes glassRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-/* Keep content above shimmer */
-.srv>*,.why>*,.team>*,.about-val>*,.dash-stat>*,.price-card>*{position:relative;z-index:1}
+@keyframes glassShimmer{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.srv>*,.why>*,.testi>*,.team>*,.about-val>*,.dash-stat>*,.price-card>*{position:relative;z-index:1}
 
-/* Glass hover glow + lift */
-.srv:hover,.why:hover,.testi:hover,.team:hover,.price-card:hover,.feat:hover,.about-val:hover,.dash-stat:hover{
-  border-color:rgba(245,197,24,0.18)!important;
-  box-shadow:0 12px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important
+/* ── GLASS HOVER GLOW ── */
+.srv:hover,.why:hover,.testi:hover,.team:hover,.price-card:hover{
+  border-color:rgba(245,197,24,0.15)!important;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 60px rgba(245,197,24,0.06),inset 0 1px 0 rgba(255,255,255,0.08)
 }
 
-/* ── ICON AURA GLOW RINGS ── */
+/* ── ICON AURA GLOW ── */
 .srv-ico,.feat-ico,.why-ico,.about-val-ico{
   position:relative;
-  background:rgba(245,197,24,0.05)!important;
-  box-shadow:0 0 24px rgba(245,197,24,0.06);
-  transition:all 0.6s cubic-bezier(0.25,0.46,0.45,0.94)
+  background:rgba(245,197,24,0.06)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.08);
+  transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)
 }
-.srv-ico::after,.why-ico::after,.about-val-ico::after{
-  content:'';position:absolute;inset:-5px;border-radius:inherit;
-  background:conic-gradient(from 0deg,rgba(245,197,24,0.2),transparent 30%,rgba(230,57,70,0.12),transparent 60%,rgba(79,195,247,0.1),transparent);
-  animation:iconRing 5s linear infinite;opacity:0;transition:opacity 0.5s;z-index:-1
+.srv-ico::after,.why-ico::after{
+  content:'';position:absolute;inset:-4px;border-radius:inherit;
+  background:conic-gradient(from 0deg,rgba(245,197,24,0.15),transparent,rgba(230,57,70,0.1),transparent);
+  animation:iconAura 4s linear infinite;opacity:0;transition:opacity 0.4s;z-index:-1
 }
-@keyframes iconRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.srv:hover .srv-ico::after,.why:hover .why-ico::after,.about-val:hover .about-val-ico::after{opacity:1}
+@keyframes iconAura{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.srv:hover .srv-ico::after,.why:hover .why-ico::after{opacity:1}
 .srv:hover .srv-ico,.why:hover .why-ico{
-  box-shadow:0 0 40px rgba(245,197,24,0.2);transform:scale(1.12) rotate(3deg);
+  box-shadow:0 0 30px rgba(245,197,24,0.2);transform:scale(1.08);
   background:rgba(245,197,24,0.12)!important
 }
-.feat:hover .feat-ico{box-shadow:0 0 30px rgba(245,197,24,0.15);transform:scale(1.1)}
 
-/* ── 3D TILT PERSPECTIVE ON SERVICE CARDS ── */
-.srv{transform-style:preserve-3d;perspective:800px;transition:all 0.6s cubic-bezier(0.25,0.46,0.45,0.94)!important}
-.srv:hover{transform:translateY(-8px) rotateX(3deg) rotateY(-3deg)!important}
+/* ── 3D TILT ON CARDS ── */
+.srv{transform-style:preserve-3d;perspective:600px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)!important}
+.srv:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg)!important;
+  box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important}
 
 /* ── HERO LIQUID BLOBS ── */
-.hero-blob{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;mix-blend-mode:screen;z-index:0}
-.hero-blob-1{width:550px;height:550px;left:-12%;top:8%;background:rgba(230,57,70,0.07);animation:blobA 14s ease-in-out infinite}
-.hero-blob-2{width:450px;height:450px;right:-8%;top:25%;background:rgba(245,197,24,0.06);animation:blobB 18s ease-in-out infinite}
-.hero-blob-3{width:380px;height:380px;left:25%;bottom:3%;background:rgba(79,195,247,0.05);animation:blobC 22s ease-in-out infinite}
-@keyframes blobA{0%,100%{transform:translate(0,0) scale(1) rotate(0deg)}25%{transform:translate(40px,-50px) scale(1.15) rotate(5deg)}50%{transform:translate(-30px,40px) scale(0.9) rotate(-3deg)}75%{transform:translate(50px,25px) scale(1.08) rotate(2deg)}}
-@keyframes blobB{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-50px,40px) scale(1.12)}66%{transform:translate(40px,-30px) scale(0.88)}}
-@keyframes blobC{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(50px,-40px) scale(1.15)}}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;mix-blend-mode:screen;z-index:0}
+.hero-blob-1{width:500px;height:500px;left:-10%;top:10%;background:rgba(230,57,70,0.06);animation:blobFloat1 12s ease-in-out infinite}
+.hero-blob-2{width:400px;height:400px;right:-5%;top:30%;background:rgba(245,197,24,0.05);animation:blobFloat2 15s ease-in-out infinite}
+.hero-blob-3{width:350px;height:350px;left:30%;bottom:5%;background:rgba(79,195,247,0.04);animation:blobFloat3 18s ease-in-out infinite}
+@keyframes blobFloat1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,30px) scale(0.95)}75%{transform:translate(40px,20px) scale(1.05)}}
+@keyframes blobFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,30px) scale(1.08)}66%{transform:translate(30px,-20px) scale(0.92)}}
+@keyframes blobFloat3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.1)}}
 
-/* ── HERO GLOW TITLES ── */
-.hero h1{text-shadow:0 0 100px rgba(245,197,24,0.06)}
-.hero h1 .gold{text-shadow:0 0 50px rgba(245,197,24,0.18);animation:goldPulse 3s ease-in-out infinite}
-.hero h1 .red{text-shadow:0 0 50px rgba(230,57,70,0.18)}
-@keyframes goldPulse{0%,100%{text-shadow:0 0 50px rgba(245,197,24,0.18)}50%{text-shadow:0 0 80px rgba(245,197,24,0.28)}}
+/* ── HERO GLOW TITLE ── */
+.hero h1{text-shadow:0 0 80px rgba(245,197,24,0.08)}
+.hero h1 .gold{text-shadow:0 0 40px rgba(245,197,24,0.15)}
+.hero h1 .red{text-shadow:0 0 40px rgba(230,57,70,0.15)}
 
 /* ── NAVBAR LIQUID GLASS ── */
 nav.n{
-  background:rgba(10,10,15,0.35)!important;
-  backdrop-filter:blur(35px) saturate(1.6)!important;
-  -webkit-backdrop-filter:blur(35px) saturate(1.6)!important;
+  background:rgba(10,10,15,0.4)!important;
+  backdrop-filter:blur(30px) saturate(1.5)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(1.5)!important;
   border-bottom:1px solid rgba(255,255,255,0.04)!important;
-  box-shadow:0 4px 30px rgba(0,0,0,0.25)
+  box-shadow:0 4px 30px rgba(0,0,0,0.2)
 }
-nav.n.s{background:rgba(10,10,15,0.55)!important;box-shadow:0 4px 40px rgba(0,0,0,0.5)}
+nav.n.s{background:rgba(10,10,15,0.6)!important;box-shadow:0 4px 40px rgba(0,0,0,0.4)}
 
-/* ── BUTTON SHINE SWEEP ── */
+/* ── BUTTON SHINE ── */
 .btn{position:relative;overflow:hidden}
-.btn::after{content:'';position:absolute;top:0;left:-120%;width:100%;height:100%;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.15) 50%,transparent 70%);
-  transition:left 0.7s ease}
-.btn:hover::after{left:120%}
-.btn-g{box-shadow:0 0 20px rgba(245,197,24,0.12)}
-.btn-g:hover{box-shadow:0 6px 35px rgba(245,197,24,0.35)!important}
-.btn-r{box-shadow:0 0 20px rgba(230,57,70,0.12)}
-.btn-r:hover{box-shadow:0 6px 35px rgba(230,57,70,0.35)!important}
+.btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  transition:left 0.6s ease}
+.btn:hover::after{left:100%}
+.btn-g{box-shadow:0 0 15px rgba(245,197,24,0.15)}
+.btn-g:hover{box-shadow:0 4px 30px rgba(245,197,24,0.3)!important}
+.btn-r{box-shadow:0 0 15px rgba(230,57,70,0.15)}
+.btn-r:hover{box-shadow:0 4px 30px rgba(230,57,70,0.3)!important}
 
 /* ── MARQUEE GLOW ── */
-.marquee{background:rgba(245,197,24,0.012);backdrop-filter:blur(10px)}
-.mq-dot{box-shadow:0 0 10px rgba(245,197,24,0.5);animation:dotPulse 2s ease-in-out infinite}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 10px rgba(245,197,24,0.5)}50%{box-shadow:0 0 20px rgba(245,197,24,0.8)}}
+.marquee{background:rgba(245,197,24,0.015);backdrop-filter:blur(10px)}
+.mq-item{transition:all 0.3s}
+.mq-dot{box-shadow:0 0 8px rgba(245,197,24,0.4);transition:all 0.3s}
+
+/* ── SCROLL REVEAL ANIMATIONS ── */
+.sr-reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+.sr-reveal.visible{opacity:1;transform:translateY(0)}
+.sr-reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-left.visible{opacity:1;transform:translateX(0)}
+.sr-reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-right.visible{opacity:1;transform:translateX(0)}
+.sr-reveal-scale{opacity:0;transform:scale(0.92);transition:opacity 0.8s ease,transform 0.8s ease}
+.sr-reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* Stagger children */
+.srv-grid .srv:nth-child(1){transition-delay:0s}
+.srv-grid .srv:nth-child(2){transition-delay:0.08s}
+.srv-grid .srv:nth-child(3){transition-delay:0.16s}
+.srv-grid .srv:nth-child(4){transition-delay:0.24s}
+.srv-grid .srv:nth-child(5){transition-delay:0.32s}
+.srv-grid .srv:nth-child(6){transition-delay:0.4s}
+.why-grid .why:nth-child(1){transition-delay:0s}
+.why-grid .why:nth-child(2){transition-delay:0.08s}
+.why-grid .why:nth-child(3){transition-delay:0.1s}
+.why-grid .why:nth-child(4){transition-delay:0.16s}
+.why-grid .why:nth-child(5){transition-delay:0.2s}
+.why-grid .why:nth-child(6){transition-delay:0.24s}
+.art-grid .art-card:nth-child(n){transition:opacity 0.6s ease,transform 0.6s ease}
+.art-grid .art-card:nth-child(1){transition-delay:0s}
+.art-grid .art-card:nth-child(2){transition-delay:0.06s}
+.art-grid .art-card:nth-child(3){transition-delay:0.12s}
+.art-grid .art-card:nth-child(4){transition-delay:0.18s}
+.art-grid .art-card:nth-child(5){transition-delay:0.24s}
+.art-grid .art-card:nth-child(6){transition-delay:0.3s}
 
 /* ── WAVE SECTION DIVIDERS ── */
-.wave-div{position:relative;height:70px;overflow:hidden;margin-top:-2px}
-.wave-div svg{position:absolute;bottom:0;width:100%;height:70px}
+.wave-div{position:relative;height:60px;overflow:hidden;margin-top:-1px}
+.wave-div svg{position:absolute;bottom:0;width:100%;height:60px}
 .wave-div path{fill:var(--bg)}
 
-/* ── GLASS FORM INPUTS ── */
+/* ── LIQUID GLASS ON FORM INPUTS ── */
 .fm-i,.fm-s,.fm-t{
-  background:rgba(22,22,31,0.5)!important;
-  backdrop-filter:blur(12px);
+  background:rgba(22,22,31,0.6)!important;
+  backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,0.05)!important;
-  transition:all 0.4s
+  transition:all 0.3s
 }
 .fm-i:focus,.fm-s:focus,.fm-t:focus{
-  border-color:rgba(245,197,24,0.35)!important;
-  box-shadow:0 0 25px rgba(245,197,24,0.07),inset 0 0 20px rgba(245,197,24,0.02);
-  background:rgba(22,22,31,0.7)!important
+  border-color:rgba(245,197,24,0.3)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.06);
+  background:rgba(22,22,31,0.8)!important
 }
 
-/* ── TESTIMONIAL TOP LIGHT BAR ── */
-.testi{backdrop-filter:blur(24px) saturate(1.4)}
+/* ── TESTIMONIAL GLASS ── */
+.testi{backdrop-filter:blur(20px) saturate(1.3)}
 .testi::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent 10%,rgba(245,197,24,0.2) 50%,transparent 90%)}
+  background:linear-gradient(90deg,transparent,rgba(245,197,24,0.15),transparent)}
 
-/* ── PRICE CARD FEATURED GLOW ── */
+/* ── PRICE CARD FEATURED GLASS ── */
 .price-card.ft{
-  background:rgba(245,197,24,0.03)!important;
+  background:rgba(245,197,24,0.04)!important;
   border-color:rgba(245,197,24,0.2)!important;
-  box-shadow:0 8px 40px rgba(0,0,0,0.3),0 0 60px rgba(245,197,24,0.06),inset 0 1px 0 rgba(245,197,24,0.1)
+  box-shadow:0 4px 30px rgba(0,0,0,0.3),0 0 40px rgba(245,197,24,0.05),inset 0 1px 0 rgba(245,197,24,0.08)
 }
 
-/* ── DASHBOARD STAT HOVER ── */
-.dash-stat{backdrop-filter:blur(20px);transition:all 0.4s}
-.dash-stat:hover{border-color:rgba(245,197,24,0.15)!important;transform:translateY(-3px)}
+/* ── DASHBOARD STAT GLASS ── */
+.dash-stat{backdrop-filter:blur(20px)}
+.dash-stat:hover{border-color:rgba(245,197,24,0.12)!important;transform:translateY(-2px);transition:all 0.3s}
 
 /* ── HERO BADGE GLASS ── */
 .hero-badge{
-  background:rgba(245,197,24,0.05)!important;
-  backdrop-filter:blur(24px);
-  border:1px solid rgba(245,197,24,0.1)!important;
-  box-shadow:0 0 25px rgba(245,197,24,0.06)
+  background:rgba(245,197,24,0.06)!important;
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(245,197,24,0.12)!important;
+  box-shadow:0 0 20px rgba(245,197,24,0.05)
 }
 
-/* ── PAGE TRANSITIONS ── */
-.pg{animation:pageSlide 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
-@keyframes pageSlide{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+/* ── SMOOTH PAGE TRANSITIONS ── */
+.pg{animation:pageIn 0.5s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── ART CARD IRIDESCENT OVERLAY ── */
+/* ── ARTIST CARD GLASS OVERLAY ── */
 .art-card::after{
   content:'';position:absolute;inset:0;z-index:1;
-  background:linear-gradient(135deg,rgba(245,197,24,0.04),transparent 40%,rgba(79,195,247,0.03));
-  opacity:0;transition:opacity 0.6s;pointer-events:none
+  background:linear-gradient(135deg,rgba(245,197,24,0.03),transparent 50%);
+  opacity:0;transition:opacity 0.5s;pointer-events:none
 }
 .art-card:hover::after{opacity:1}
 
 /* ── TOAST GLASS ── */
-.toast{backdrop-filter:blur(24px);box-shadow:0 10px 40px rgba(0,0,0,0.4)}
-.toast.ok{background:rgba(76,175,80,0.82)!important}
-.toast.err{background:rgba(230,57,70,0.82)!important}
+.toast{backdrop-filter:blur(20px);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.toast.ok{background:rgba(76,175,80,0.85)!important}
+.toast.err{background:rgba(230,57,70,0.85)!important}
 
-/* ── LOGIN GLASS PREMIUM ── */
+/* ── LOGIN GLASS ── */
 .login-card{
-  backdrop-filter:blur(36px) saturate(1.6)!important;
-  box-shadow:0 12px 80px rgba(0,0,0,0.5),0 0 100px rgba(245,197,24,0.03),inset 0 1px 0 rgba(255,255,255,0.07)!important
+  backdrop-filter:blur(30px) saturate(1.5)!important;
+  box-shadow:0 8px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)!important
 }
 
 /* ── FOOTER GLASS ── */
 footer.ft{
-  background:rgba(10,10,15,0.35)!important;
-  backdrop-filter:blur(24px) saturate(1.4);
+  background:rgba(10,10,15,0.4)!important;
+  backdrop-filter:blur(20px) saturate(1.3);
   border-top:1px solid rgba(255,255,255,0.04)!important
 }
 
 /* ── UPLOAD ZONE GLASS ── */
-.upload{border:2px dashed rgba(255,255,255,0.07)!important}
-.upload:hover{border-color:rgba(245,197,24,0.25)!important;background:rgba(245,197,24,0.02)!important;box-shadow:0 0 40px rgba(245,197,24,0.04)}
-.upload.has-file{border-color:rgba(76,175,80,0.3)!important;background:rgba(76,175,80,0.02)!important}
+.upload{
+  background:rgba(18,18,26,0.3);
+  backdrop-filter:blur(15px);
+  border:2px dashed rgba(255,255,255,0.08)!important
+}
+.upload:hover{
+  border-color:rgba(245,197,24,0.2)!important;
+  background:rgba(245,197,24,0.02);
+  box-shadow:0 0 30px rgba(245,197,24,0.04)
+}
+.upload.has-file{border-color:rgba(76,175,80,0.3)!important;background:rgba(76,175,80,0.03)}
 
-/* ── TABS ── */
-.tab.ac{text-shadow:0 0 15px rgba(245,197,24,0.3)}
+/* ── TABS GLASS ── */
+.tab{transition:all 0.3s}
+.tab.ac{text-shadow:0 0 12px rgba(245,197,24,0.3)}
 .tab:hover{background:rgba(255,255,255,0.02)}
 
 /* ── VINYL GLOW ── */
-.hero-vinyl{box-shadow:0 0 100px rgba(245,197,24,0.04);border:1px solid rgba(245,197,24,0.06)!important}
+.hero-vinyl{box-shadow:0 0 80px rgba(245,197,24,0.05);border:1px solid rgba(245,197,24,0.08)!important}
 
-/* ── STAT GLOW ── */
-.stat-v{text-shadow:0 0 25px rgba(255,255,255,0.06)}
-.about-stat-v{text-shadow:0 0 40px rgba(245,197,24,0.15)}
+/* ── STATS COUNTER GLOW ── */
+.stat-v{text-shadow:0 0 20px rgba(255,255,255,0.06)}
+.about-stat-v{text-shadow:0 0 30px rgba(245,197,24,0.12)}
 
-/* ── STEP GLOW ── */
-.step-n{box-shadow:0 0 20px rgba(245,197,24,0.1)}
+/* ── STEP LINE GLOW ── */
+.step-n{box-shadow:0 0 15px rgba(245,197,24,0.1)}
 
 /* ── MOBILE MENU GLASS ── */
-.mob{background:rgba(10,10,15,0.8)!important;backdrop-filter:blur(50px) saturate(1.6)!important}
-
-/* ── BANNER PARALLAX LAYERS ── */
-.pg-banner{overflow:hidden}
-.pg-banner-deco{opacity:0.6}
-
-/* ── ARTIST DETAIL PAGE GLASS ── */
-.ap-stats-bar{background:rgba(18,18,26,0.5)!important;backdrop-filter:blur(20px) saturate(1.3)}
-.ap-sidebar-card{backdrop-filter:blur(24px) saturate(1.4)}
-
-/* ═══ GSAP SUPPORT CLASSES ═══ */
-.gc,.gw{display:inline-block;will-change:transform,opacity}
-.g-split{overflow:visible}
-.g-hero-title,.g-magnetic,.g-parallax,.g-fade,.g-left,.g-right,.g-scale,.g-clip,.g-step,.g-tl-item{will-change:transform,opacity}
-.g-stagger>*{will-change:transform,opacity;transform-style:preserve-3d}
-.g-price{transform-style:preserve-3d;perspective:800px}
-.g-count{font-variant-numeric:tabular-nums}
-.hero{perspective:1200px}
-.hero-c{transform-style:preserve-3d}
+.mob{background:rgba(10,10,15,0.85)!important;backdrop-filter:blur(40px) saturate(1.5)!important}
 
 @media(max-width:900px){
   .n-links{display:none}.n-ham{display:flex}
@@ -1155,7 +1010,7 @@ function Toast({ msg, type, onClose }) {
 // ─── HOME ───
 function HomePage() {
   useSEO("/");
-  useGSAP();
+  useScrollReveal();
   const { artists } = useArtists();
   const testimonials = useTestimonials();
   const platforms = ["SPOTIFY", "APPLE MUSIC", "DEEZER", "YOUTUBE MUSIC", "TIDAL", "AMAZON MUSIC", "AUDIOMACK", "BOOMPLAY"];
@@ -1189,14 +1044,14 @@ function HomePage() {
         </div>
 
         <div className="hero-c">
-          <div className="hero-badge g-fade"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
-          <h1 className="g-hero-title">Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
-          <p className="hero-sub g-fade">Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management. Nous transformons votre talent en carrière.</p>
-          <div className="hero-acts g-fade">
-            <Link to="/distribution-musique" className="btn btn-r btn-lg g-magnetic"><Icon.Music size={16} color="currentColor" />Distribuer mon titre</Link>
-            <Link to="/studio-enregistrement" className="btn btn-o btn-lg g-magnetic"><Icon.Mic size={16} color="currentColor" />Réserver le studio</Link>
+          <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
+          <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
+          <p className="hero-sub">Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management. Nous transformons votre talent en carrière.</p>
+          <div className="hero-acts">
+            <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} color="currentColor" />Distribuer mon titre</Link>
+            <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} color="currentColor" />Réserver le studio</Link>
           </div>
-          <div className="hero-stats">{[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "15+", l: "Pays" }].map((s) => <div key={s.l} className="g-stat-v"><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
+          <div className="hero-stats">{[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "15+", l: "Pays" }].map((s) => <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
         </div>
       </section>
 
@@ -1206,19 +1061,19 @@ function HomePage() {
       {/* Services */}
       <section className="sec">
         <div className="sec-h">
-          <div className="sec-tag g-tag">Nos services</div>
-          <h2 className="sec-title g-words">Tout pour lancer et développer votre carrière</h2>
-          <p className="sec-desc g-fade">De la première maquette au concert sold-out, Sterkte Records vous fournit les outils et le réseau pour réussir.</p>
+          <div className="sec-tag">Nos services</div>
+          <h2 className="sec-title">Tout pour lancer et développer votre carrière</h2>
+          <p className="sec-desc">De la première maquette au concert sold-out, Sterkte Records vous fournit les outils et le réseau pour réussir.</p>
         </div>
-        <div className="srv-grid g-stagger">{SERVICES_LIST.map((s) => <Link key={s.title} to={s.link} className="srv"><div className="srv-ico g-float"><s.Icon size={24} /></div><h3>{s.title}</h3><p>{s.desc}</p><div className="srv-arr"><Icon.ArrowRight size={18} /></div></Link>)}</div>
+        <div className="srv-grid sr-reveal">{SERVICES_LIST.map((s) => <Link key={s.title} to={s.link} className="srv"><div className="srv-ico"><s.Icon size={24} /></div><h3>{s.title}</h3><p>{s.desc}</p><div className="srv-arr"><Icon.ArrowRight size={18} /></div></Link>)}</div>
       </section>
 
       <WaveDivider />
 
       {/* Pourquoi nous */}
       <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
-        <div className="sec-h"><div className="sec-tag g-tag">Pourquoi nous choisir</div><h2 className="sec-title g-words">Ce qui nous différencie</h2></div>
-        <div className="why-grid g-stagger">{[
+        <div className="sec-h"><div className="sec-tag">Pourquoi nous choisir</div><h2 className="sec-title">Ce qui nous différencie</h2></div>
+        <div className="why-grid sr-reveal">{[
           { Ico: Icon.Diamond, title: "Transparence totale", desc: "Accès en temps réel à vos statistiques et revenus. Pas de frais cachés." },
           { Ico: Icon.Globe, title: "Expertise Afrique + International", desc: "Basés en RDC avec un réseau en Europe et en Afrique." },
           { Ico: Icon.Handshake, title: "Accompagnement humain", desc: "Chaque artiste a un interlocuteur dédié qui connaît son projet." },
@@ -1232,28 +1087,28 @@ function HomePage() {
 
       {/* Roster aperçu */}
       <section className="sec">
-        <div className="sec-h"><div className="sec-tag g-tag">Roster</div><h2 className="sec-title g-words">Ils nous font confiance</h2></div>
-        <div className="art-grid g-stagger" style={{ padding: 0 }}>{artists.slice(0, 6).map((a) => <div key={a.id} className="art-card"><img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" /><div className="art-ov"><div className="art-name">{a.name}</div><div className="art-genre">{(a.tags || []).join(" · ")}</div></div></div>)}</div>
-        <div style={{ textAlign: "center", marginTop: 40 }}><Link to="/artistes" className="btn btn-o btn-lg g-magnetic"><Icon.ArrowRight size={16} />Voir tous les artistes</Link></div>
+        <div className="sec-h sr-reveal"><div className="sec-tag">Roster</div><h2 className="sec-title">Ils nous font confiance</h2></div>
+        <div className="art-grid sr-reveal" style={{ padding: 0 }}>{artists.slice(0, 6).map((a) => <div key={a.id} className="art-card"><img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" /><div className="art-ov"><div className="art-name">{a.name}</div><div className="art-genre">{(a.tags || []).join(" · ")}</div></div></div>)}</div>
+        <div style={{ textAlign: "center", marginTop: 40 }}><Link to="/artistes" className="btn btn-o btn-lg"><Icon.ArrowRight size={16} />Voir tous les artistes</Link></div>
       </section>
 
       {/* Témoignages */}
       {testimonials.length > 0 && <>
-      <WaveDivider />
-      <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
-        <div className="sec-h"><div className="sec-tag g-tag">Témoignages</div><h2 className="sec-title g-words">Ce que disent nos artistes</h2></div>
-        <div className="testi-grid g-stagger">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
+        <WaveDivider />
+        <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
+        <div className="sec-h"><div className="sec-tag">Témoignages</div><h2 className="sec-title">Ce que disent nos artistes</h2></div>
+        <div className="testi-grid sr-reveal">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
       </section>
       </>}
 
       {/* CTA final */}
-      <section className="sec" style={{ textAlign: "center" }}>
-        <div className="sec-tag g-tag">Prêt à commencer ?</div>
-        <h2 className="sec-title g-words" style={{ marginBottom: 20 }}>Transformez votre talent en <span className="gold">carrière musicale</span></h2>
-        <p className="sec-desc g-fade" style={{ marginBottom: 36, textAlign: "center" }}>Rejoignez un label qui investit dans votre réussite.</p>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }} className="g-scale">
-          <Link to="/connexion" className="btn btn-g btn-lg g-magnetic"><Icon.Rocket size={16} />Rejoindre le label</Link>
-          <Link to="/contact" className="btn btn-o btn-lg g-magnetic"><Icon.Mail size={16} />Nous contacter</Link>
+      <section className="sec sr-reveal" style={{ textAlign: "center" }}>
+        <div className="sec-tag">Prêt à commencer ?</div>
+        <h2 className="sec-title" style={{ marginBottom: 20 }}>Transformez votre talent en <span className="gold">carrière musicale</span></h2>
+        <p className="sec-desc" style={{ marginBottom: 36, textAlign: "center" }}>Rejoignez un label qui investit dans votre réussite.</p>
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <Link to="/connexion" className="btn btn-g btn-lg"><Icon.Rocket size={16} />Rejoindre le label</Link>
+          <Link to="/contact" className="btn btn-o btn-lg"><Icon.Mail size={16} />Nous contacter</Link>
         </div>
       </section>
     </>
@@ -1263,7 +1118,7 @@ function HomePage() {
 // ─── ABOUT ───
 function AboutPage() {
   useSEO("/a-propos");
-  useGSAP();
+  useScrollReveal();
   const team = [
     { i: "AK", name: "Axel l'or Kaumba", role: "Fondateur & Distribution digitale", desc: "Visionnaire et entrepreneur passionné, Axel a fondé Sterkte Records avec la conviction profonde que la musique africaine mérite une scène mondiale. Expert en marketing digital, il orchestre les stratégies de distribution et guide chaque artiste vers la réussite." },
     { i: "AA", name: "Abigail Angelani", role: "Directrice Marketing & Communication", desc: "Maîtresse des récits qui résonnent, Abigail construit l'image du label et de ses artistes sur tous les canaux digitaux. Ses campagnes créatives ont permis à plusieurs artistes de percer au-delà des frontières africaines." },
@@ -1279,9 +1134,9 @@ function AboutPage() {
       <div className="pg-c">
 
         {/* Stats chiffres */}
-        <div className="about-stats g-clip">
+        <div className="about-stats">
           {[{ v: "2020", l: "Année de création" }, { v: "150+", l: "Plateformes" }, { v: "1M+", l: "Streams générés" }, { v: "15+", l: "Pays atteints" }].map((s) => (
-            <div key={s.l} className="about-stat"><div className="about-stat-v g-count">{s.v}</div><div className="about-stat-l">{s.l}</div></div>
+            <div key={s.l} className="about-stat"><div className="about-stat-v">{s.v}</div><div className="about-stat-l">{s.l}</div></div>
           ))}
         </div>
 
@@ -1301,7 +1156,7 @@ function AboutPage() {
 
         {/* Valeurs */}
         <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Nos valeurs fondamentales</h3>
-        <div className="about-values g-stagger">
+        <div className="about-values">
           {[
             { Ico: Icon.Diamond, title: "Intégrité", desc: "Honnêteté totale sur les chiffres, les contrats et les décisions. Pas de zones grises." },
             { Ico: Icon.Star, title: "Excellence", desc: "Production de qualité internationale, quel que soit le budget ou le niveau de l'artiste." },
@@ -1326,7 +1181,7 @@ function AboutPage() {
             { year: "2023", title: "Cap du million de streams", desc: "Le catalogue Sterkte Records franchit collectivement le million de streams. Lancement du studio mobile pour les artistes hors de Lubumbashi." },
             { year: "2024", title: "Rayonnement international", desc: "Présence sur 15+ pays, collaborations avec des labels européens et lancement de l'espace artiste digital pour un suivi en temps réel." },
           ].map((item) => (
-            <div key={item.year} className="about-tl-item g-tl-item">
+            <div key={item.year} className="about-tl-item">
               <div className="about-tl-dot" />
               <div className="about-tl-year">{item.year}</div>
               <h4>{item.title}</h4>
@@ -1338,16 +1193,16 @@ function AboutPage() {
         {/* Équipe */}
         <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>L'équipe dirigeante</h3>
         <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Des professionnels passionnés au service de votre talent.</p>
-        <div className="team-grid g-stagger">{team.map((m) => <div key={m.name} className="team"><div className="team-av g-float">{m.i}</div><h4>{m.name}</h4><div className="role">{m.role}</div><p>{m.desc}</p></div>)}</div>
+        <div className="team-grid">{team.map((m) => <div key={m.name} className="team"><div className="team-av">{m.i}</div><h4>{m.name}</h4><div className="role">{m.role}</div><p>{m.desc}</p></div>)}</div>
 
         {/* CTA */}
-        <div className="g-scale" style={{ marginTop: 64, padding: "48px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: "center" }}>
-          <div className="sec-tag g-tag">Vous êtes artiste ?</div>
+        <div style={{ marginTop: 64, padding: "48px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: "center" }}>
+          <div className="sec-tag">Vous êtes artiste ?</div>
           <h3 style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1, margin: "12px 0 16px" }}>Rejoignez l'aventure <span className="gold">Sterkte Records</span></h3>
           <p style={{ color: C.muted, fontSize: 15, marginBottom: 28, maxWidth: 500, margin: "0 auto 28px" }}>Quel que soit votre style, votre niveau ou vos objectifs, nous avons les outils et l'équipe pour vous propulser.</p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link to="/connexion" className="btn btn-g btn-lg g-magnetic"><Icon.User size={16} />Créer mon espace artiste</Link>
-            <Link to="/contact" className="btn btn-o btn-lg g-magnetic"><Icon.Mail size={16} />Nous contacter</Link>
+            <Link to="/connexion" className="btn btn-g btn-lg"><Icon.User size={16} />Créer mon espace artiste</Link>
+            <Link to="/contact" className="btn btn-o btn-lg"><Icon.Mail size={16} />Nous contacter</Link>
           </div>
         </div>
       </div>
@@ -1358,7 +1213,7 @@ function AboutPage() {
 // ─── ARTISTS PAGE ───
 function ArtistsPage() {
   useSEO("/artistes");
-  useGSAP();
+  useScrollReveal();
   const { artists, loading } = useArtists();
   const [filter, setFilter] = useState("Tout");
   const [search, setSearch] = useState("");
@@ -1375,12 +1230,12 @@ function ArtistsPage() {
   return (
     <div className="pg">
       <div className="art-hero">
-        <h1 className="art-big g-split">ARTISTES</h1>
-        <div className="art-filters g-fade">{ARTIST_GENRES.map((g) => <button key={g} className={`art-tag ${filter === g ? "ac" : ""}`} onClick={() => { setFilter(g); setShowAll(false); }}>{g}</button>)}</div>
-        <div className="art-search g-fade"><span className="art-search-ico"><Icon.Search size={16} color={C.muted} /></span><input placeholder="Rechercher un artiste..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+        <h1 className="art-big">ARTISTES</h1>
+        <div className="art-filters">{ARTIST_GENRES.map((g) => <button key={g} className={`art-tag ${filter === g ? "ac" : ""}`} onClick={() => { setFilter(g); setShowAll(false); }}>{g}</button>)}</div>
+        <div className="art-search"><span className="art-search-ico"><Icon.Search size={16} color={C.muted} /></span><input placeholder="Rechercher un artiste..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
       </div>
       {loading ? <div className="loading-box">Chargement...</div> : filtered.length === 0 ? <div style={{ textAlign: "center", padding: "60px 24px", color: C.muted }}>Aucun artiste trouvé.</div> : <>
-        <div className="art-grid g-stagger" key={filter + search}>{visible.map((a) => (
+        <div className="art-grid">{visible.map((a) => (
           <div key={a.id} className="art-card" onClick={() => handleArtistClick(a)}>
             <img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" />
             <div className="art-ov">
@@ -1390,7 +1245,7 @@ function ArtistsPage() {
             </div>
           </div>
         ))}</div>
-        {!showAll && filtered.length > 8 && <div style={{ textAlign: "center", padding: "0 60px 80px" }}><button className="btn btn-o btn-lg g-magnetic" onClick={() => setShowAll(true)}>Voir plus</button></div>}
+        {!showAll && filtered.length > 8 && <div style={{ textAlign: "center", padding: "0 60px 80px" }}><button className="btn btn-o btn-lg" onClick={() => setShowAll(true)}>Voir plus</button></div>}
       </>}
     </div>
   );
@@ -1402,7 +1257,6 @@ function ArtistDetailPage() {
   const location = useLocation();
   const nav = useNavigate();
   const { artists } = useArtists();
-  useGSAP([slug]);
 
   // Récupère l'artiste depuis state ou depuis la liste
   const artistFromState = location.state?.artist;
@@ -1434,33 +1288,33 @@ function ArtistDetailPage() {
     <div className="ap">
       {/* HERO */}
       <div className="ap-hero">
-        <div className="ap-hero-bg g-parallax" data-speed="0.5">
+        <div className="ap-hero-bg">
           <img src={imgSrc} alt={artist.name} className="ap-hero-img" />
           <div className="ap-hero-overlay" />
         </div>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 60% 100%, rgba(245,197,24,0.06), transparent 60%)", zIndex: 1 }} />
         <div className="ap-hero-c">
-          <button className="ap-back g-fade" onClick={() => nav("/artistes")}>
+          <button className="ap-back" onClick={() => nav("/artistes")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
             Retour aux artistes
           </button>
-          <div className="ap-genre-tag g-fade"><Icon.Music size={12} />{detail.genre}</div>
-          <h1 className="ap-hero-name g-split">{artist.name}</h1>
-          <div className="ap-hero-socials g-fade">
+          <div className="ap-genre-tag"><Icon.Music size={12} />{detail.genre}</div>
+          <h1 className="ap-hero-name">{artist.name}</h1>
+          <div className="ap-hero-socials">
             {socials.instagram && <a href={socials.instagram} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Instagram size={16} /></a>}
             {socials.twitter && <a href={socials.twitter} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Twitter size={16} /></a>}
             {socials.youtube && <a href={socials.youtube} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Youtube size={16} /></a>}
             {socials.spotify && <a href={socials.spotify} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Spotify size={16} /></a>}
           </div>
-          <div className="ap-hero-acts g-fade">
-            <a href={socials.spotify || "#"} target="_blank" rel="noreferrer" className="btn btn-g btn-lg g-magnetic"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>
-            <Link to="/booking-artistes" className="btn btn-o btn-lg g-magnetic"><Icon.Calendar size={14} />Réserver cet artiste</Link>
+          <div className="ap-hero-acts">
+            <a href={socials.spotify || "#"} target="_blank" rel="noreferrer" className="btn btn-g btn-lg"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>
+            <Link to="/booking-artistes" className="btn btn-o btn-lg"><Icon.Calendar size={14} />Réserver cet artiste</Link>
           </div>
         </div>
       </div>
 
       {/* STATS BAR */}
-      <div className="ap-stats-bar g-stagger">
+      <div className="ap-stats-bar">
         {[{ v: detail.streams, l: "Streams totaux" }, { v: detail.plateformes, l: "Plateformes" }, { v: detail.singles.length + "+", l: "Sorties" }, { v: detail.since, l: "Avec Sterkte" }].map((s) => (
           <div key={s.l} className="ap-stat"><div className="ap-stat-v">{s.v}</div><div className="ap-stat-l">{s.l}</div></div>
         ))}
@@ -1471,13 +1325,12 @@ function ArtistDetailPage() {
         <div className="ap-grid">
           {/* Gauche : bio + discographie */}
           <div>
-            <div className="ap-bio-title g-tag">Biographie</div>
-            <p className="ap-bio-text g-fade">{detail.bio}</p>
-            <p className="ap-bio-text g-fade">{detail.bio2}</p>
+            <div className="ap-bio-title">Biographie</div>
+            <p className="ap-bio-text">{detail.bio}</p>
+            <p className="ap-bio-text">{detail.bio2}</p>
 
             <div style={{ marginTop: 48 }}>
-              <div className="ap-disco-title g-tag">Discographie</div>
-              <div className="g-stagger">
+              <div className="ap-disco-title">Discographie</div>
               {detail.singles.map((s, i) => (
                 <div key={s.title} className="ap-track">
                   <div className="ap-track-num">{i + 1}</div>
@@ -1489,12 +1342,11 @@ function ArtistDetailPage() {
                   <div className="ap-track-streams">{s.streams} streams</div>
                 </div>
               ))}
-              </div>
             </div>
           </div>
 
           {/* Droite : infos sidebar */}
-          <div className="g-right">
+          <div>
             <div className="ap-sidebar-card">
               <div>
                 <div className="ap-sidebar-label">Genre</div>
@@ -1533,7 +1385,6 @@ function ArtistDetailPage() {
 // ─── DISTRIBUTION ───
 function DistributionPage({ toast }) {
   useSEO("/distribution-musique");
-  useGSAP();
   const { user } = useAuth();
   return (
     <div className="pg">
@@ -1544,14 +1395,14 @@ function DistributionPage({ toast }) {
           { n: "2", t: "Uploadez vos morceaux", d: "Fichiers audio (WAV, FLAC, MP3) + visuel de couverture." },
           { n: "3", t: "Renseignez les métadonnées", d: "Titre, auteurs, genre, date de sortie." },
           { n: "4", t: "Validation et mise en ligne", d: "Notre équipe valide sous 48h et distribue sur 150+ plateformes." },
-        ].map((s) => <div key={s.n} className="step g-step"><div className="step-n">{s.n}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}</div>
-        <div className="feats g-stagger">{[
+        ].map((s) => <div key={s.n} className="step"><div className="step-n">{s.n}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}</div>
+        <div className="feats">{[
           { Ico: Icon.BarChart, title: "Rapports en temps réel", desc: "Suivez vos streams et revenus depuis votre dashboard." },
           { Ico: Icon.Diamond, title: "Royalties transparentes", desc: "Rapport mensuel détaillé. Paiement par virement ou Mobile Money." },
           { Ico: Icon.Globe, title: "150+ plateformes", desc: "Spotify, Apple Music, Deezer, YouTube Music, Tidal et plus." },
           { Ico: Icon.Zap, title: "Distribution en 48h", desc: "Validation et envoi aux plateformes en 48h maximum." },
-        ].map((f) => <div key={f.title} className="feat"><div className="feat-ico g-float"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
-        <div className="g-fade" style={{ marginTop: 40 }}><Link to={user ? "/dashboard" : "/connexion"} className="btn btn-g btn-lg g-magnetic"><Icon.ArrowRight size={16} />{user ? "Accéder au dashboard" : "Créer un compte pour distribuer"}</Link></div>
+        ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
+        <div style={{ marginTop: 40 }}><Link to={user ? "/dashboard" : "/connexion"} className="btn btn-g btn-lg"><Icon.ArrowRight size={16} />{user ? "Accéder au dashboard" : "Créer un compte pour distribuer"}</Link></div>
       </div>
     </div>
   );
@@ -1560,7 +1411,6 @@ function DistributionPage({ toast }) {
 // ─── STUDIO ───
 function StudioPage({ toast }) {
   useSEO("/studio-enregistrement");
-  useGSAP();
   const { user } = useAuth();
   const [form, setForm] = useState({ type: "sur-place", date: "", duration: "2", address: "", name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
@@ -1585,9 +1435,9 @@ function StudioPage({ toast }) {
           { title: "Enregistrement", p: "50$", u: "/heure", items: ["Studio professionnel", "Ingénieur son dédié", "Export WAV/FLAC/MP3", "Coaching vocal inclus"], ft: false },
           { title: "Mixage & Mastering", p: "200$", u: "/titre", items: ["Mix professionnel", "Mastering haute qualité", "2 révisions incluses", "Export multi-formats"], ft: true },
           { title: "Studio Mobile", p: "75$", u: "/heure", items: ["Déplacement inclus", "Matériel professionnel", "Enregistrement sur site", "Flexibilité totale"], ft: false },
-        ].map((p) => <div key={p.title} className={`price-card g-price ${p.ft ? "ft" : ""}`}><h4>{p.title}</h4><div className="price-val">{p.p}<span> {p.u}</span></div><ul>{p.items.map((it) => <li key={it}><span className="chk"><Icon.Check size={14} color={C.gold} /></span>{it}</li>)}</ul></div>)}</div>
-        <h3 className="g-words" style={{ fontSize: 22, fontWeight: 800, marginTop: 48, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
-        <div className="fm g-form">
+        ].map((p) => <div key={p.title} className={`price-card ${p.ft ? "ft" : ""}`}><h4>{p.title}</h4><div className="price-val">{p.p}<span> {p.u}</span></div><ul>{p.items.map((it) => <li key={it}><span className="chk"><Icon.Check size={14} color={C.gold} /></span>{it}</li>)}</ul></div>)}</div>
+        <h3 style={{ fontSize: 22, fontWeight: 800, marginTop: 48, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
+        <div className="fm">
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Votre nom *</label><input className="fm-i" placeholder="Nom complet" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div></div>
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Type</label><select className="fm-s" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}><option value="sur-place">Studio sur place</option><option value="mobile">Studio mobile</option></select></div><div className="fm-g"><label className="fm-l">Durée</label><select className="fm-s" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })}>{[1, 2, 3, 4, 5, 6, 8].map((h) => <option key={h} value={h}>{h}h</option>)}</select></div></div>
           <div className="fm-g"><label className="fm-l">Date souhaitée</label><input className="fm-i" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
@@ -1604,7 +1454,6 @@ function StudioPage({ toast }) {
 // ─── BOOKING ───
 function BookingPage({ toast }) {
   useSEO("/booking-artistes");
-  useGSAP([]);
   const { artists } = useArtists();
   const [tab, setTab] = useState("artiste");
   const [form, setForm] = useState({ name: "", email: "", artist: "", event: "", date: "", budget: "", lieu: "", message: "" });
@@ -1623,7 +1472,7 @@ function BookingPage({ toast }) {
       <PageBanner tag="Booking" title='Réservez vos <span style="color:#F5C518">événements</span>' subtitle="Réservez nos artistes pour concerts, festivals et événements. Réponse sous 72h." accent={C.red} />
       <div className="pg-c">
         <div className="tabs"><button className={`tab ${tab === "artiste" ? "ac" : ""}`} onClick={() => setTab("artiste")}>Réserver un artiste</button><button className={`tab ${tab === "lieu" ? "ac" : ""}`} onClick={() => setTab("lieu")}>Réserver un lieu</button></div>
-        <div className="fm g-form" key={tab}>
+        <div className="fm">
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Nom *</label><input className="fm-i" placeholder="Nom complet" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div></div>
           {tab === "artiste" && <div className="fm-g"><label className="fm-l">Artiste</label><select className="fm-s" value={form.artist} onChange={(e) => setForm({ ...form, artist: e.target.value })}><option value="">Sélectionner</option>{artists.map((a) => <option key={a.id} value={a.name}>{a.name}</option>)}<option value="autre">Autre</option></select></div>}
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Type d'événement</label><select className="fm-s" value={form.event} onChange={(e) => setForm({ ...form, event: e.target.value })}><option value="">Sélectionner</option><option value="concert">Concert</option><option value="festival">Festival</option><option value="showcase">Showcase</option><option value="prive">Privé</option><option value="corporate">Corporate</option></select></div><div className="fm-g"><label className="fm-l">Date</label><input className="fm-i" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div></div>
@@ -1639,7 +1488,6 @@ function BookingPage({ toast }) {
 // ─── FEATURING ───
 function FeaturingPage({ toast }) {
   useSEO("/featurings");
-  useGSAP();
   const { artists } = useArtists();
   const [form, setForm] = useState({ name: "", email: "", artist: "", project: "", deadline: "", link: "", message: "" });
   const [sending, setSending] = useState(false);
@@ -1660,15 +1508,15 @@ function FeaturingPage({ toast }) {
           { n: "1", t: "Remplissez le formulaire", d: "Précisez l'artiste, le projet et les délais." },
           { n: "2", t: "Analyse sous 7 jours", d: "Notre équipe évalue la compatibilité artistique." },
           { n: "3", t: "Coordination et production", d: "Collaboration coordonnée jusqu'à la finalisation." },
-        ].map((s) => <div key={s.n} className="step g-step"><div className="step-n">{s.n}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}</div>
-        <h3 className="g-words" style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Demande de <span className="gold">featuring</span></h3>
-        <div className="fm g-form">
+        ].map((s) => <div key={s.n} className="step"><div className="step-n">{s.n}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}</div>
+        <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Demande de <span className="gold">featuring</span></h3>
+        <div className="fm">
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Nom *</label><input className="fm-i" placeholder="Nom" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div></div>
           <div className="fm-g"><label className="fm-l">Artiste</label><select className="fm-s" value={form.artist} onChange={(e) => setForm({ ...form, artist: e.target.value })}><option value="">Sélectionner</option>{artists.map((a) => <option key={a.id} value={a.name}>{a.name}</option>)}</select></div>
           <div className="fm-row"><div className="fm-g"><label className="fm-l">Projet</label><input className="fm-i" placeholder="Nom du morceau" value={form.project} onChange={(e) => setForm({ ...form, project: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Deadline</label><input className="fm-i" type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div></div>
           <div className="fm-g"><label className="fm-l">Lien projet</label><input className="fm-i" placeholder="SoundCloud, Drive..." value={form.link} onChange={(e) => setForm({ ...form, link: e.target.value })} /></div>
           <div className="fm-g"><label className="fm-l">Description</label><textarea className="fm-t" placeholder="Style, vision..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
-          <button className="btn btn-g btn-lg g-magnetic" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Soumettre"}</button>
+          <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Soumettre"}</button>
         </div>
       </div>
     </div>
@@ -1678,20 +1526,19 @@ function FeaturingPage({ toast }) {
 // ─── CONSULTING ───
 function ConsultingPage() {
   useSEO("/services");
-  useGSAP();
   return (
     <div className="pg">
       <PageBanner tag="Consulting & Management" title='Accompagnement <span style="color:#F5C518">stratégique</span>' subtitle="Des services adaptés à vos besoins artistiques et commerciaux." accent={C.gold} />
       <div className="pg-c">
-        <div className="feats g-stagger">{[
+        <div className="feats">{[
           { Ico: Icon.Rocket, title: "Stratégie de lancement", desc: "Plan de promotion digitale personnalisé." },
           { Ico: Icon.Clipboard, title: "Gestion de carrière", desc: "Négociation de contrats, planification stratégique." },
           { Ico: Icon.Layers, title: "Développement de marque", desc: "Coaching artistique, image de marque." },
           { Ico: Icon.TrendingUp, title: "Analyse de données", desc: "Optimisation des revenus et des streams." },
           { Ico: Icon.Map, title: "Organisation de tournées", desc: "Planification logistique complète." },
           { Ico: Icon.Film, title: "Production visuelle", desc: "Clips vidéo, photos, pochettes." },
-        ].map((f) => <div key={f.title} className="feat"><div className="feat-ico g-float"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
-        <div className="g-scale" style={{ marginTop: 48, textAlign: "center" }}><Link to="/contact" className="btn btn-r btn-lg g-magnetic"><Icon.Mail size={16} />Prendre contact</Link></div>
+        ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
+        <div style={{ marginTop: 48, textAlign: "center" }}><Link to="/contact" className="btn btn-r btn-lg"><Icon.Mail size={16} />Prendre contact</Link></div>
       </div>
     </div>
   );
@@ -1700,7 +1547,6 @@ function ConsultingPage() {
 // ─── CONTACT ───
 function ContactPage({ toast }) {
   useSEO("/contact");
-  useGSAP();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
   const handleSubmit = async () => {
@@ -1717,21 +1563,19 @@ function ContactPage({ toast }) {
       <PageBanner tag="Contact" title='Contactez-<span style="color:#F5C518">nous</span>' subtitle="Notre équipe répond sous 48 heures." />
       <div className="pg-c">
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-          <div className="fm g-form g-left">
+          <div className="fm">
             <div className="fm-row"><div className="fm-g"><label className="fm-l">Nom *</label><input className="fm-i" placeholder="Nom" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div></div>
             <div className="fm-g"><label className="fm-l">Sujet</label><select className="fm-s" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })}><option value="">Sélectionner</option><option value="Distribution">Distribution</option><option value="Studio">Studio</option><option value="Booking">Booking</option><option value="Featuring">Featuring</option><option value="Consulting">Consulting</option><option value="Autre">Autre</option></select></div>
             <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" placeholder="Votre message..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
-            <button className="btn btn-g btn-lg g-magnetic" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Envoyer"}</button>
+            <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Envoyer"}</button>
           </div>
-          <div className="g-right"><div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32 }}>
-            <h4 className="g-tag" style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Informations</h4>
-            <div className="g-stagger">
+          <div><div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32 }}>
+            <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Informations</h4>
             {[
               { Ico: Icon.Mail, l: "Email", v: "contact.sterkterecords@gmail.com", c: C.blue },
               { Ico: Icon.Phone, l: "Téléphone", v: "+243 850 510 209", c: C.white },
               { Ico: Icon.MapPin, l: "Adresse", v: "Avenue Mama Yemo, Lubumbashi, RDC", c: C.white },
             ].map((c) => <div key={c.l} style={{ marginBottom: 20, display: "flex", gap: 12, alignItems: "flex-start" }}><div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(245,197,24,0.08)", display: "flex", alignItems: "center", justifyContent: "center", color: C.gold, flexShrink: 0 }}><c.Ico size={16} color="currentColor" /></div><div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Montserrat',sans-serif", fontWeight: 600, marginBottom: 4 }}>{c.l}</div><div style={{ fontSize: 14, color: c.c }}>{c.v}</div></div></div>)}
-            </div>
             <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.border}` }}><a href="https://linktr.ee/sterkterecords" target="_blank" rel="noreferrer" style={{ color: C.blue, fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon.Link2 size={16} color={C.blue} />Tous nos réseaux</a></div>
           </div></div>
         </div>
@@ -1748,15 +1592,6 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const nav = useNavigate();
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.from(cardRef.current, { opacity: 0, y: 40, scale: 0.9, duration: 0.9, ease: "power3.out" });
-      const fields = cardRef.current.querySelectorAll(".fm-g, .btn");
-      gsap.from(fields, { opacity: 0, x: -30, duration: 0.5, stagger: 0.06, delay: 0.3, ease: "power2.out" });
-    }
-  }, [isReg]);
 
   const handleSubmit = async () => {
     setError("");
@@ -1776,7 +1611,7 @@ function LoginPage() {
     setSending(false);
   };
 
-  return (<div className="login-pg"><div className="login-card" ref={cardRef}>
+  return (<div className="login-pg"><div className="login-card">
     <div style={{ textAlign: "center", marginBottom: 24 }}><span className="n-logo-t" style={{ fontSize: 22 }}><span style={{ color: C.white }}>Sterkte</span> <span style={{ color: C.red }}>Records</span></span></div>
     <h2>{isReg ? "Créer un compte" : "Connexion"}</h2>
     <p className="sub">{isReg ? "Rejoignez le label" : "Accédez à votre espace artiste"}</p>
@@ -1786,7 +1621,7 @@ function LoginPage() {
     <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
     <div className="fm-g"><label className="fm-l">Mot de passe *</label><input className="fm-i" type="password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
     {isReg && <div className="fm-g"><label className="fm-l">Genre musical</label><select className="fm-s" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })}><option value="">Sélectionner</option><option value="Afrobeat">Afrobeat</option><option value="R&B">R&B</option><option value="Rap">Rap</option><option value="Rumba">Rumba</option><option value="Gospel">Gospel</option><option value="Amapiano">Amapiano</option><option value="Autre">Autre</option></select></div>}
-    <button className="btn btn-g btn-lg g-magnetic" style={{ width: "100%", justifyContent: "center", marginTop: 8 }} onClick={handleSubmit} disabled={sending}>{sending ? "Chargement..." : isReg ? "Créer mon compte" : "Se connecter"}</button>
+    <button className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginTop: 8 }} onClick={handleSubmit} disabled={sending}>{sending ? "Chargement..." : isReg ? "Créer mon compte" : "Se connecter"}</button>
     <div style={{ textAlign: "center", marginTop: 20 }}><span style={{ fontSize: 13, color: C.muted }}>{isReg ? "Déjà un compte ? " : "Pas de compte ? "}</span><span style={{ fontSize: 13, color: C.blue, cursor: "pointer", fontWeight: 600 }} onClick={() => { setIsReg(!isReg); setError(""); }}>{isReg ? "Se connecter" : "S'inscrire"}</span></div>
   </div></div>);
 }
@@ -1804,19 +1639,6 @@ function DashboardPage({ toast }) {
   const [sending, setSending] = useState(false);
   const audioRef = useRef(null);
   const coverRef = useRef(null);
-
-  // GSAP on tab changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const stats = document.querySelectorAll(".dash-stat");
-      if (stats.length) gsap.from(stats, { opacity: 0, y: 40, scale: 0.9, duration: 0.7, stagger: 0.08, ease: "power3.out" });
-      const trackRows = document.querySelectorAll(".tr-row");
-      if (trackRows.length) gsap.from(trackRows, { opacity: 0, x: -30, duration: 0.5, stagger: 0.04, ease: "power2.out", delay: 0.2 });
-      const uploads = document.querySelectorAll(".upload");
-      if (uploads.length) gsap.from(uploads, { opacity: 0, y: 30, duration: 0.6, stagger: 0.1, ease: "power3.out" });
-    }, 50);
-    return () => clearTimeout(timer);
-  }, [dashTab]);
 
   useEffect(() => { if (!user) nav("/connexion"); }, [user, nav]);
 
