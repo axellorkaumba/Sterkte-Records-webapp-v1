@@ -1306,7 +1306,7 @@ function ArtistsPage() {
                         <span>En mémoire</span>
                       </div>
                       <div className="tribute-name">DJ Minho</div>
-                      <div className="tribute-dates">1990 – 01/02/2025</div>
+                      <div className="tribute-dates">18/11/2000 – 01/02/2025</div>
                       <div className="tribute-quote">« La musique ne meurt jamais, elle vit dans chaque âme qu'elle a touchée. »</div>
                     </div>
                   </div>
