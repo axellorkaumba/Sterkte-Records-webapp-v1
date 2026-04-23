@@ -548,17 +548,17 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 
 /* ── HERO (Accueil) ── */
 .hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:100px 60px 60px}
-.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 20% 50%,rgba(230,57,70,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(245,197,24,.06) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(79,195,247,.04) 0%,transparent 50%),var(--bg)}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(42,42,53,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(42,42,53,.15) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%)}
-.hero-c{position:relative;z-index:1;max-width:720px}
+.hero-bg{position:absolute;inset:0;z-index:0;background:#0A0A0F;}
+.hero-grid{display:none;}
+.hero-c{position:relative;z-index:1;max-width:800px;text-align:center;margin:0 auto;}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2);padding:6px 16px;border-radius:20px;margin-bottom:28px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase}
 .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+.hero h1{font-size:clamp(32px,4.5vw,54px);font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:24px}
 .gold{color:var(--gold)}.red{color:var(--red)}
-.hero-sub{font-size:17px;line-height:1.7;color:var(--muted);max-width:560px;margin-bottom:36px}
-.hero-acts{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:60px}
-.hero-stats{display:flex;gap:48px;padding-top:40px;border-top:1px solid var(--border)}
+.hero-sub{font-size:16px;line-height:1.7;color:var(--muted);max-width:560px;margin:0 auto 36px;}
+.hero-acts{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:60px;justify-content:center;}
+.hero-stats{display:flex;gap:48px;padding-top:40px;border-top:1px solid var(--border);justify-content:center;}
 .stat-v{font-family:'Montserrat',sans-serif;font-size:32px;font-weight:800}
 .stat-l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-family:'Montserrat',sans-serif;font-weight:500}
 
@@ -864,9 +864,7 @@ footer ul li:hover{color:var(--blue)}
 .srv{transform-style:preserve-3d;perspective:600px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)!important}
 .srv:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg)!important;box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important}
 .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;mix-blend-mode:screen;z-index:0}
-.hero-blob-1{width:500px;height:500px;left:-10%;top:10%;background:rgba(230,57,70,0.06);animation:blobFloat1 12s ease-in-out infinite}
-.hero-blob-2{width:400px;height:400px;right:-5%;top:30%;background:rgba(245,197,24,0.05);animation:blobFloat2 15s ease-in-out infinite}
-.hero-blob-3{width:350px;height:350px;left:30%;bottom:5%;background:rgba(79,195,247,0.04);animation:blobFloat3 18s ease-in-out infinite}
+.hero-blob-1,.hero-blob-2,.hero-blob-3{display:none;}
 @keyframes blobFloat1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,30px) scale(0.95)}75%{transform:translate(40px,20px) scale(1.05)}}
 @keyframes blobFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,30px) scale(1.08)}66%{transform:translate(30px,-20px) scale(0.92)}}
 @keyframes blobFloat3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.1)}}
@@ -1058,18 +1056,15 @@ function HomePage() {
   const testimonials = useTestimonials();
   const platforms = ["SPOTIFY", "APPLE MUSIC", "DEEZER", "YOUTUBE MUSIC", "TIDAL", "AMAZON MUSIC", "AUDIOMACK", "BOOMPLAY"];
 
-  const bars = Array.from({ length: 60 }, (_, i) => ({
-    x: 60 + i * 18,
-    h: 30 + Math.sin(i * 0.45) * 25 + Math.cos(i * 0.2) * 20,
-  }));
-
   return (
     <>
       <section className="hero">
         <div className="hero-bg" />
-        <div className="hero-grid" />
-        <HeroBlobs />
-        <HeroSlider />
+        <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.15,pointerEvents:"none",zIndex:0}} viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          {Array.from({length:12},(_,i)=>(
+            <path key={i} d={`M0,${180+i*38} C360,${140+i*38} 720,${220+i*38} 1080,${180+i*38} C1260,${160+i*38} 1380,${200+i*38} 1440,${190+i*38}`} stroke="#F5C518" strokeWidth="0.8" fill="none" opacity={0.55-i*0.03}/>
+          ))}
+        </svg>
         <div className="hero-c">
           <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
           <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
@@ -1078,7 +1073,7 @@ function HomePage() {
             <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} color="currentColor" />Distribuer mon titre</Link>
             <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} color="currentColor" />Réserver le studio</Link>
           </div>
-          <div className="hero-stats">{[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "20+", l: "Pays" }].map((s) => <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
+          <div className="hero-stats">{[{v:"150+",l:"Plateformes"},{v:`${artists.length||10}+`,l:"Artistes"},{v:"1M+",l:"Streams"},{v:"20+",l:"Pays"}].map((s)=><div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
         </div>
       </section>
 
@@ -1135,9 +1130,6 @@ function HomePage() {
     </>
   );
 }
-
-// ─── ABOUT ───
-function AboutPage() {
   useSEO("/a-propos");
   useScrollReveal();
   const team = [
