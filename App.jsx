@@ -8,6 +8,12 @@ const EMAIL_CONFIG = {
   ENDPOINT: "https://api.web3forms.com/submit",
 };
 
+const WHATSAPP_NUMBER = "212600000000"; // ← Remplacez par votre vrai numéro WhatsApp (format international sans +)
+const WHATSAPP_EMAIL = "contact.sterkterecords@gmail.com";
+
+// ADMIN CONFIG — emails des membres de l'équipe autorisés à accéder au dashboard admin
+const ADMIN_EMAILS = ["axel@sterkterecords.com", "contact.sterkterecords@gmail.com"];
+
 // ─── COLORS ───
 const C = {
   bg: "#0A0A0F", bgCard: "#12121A", bgHover: "#1A1A25", bgInput: "#16161F",
@@ -18,10 +24,10 @@ const C = {
 // ─── SEO ───
 const SEO = {
   "/": { title: "Sterkte Records – Label musical indépendant & distribution digitale", desc: "Label musical indépendant basé à Lubumbashi, RDC. Production, distribution digitale sur 150+ plateformes, studio, booking et management d'artistes africains." },
-  "/a-propos": { title: "À propos de Sterkte Records – Label passionné et innovant", desc: "Découvrez l'histoire, la vision et l'équipe de Sterkte Records, label indépendant fondé en 2020 à Lubumbashi pour accompagner les artistes africains." },
+  "/a-propos": { title: "À propos de Sterkte Records – Label passionné et innovant", desc: "Découvrez l'histoire, la vision et l'équipe de Sterkte Records, label indépendant fondé en 2021 à Lubumbashi." },
   "/artistes": { title: "Nos artistes – Roster Sterkte Records", desc: "Découvrez les talents signés chez Sterkte Records : afrobeat, rap, R&B, rumba, gospel, amapiano." },
   "/distribution-musique": { title: "Distribution musicale digitale – Sterkte Records", desc: "Distribuez votre musique sur Spotify, Apple Music, Deezer et 150+ plateformes." },
-  "/studio-enregistrement": { title: "Studio d'enregistrement professionnel – Sterkte Records Lubumbashi", desc: "Enregistrement, mixage et mastering professionnel à Lubumbashi. À partir de 50$/heure." },
+  "/studio-enregistrement": { title: "Studio d'enregistrement professionnel – Sterkte Records Lubumbashi", desc: "Enregistrement, mixage et mastering professionnel à Lubumbashi. Studio mobile disponible." },
   "/booking-artistes": { title: "Booking artistes & événements – Sterkte Records", desc: "Réservez nos artistes pour concerts, festivals, événements privés et corporate." },
   "/featurings": { title: "Demande de featuring – Collaboration musicale Sterkte Records", desc: "Collaborez avec les artistes Sterkte Records. Réponse sous 7 jours ouvrés." },
   "/services": { title: "Consulting & Management artistique – Sterkte Records", desc: "Stratégie de lancement, gestion de carrière, coaching artistique." },
@@ -30,7 +36,18 @@ const SEO = {
 
 const ARTIST_GENRES = ["Tout", "Afrobeat", "Rap", "R&B", "Rumba", "Gospel", "Amapiano", "DJ"];
 
-// ─── ICONES SVG (remplace tous les emojis) ───
+const MUSIC_GENRES = [
+  "Afrobeat","Afropop","Afrohouse","Afrotrap","Afrofusion",
+  "Amapiano","Rumba congolaise","Ndombolo","Soukous","Lingala pop",
+  "Rap / Hip-hop","Trap","Drill","R&B","Soul","Gospel","Zouk",
+  "Dancehall","Reggae","Coupé-décalé","Gqom","Kizomba","Kuduro",
+  "Highlife","Afrojuju","Bongo Flava","Benga","Mapouka","Fuji",
+  "Contemporary gospel","Praise & Worship","Jazz afro","Blues",
+  "Pop","Electronic","House","Techno","Deep house","Lounge",
+  "Instrumental","Classical","Spoken word","Autre"
+];
+
+// ─── ICONES SVG ───
 const Icon = {
   Music: ({ size = 24, color = "currentColor" }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -115,6 +132,11 @@ const Icon = {
   ArrowRight: ({ size = 18, color = "currentColor" }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+    </svg>
+  ),
+  ArrowLeft: ({ size = 18, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
     </svg>
   ),
   Clipboard: ({ size = 24, color = "currentColor" }) => (
@@ -203,19 +225,83 @@ const Icon = {
       <polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" />
     </svg>
   ),
+  Eye: ({ size = 18, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
+  EyeOff: ({ size = 18, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  ),
+  Heart: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+  Whatsapp: ({ size = 20, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+    </svg>
+  ),
+  Crown: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+      <path d="M12 2L15 8L22 3L20 12H4L2 3L9 8L12 2Z"/>
+      <rect x="4" y="13" width="16" height="2" rx="1"/>
+      <rect x="5" y="16" width="14" height="3" rx="1"/>
+    </svg>
+  ),
+  Shield: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  Users: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  Settings: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  AlertCircle: ({ size = 24, color = "currentColor" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  ),
 };
 
 const SERVICES_LIST = [
   { Icon: Icon.Music, title: "Distribution Digitale", desc: "Votre musique sur Spotify, Apple Music, Deezer et 150+ plateformes en quelques jours.", link: "/distribution-musique" },
-  { Icon: Icon.Mic, title: "Studio d'Enregistrement", desc: "Studio professionnel à Lubumbashi + option mobile. Enregistrement, mixage et mastering.", link: "/studio-enregistrement" },
+  { Icon: Icon.Mic, title: "Studio d'Enregistrement", desc: "Studio professionnel à Lubumbashi + studios mobiles à Lubumbashi et au Maroc. Enregistrement, mixage et mastering.", link: "/studio-enregistrement" },
   { Icon: Icon.Calendar, title: "Booking & Événements", desc: "Réservez nos artistes pour concerts, festivals et événements privés.", link: "/booking-artistes" },
   { Icon: Icon.Handshake, title: "Featurings", desc: "Collaborez avec les artistes du roster. Processus simple, réponse sous 7 jours.", link: "/featurings" },
   { Icon: Icon.BarChart, title: "Consulting & Management", desc: "Stratégie de lancement, gestion de carrière et coaching artistique personnalisé.", link: "/services" },
-  { Icon: Icon.User, title: "Espace Artiste", desc: "Dashboard personnel : suivez vos streams, revenus et gérez vos sorties.", link: "/dashboard" },
+  { Icon: Icon.User, title: "Espace Artiste", desc: "Dashboard personnel : suivez vos streams et gérez vos sorties.", link: "/dashboard" },
 ];
 
-// ─── MOCK ARTIST DATA (à personnaliser) ───
+// ─── MOCK ARTIST DATA ───
 const MOCK_ARTISTS_DETAIL = {
+  "dj-minho": {
+    bio: "DJ Minho était l'une des figures les plus emblématiques de la scène musicale de Lubumbashi. Reconnu pour son énergie incomparable sur les platines et sa capacité à transcender les foules, il a marqué de son empreinte indélébile la scène musicale congolaise et africaine.",
+    bio2: "Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le 01 février 2025. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.",
+    genre: "DJ / Afrobeat",
+    origin: "Lubumbashi, RDC",
+    since: "2021",
+    streams: "500K+",
+    plateformes: "150+",
+    singles: [
+      { title: "Nuit de Lubumbashi", year: "2024", streams: "180K" },
+      { title: "Afrika Rising", year: "2023", streams: "145K" },
+      { title: "On Fire", year: "2022", streams: "120K" },
+    ],
+    socials: { instagram: "https://instagram.com", spotify: "https://open.spotify.com" },
+    tribute: true,
+    tributeDate: "01/02/2025",
+  },
   default: {
     bio: "Artiste emblématique du roster Sterkte Records, il incarne la fusion entre les sonorités africaines authentiques et les productions modernes. Depuis ses débuts, il s'est imposé comme une voix incontournable de la scène musicale de Lubumbashi, portant haut les couleurs d'une Afrique créative et résolument tournée vers le monde.",
     bio2: "Avec plusieurs projets à son actif, il continue d'inspirer une nouvelle génération d'artistes en démontrant que l'excellence africaine peut résonner sur toutes les plateformes mondiales.",
@@ -230,12 +316,7 @@ const MOCK_ARTISTS_DETAIL = {
       { title: "Mama Africa", year: "2023", streams: "210K" },
       { title: "Voyage", year: "2022", streams: "140K" },
     ],
-    socials: {
-      instagram: "https://instagram.com",
-      twitter: "https://twitter.com",
-      youtube: "https://youtube.com",
-      spotify: "https://open.spotify.com",
-    },
+    socials: { instagram: "https://instagram.com", twitter: "https://twitter.com", youtube: "https://youtube.com", spotify: "https://open.spotify.com" },
   },
 };
 
@@ -273,7 +354,7 @@ function AuthProvider({ children }) {
       options: { data: { full_name: meta.full_name, artist_name: meta.artist_name } },
     });
     if (!error && data.user) {
-      await supabase.from("profiles").update({ genre: meta.genre }).eq("id", data.user.id);
+      await supabase.from("profiles").update({ genre: meta.genre, whatsapp: meta.whatsapp }).eq("id", data.user.id);
     }
     return { data, error };
   };
@@ -287,8 +368,10 @@ function AuthProvider({ children }) {
     setUser(null); setProfile(null);
   };
 
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email);
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, fetchProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, fetchProfile, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
@@ -328,8 +411,7 @@ function useTracks() {
     setTracks(t);
     const totalStreams = t.reduce((s, tr) => s + (tr.streams || 0), 0);
     const totalRevenue = t.reduce((s, tr) => s + parseFloat(tr.revenue || 0), 0);
-    const liveCount = t.filter((tr) => tr.status === "live").length;
-    setStats({ totalStreams, totalRevenue: totalRevenue.toFixed(2), count: t.length, platforms: liveCount > 0 ? 12 : 0 });
+    setStats({ totalStreams, totalRevenue: totalRevenue.toFixed(2), count: t.length, platforms: t.filter(tr => tr.status === "live").length > 0 ? 20 : 0 });
     setLoading(false);
   };
 
@@ -353,7 +435,6 @@ function ScrollToTop() {
   return null;
 }
 
-// ─── SCROLL REVEAL HOOK ───
 function useScrollReveal() {
   useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
@@ -365,7 +446,6 @@ function useScrollReveal() {
   });
 }
 
-// ─── HERO BLOBS COMPONENT ───
 function HeroBlobs() {
   return (
     <>
@@ -376,7 +456,6 @@ function HeroBlobs() {
   );
 }
 
-// ─── WAVE DIVIDER ───
 function WaveDivider() {
   return (
     <div className="wave-div">
@@ -400,6 +479,11 @@ async function sendEmail(data) {
   } catch { return false; }
 }
 
+function sendWhatsApp(message) {
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank");
+}
+
 async function uploadFile(bucket, file, folder) {
   const ext = file.name.split(".").pop();
   const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
@@ -409,12 +493,10 @@ async function uploadFile(bucket, file, folder) {
   return urlData.publicUrl;
 }
 
-// ─── PAGE BANNER COMPONENT (dégradé vers fond) ───
 function PageBanner({ tag, title, subtitle, accent = C.red }) {
   return (
     <div className="pg-banner">
       <div className="pg-banner-bg" style={{ background: `radial-gradient(ellipse at 30% 50%, ${accent}14 0%, transparent 65%), radial-gradient(ellipse at 80% 20%, ${C.gold}08 0%, transparent 50%)` }} />
-      {/* Lignes décoratives SVG */}
       <svg className="pg-banner-deco" viewBox="0 0 1200 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,150 Q300,80 600,150 T1200,150" stroke={`${accent}20`} strokeWidth="1" fill="none" />
         <path d="M0,200 Q400,120 800,200 T1600,200" stroke={`${C.gold}10`} strokeWidth="1" fill="none" />
@@ -426,7 +508,6 @@ function PageBanner({ tag, title, subtitle, accent = C.red }) {
         <h1 dangerouslySetInnerHTML={{ __html: title }} />
         {subtitle && <p>{subtitle}</p>}
       </div>
-      {/* Dégradé vers le fond en bas */}
       <div className="pg-banner-fade" />
     </div>
   );
@@ -446,6 +527,7 @@ a{text-decoration:none;color:inherit}
 nav.n{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(42,42,53,0.5);transition:all .3s}
 nav.n.s{background:rgba(10,10,15,0.95)}
 .n-logo{display:flex;align-items:center;gap:10px}
+.n-logo-img{height:36px;width:auto;object-fit:contain}
 .n-logo-t{font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px}
 .n-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
 .n-links{display:flex;align-items:center;gap:24px;list-style:none}
@@ -480,27 +562,32 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .stat-v{font-family:'Montserrat',sans-serif;font-size:32px;font-weight:800}
 .stat-l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;font-family:'Montserrat',sans-serif;font-weight:500}
 
-/* Bannière héro côté droit : onde sonore animée SVG */
+/* Hero visual */
 .hero-visual{position:absolute;right:0;top:0;bottom:0;width:50%;z-index:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.hero-wave-wrap{position:relative;width:100%;height:100%}
 .hero-wave-svg{position:absolute;inset:0;width:100%;height:100%}
 .wv{transform-origin:center;animation:wvPulse 3s ease-in-out infinite}
-.wv:nth-child(1){animation-delay:0s}
-.wv:nth-child(2){animation-delay:.4s}
-.wv:nth-child(3){animation-delay:.8s}
-.wv:nth-child(4){animation-delay:1.2s}
-.wv:nth-child(5){animation-delay:1.6s}
 @keyframes wvPulse{0%,100%{opacity:.08;transform:scaleY(.9)}50%{opacity:.25;transform:scaleY(1)}}
-
-/* Disque vinyle décoratif */
 .hero-vinyl{position:absolute;right:8%;top:50%;transform:translateY(-50%);width:320px;height:320px;border-radius:50%;background:conic-gradient(from 0deg,#1a1a25,#12121a,#1a1a25,#0d0d14,#1a1a25);border:2px solid rgba(245,197,24,.15);animation:spin 20s linear infinite;opacity:.35}
 .hero-vinyl::after{content:'';position:absolute;inset:30%;border-radius:50%;background:radial-gradient(circle,rgba(245,197,24,.3),transparent);border:1px solid rgba(245,197,24,.2)}
 @keyframes spin{from{transform:translateY(-50%) rotate(0deg)}to{transform:translateY(-50%) rotate(360deg)}}
-
-/* Cercles lumineux */
 .hero-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
 .hero-orb1{width:400px;height:400px;right:-100px;top:10%;background:rgba(230,57,70,.06)}
 .hero-orb2{width:300px;height:300px;right:20%;bottom:10%;background:rgba(245,197,24,.05)}
+
+/* ── HERO SLIDER ARTISTIQUE ── */
+.hero-slider{position:absolute;right:0;top:0;bottom:0;width:48%;z-index:0;overflow:hidden}
+.hero-slider-track{display:flex;height:100%;transition:transform 0.9s cubic-bezier(0.77,0,0.175,1)}
+.hero-slide{min-width:100%;height:100%;position:relative;overflow:hidden}
+.hero-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(.5) saturate(.8)}
+.hero-slide-overlay{position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 0%,rgba(10,10,15,0.5) 40%,transparent 100%)}
+.hero-slide-label{position:absolute;bottom:40px;right:32px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.hero-slider-nav{position:absolute;bottom:32px;left:60px;display:flex;gap:8px;z-index:2}
+.hero-slider-dot{width:24px;height:3px;border-radius:2px;background:rgba(255,255,255,.25);cursor:pointer;transition:all .4s}
+.hero-slider-dot.ac{background:var(--gold);width:40px}
+.hero-slider-arrows{position:absolute;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:2}
+.hero-slider-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--white)}
+.hero-slider-btn:hover{background:rgba(245,197,24,.15);border-color:var(--gold)}
+.hero-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:.4}
 
 /* ── SECTIONS ── */
 .sec{padding:100px 60px;position:relative}
@@ -518,7 +605,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .srv-arr{position:absolute;top:28px;right:28px;color:var(--gold);opacity:0;transition:all .3s}
 .srv:hover .srv-arr{opacity:1;transform:translateX(4px)}
 
-/* ── PAGE BANNER (sous-pages) ── */
+/* ── PAGE BANNER ── */
 .pg-banner{padding:120px 60px 80px;position:relative;overflow:hidden;padding-top:calc(72px + 60px)}
 .pg-banner-bg{position:absolute;inset:0;z-index:0}
 .pg-banner-deco{position:absolute;inset:0;width:100%;height:100%;z-index:0}
@@ -551,6 +638,25 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .art-card:hover .art-genre{opacity:1;transform:translateY(0)}
 .art-cta{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--white);background:var(--red);padding:6px 14px;border-radius:4px;margin-top:10px;opacity:0;transform:translateY(8px);transition:all .4s .05s;display:inline-flex;align-items:center;gap:6px;align-self:flex-start}
 .art-card:hover .art-cta{opacity:1;transform:translateY(0)}
+
+/* DJ Minho tribute card */
+.art-card.tribute{border:2px solid rgba(245,197,24,0.3);box-shadow:0 0 40px rgba(245,197,24,0.08)}
+.tribute-banner{position:absolute;top:0;left:0;right:0;z-index:3;background:linear-gradient(90deg,rgba(10,10,15,0.95),rgba(245,197,24,0.15));padding:8px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(245,197,24,0.2)}
+.tribute-banner span{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.tribute-card-wrapper{grid-column:1/-1;display:flex;justify-content:center;padding:0 0 32px}
+.tribute-card-inner{width:100%;max-width:420px;position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,rgba(10,10,15,0.98),rgba(18,18,26,0.9));border:1px solid rgba(245,197,24,0.25);box-shadow:0 8px 60px rgba(245,197,24,0.06),0 0 120px rgba(245,197,24,0.03);aspect-ratio:1/1;cursor:pointer}
+.tribute-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(245,197,24,0.05),transparent 60%)}
+.tribute-particles{position:absolute;inset:0;overflow:hidden}
+.tribute-star{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(245,197,24,0.6);animation:tributeFloat 4s ease-in-out infinite}
+.tribute-img{width:100%;height:100%;object-fit:cover;filter:brightness(.45) saturate(.6) sepia(.2)}
+.tribute-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,10,15,0.95) 0%,rgba(10,10,15,0.5) 50%,rgba(10,10,15,0.2) 100%)}
+.tribute-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;z-index:2}
+.tribute-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);padding:4px 12px;border-radius:20px;margin-bottom:12px;width:fit-content}
+.tribute-badge span{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.tribute-name{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:1;margin-bottom:6px;color:var(--white)}
+.tribute-dates{font-family:'Montserrat',sans-serif;font-size:11px;color:rgba(245,197,24,0.7);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.tribute-quote{font-size:13px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.5;border-left:2px solid rgba(245,197,24,0.3);padding-left:12px}
+@keyframes tributeFloat{0%,100%{transform:translateY(0) scale(1);opacity:.6}50%{transform:translateY(-8px) scale(1.1);opacity:1}}
 
 /* ── ARTIST DETAIL PAGE ── */
 .ap{padding-top:72px;min-height:100vh}
@@ -586,21 +692,26 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .ap-sidebar-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px}
 .ap-sidebar-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;font-weight:600;margin-bottom:6px}
 .ap-sidebar-value{font-size:15px;font-weight:600;margin-bottom:16px}
-.ap-back{display:inline-flex;align-items:center;gap:8px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;transition:color .3s;margin-bottom:32px;cursor:pointer}
-.ap-back:hover{color:var(--white)}
-.ap-back svg{transition:transform .3s}
-.ap-back:hover svg{transform:translateX(-3px)}
 
-/* ── LEGACY PG (autres pages) ── */
+/* ── BACK BUTTON AMÉLIORÉ ── */
+.ap-back-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:10px 20px 10px 14px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;transition:all .3s;cursor:pointer;margin-bottom:32px;backdrop-filter:blur(10px)}
+.ap-back-btn:hover{background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.3);color:var(--white);transform:translateX(-2px)}
+.ap-back-btn svg{transition:transform .3s}
+.ap-back-btn:hover svg{transform:translateX(-3px)}
+
+/* ── PAGES GÉNÉRIQUES ── */
 .pg{padding-top:72px;min-height:100vh}
 .pg-c{padding:60px;max-width:1200px;margin:0 auto}
 .fm{max-width:640px}.fm-row{display:flex;gap:16px;margin-bottom:16px}.fm-row>*{flex:1}
-.fm-g{margin-bottom:16px}
+.fm-g{margin-bottom:16px;position:relative}
 .fm-l{display:block;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
 .fm-i,.fm-s,.fm-t{width:100%;padding:12px 16px;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'Raleway',sans-serif;font-size:14px;transition:border-color .3s;outline:none}
 .fm-i:focus,.fm-s:focus,.fm-t:focus{border-color:var(--gold)}
 .fm-t{min-height:120px;resize:vertical}.fm-s{appearance:none;cursor:pointer}
 .fm-err{color:var(--red);font-size:12px;margin-top:4px;font-family:'Montserrat',sans-serif}
+.fm-eye{position:absolute;right:12px;bottom:12px;cursor:pointer;color:var(--muted);transition:color .2s;background:none;border:none;padding:0;display:flex;align-items:center}
+.fm-eye:hover{color:var(--white)}
+.fm-i-pwd{padding-right:44px}
 .feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin:40px 0}
 .feat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all .3s}
 .feat:hover{border-color:rgba(245,197,24,.3)}
@@ -631,6 +742,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .dash-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
 .dash-stat-l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:'Montserrat',sans-serif;font-weight:600;margin-bottom:8px}
 .dash-stat-v{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800}
+.dash-stat-note{font-size:11px;color:var(--muted);margin-top:6px;font-family:'Montserrat',sans-serif}
 .dash-tracks{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
 .dash-tracks-h{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border)}
 .dash-tracks-h h3{font-size:16px;font-weight:700}
@@ -640,7 +752,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .tr-title{font-size:14px;font-weight:600}
 .tr-info{font-size:13px;color:var(--muted)}
 .tr-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-family:'Montserrat',sans-serif}
-.tr-status.live{color:var(--ok)}.tr-status.pending{color:var(--gold)}
+.tr-status.live{color:var(--ok)}.tr-status.pending{color:var(--gold)}.tr-status.rejected{color:var(--red)}
 .tr-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
 .upload{border:2px dashed var(--border);border-radius:12px;padding:48px;text-align:center;cursor:pointer;transition:all .3s;margin:24px 0}
 .upload:hover{border-color:var(--gold);background:rgba(245,197,24,.03)}
@@ -658,7 +770,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .price-card ul li{padding:8px 0;font-size:13px;color:var(--muted);border-bottom:1px solid rgba(42,42,53,.4);display:flex;align-items:center;gap:8px}
 .price-card ul li .chk{color:var(--gold);flex-shrink:0}
 .login-pg{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(ellipse at center,rgba(230,57,70,.06) 0%,var(--bg) 70%)}
-.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:48px;max-width:420px;width:100%}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:48px;max-width:440px;width:100%}
 .login-card h2{font-size:24px;font-weight:800;margin-bottom:8px;text-align:center}
 .login-card .sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:32px}
 .tabs{display:flex;gap:4px;margin-bottom:32px;border-bottom:1px solid var(--border)}
@@ -677,7 +789,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .team .role{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-family:'Montserrat',sans-serif;font-weight:600}
 .team p{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;text-align:justify}
 
-/* About page extras */
+/* About page */
 .about-values{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin:48px 0}
 .about-val{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
 .about-val::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
@@ -696,12 +808,12 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .about-tl-dot{position:absolute;left:-32px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--gold);border:2px solid var(--bg)}
 .about-tl-year{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:6px}
 .about-tl-item h4{font-size:15px;font-weight:700;margin-bottom:4px}
-.about-tl-item p{font-size:13px;color:var(--muted);line-height:1.6}
+.about-tl-item p{font-size:13px;color:var(--muted);line-height:1.6;text-align:justify}
 
-/* Bannière section dégradée */
+/* Wave divider */
+.wave-div{line-height:0;position:relative;height:60px}
+.wave-div svg{width:100%;height:100%;fill:rgba(255,255,255,.02)}
 .sec-banner{padding:80px 60px;position:relative;overflow:hidden}
-.sec-banner-fade-top{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(var(--bg),transparent);z-index:1}
-.sec-banner-fade-bot{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--bg));z-index:1}
 .sec-banner-bg{position:absolute;inset:0;z-index:0}
 .sec-banner-c{position:relative;z-index:2}
 
@@ -722,18 +834,23 @@ footer ul li:hover{color:var(--blue)}
 .mob a:hover,.mob a.ac{color:var(--white)}
 .loading-box{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--muted);font-size:14px}
 
-/* ═══════════════════════════════════════════════════
-   LIQUID GLASS & PREMIUM EFFECTS
-   ═══════════════════════════════════════════════════ */
+/* ── ADMIN DASHBOARD ── */
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.admin-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr auto;align-items:center;padding:14px 24px;gap:16px;border-bottom:1px solid rgba(42,42,53,.4)}
+.admin-row:hover{background:var(--hover)}
+.admin-badge{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.admin-badge.pending{background:rgba(245,197,24,0.15);color:var(--gold)}
+.admin-badge.live{background:rgba(76,175,80,0.15);color:var(--ok)}
+.admin-badge.rejected{background:rgba(230,57,70,0.15);color:var(--red)}
+.admin-action{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;cursor:pointer;border:none;transition:all .2s}
+.admin-action.approve{background:rgba(76,175,80,0.15);color:var(--ok)}.admin-action.approve:hover{background:var(--ok);color:#000}
+.admin-action.reject{background:rgba(230,57,70,0.15);color:var(--red)}.admin-action.reject:hover{background:var(--red);color:#fff}
+.admin-reg-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;align-items:center;padding:14px 24px;gap:16px;border-bottom:1px solid rgba(42,42,53,.4)}
 
-/* ── LIQUID GLASS BASE ── */
+/* ── EFFECTS ── */
 .srv,.feat,.why,.testi,.team,.about-val,.dash-stat,.price-card,.login-card,.ap-sidebar-card{
-  background:rgba(18,18,26,0.45)!important;
-  backdrop-filter:blur(24px) saturate(1.4);
-  -webkit-backdrop-filter:blur(24px) saturate(1.4);
-  border:1px solid rgba(255,255,255,0.06)!important;
-  box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);
-  position:relative;overflow:hidden
+  background:rgba(18,18,26,0.45)!important;backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border:1px solid rgba(255,255,255,0.06)!important;box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden
 }
 .srv::before,.why::before,.testi::before,.team::before,.about-val::before,.dash-stat::before,.price-card::before{
   content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
@@ -742,38 +859,10 @@ footer ul li:hover{color:var(--blue)}
 }
 @keyframes glassShimmer{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .srv>*,.why>*,.testi>*,.team>*,.about-val>*,.dash-stat>*,.price-card>*{position:relative;z-index:1}
-
-/* ── GLASS HOVER GLOW ── */
-.srv:hover,.why:hover,.testi:hover,.team:hover,.price-card:hover{
-  border-color:rgba(245,197,24,0.15)!important;
-  box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 60px rgba(245,197,24,0.06),inset 0 1px 0 rgba(255,255,255,0.08)
-}
-
-/* ── ICON AURA GLOW ── */
-.srv-ico,.feat-ico,.why-ico,.about-val-ico{
-  position:relative;
-  background:rgba(245,197,24,0.06)!important;
-  box-shadow:0 0 20px rgba(245,197,24,0.08);
-  transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)
-}
-.srv-ico::after,.why-ico::after{
-  content:'';position:absolute;inset:-4px;border-radius:inherit;
-  background:conic-gradient(from 0deg,rgba(245,197,24,0.15),transparent,rgba(230,57,70,0.1),transparent);
-  animation:iconAura 4s linear infinite;opacity:0;transition:opacity 0.4s;z-index:-1
-}
-@keyframes iconAura{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.srv:hover .srv-ico::after,.why:hover .why-ico::after{opacity:1}
-.srv:hover .srv-ico,.why:hover .why-ico{
-  box-shadow:0 0 30px rgba(245,197,24,0.2);transform:scale(1.08);
-  background:rgba(245,197,24,0.12)!important
-}
-
-/* ── 3D TILT ON CARDS ── */
+.srv:hover,.why:hover,.testi:hover,.team:hover,.price-card:hover{border-color:rgba(245,197,24,0.15)!important;box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 60px rgba(245,197,24,0.06),inset 0 1px 0 rgba(255,255,255,0.08)}
+.srv-ico,.feat-ico,.why-ico,.about-val-ico{position:relative;background:rgba(245,197,24,0.06)!important;box-shadow:0 0 20px rgba(245,197,24,0.08);transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)}
 .srv{transform-style:preserve-3d;perspective:600px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)!important}
-.srv:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg)!important;
-  box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important}
-
-/* ── HERO LIQUID BLOBS ── */
+.srv:hover{transform:translateY(-6px) rotateX(2deg) rotateY(-2deg)!important;box-shadow:0 25px 50px rgba(0,0,0,0.5),0 0 80px rgba(245,197,24,0.05),inset 0 1px 0 rgba(255,255,255,0.1)!important}
 .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;mix-blend-mode:screen;z-index:0}
 .hero-blob-1{width:500px;height:500px;left:-10%;top:10%;background:rgba(230,57,70,0.06);animation:blobFloat1 12s ease-in-out infinite}
 .hero-blob-2{width:400px;height:400px;right:-5%;top:30%;background:rgba(245,197,24,0.05);animation:blobFloat2 15s ease-in-out infinite}
@@ -781,175 +870,59 @@ footer ul li:hover{color:var(--blue)}
 @keyframes blobFloat1{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,30px) scale(0.95)}75%{transform:translate(40px,20px) scale(1.05)}}
 @keyframes blobFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,30px) scale(1.08)}66%{transform:translate(30px,-20px) scale(0.92)}}
 @keyframes blobFloat3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.1)}}
-
-/* ── HERO GLOW TITLE ── */
 .hero h1{text-shadow:0 0 80px rgba(245,197,24,0.08)}
 .hero h1 .gold{text-shadow:0 0 40px rgba(245,197,24,0.15)}
 .hero h1 .red{text-shadow:0 0 40px rgba(230,57,70,0.15)}
-
-/* ── NAVBAR LIQUID GLASS ── */
-nav.n{
-  background:rgba(10,10,15,0.4)!important;
-  backdrop-filter:blur(30px) saturate(1.5)!important;
-  -webkit-backdrop-filter:blur(30px) saturate(1.5)!important;
-  border-bottom:1px solid rgba(255,255,255,0.04)!important;
-  box-shadow:0 4px 30px rgba(0,0,0,0.2)
-}
+nav.n{background:rgba(10,10,15,0.4)!important;backdrop-filter:blur(30px) saturate(1.5)!important;-webkit-backdrop-filter:blur(30px) saturate(1.5)!important;border-bottom:1px solid rgba(255,255,255,0.04)!important;box-shadow:0 4px 30px rgba(0,0,0,0.2)}
 nav.n.s{background:rgba(10,10,15,0.6)!important;box-shadow:0 4px 40px rgba(0,0,0,0.4)}
-
-/* ── BUTTON SHINE ── */
 .btn{position:relative;overflow:hidden}
-.btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
-  transition:left 0.6s ease}
+.btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);transition:left 0.6s ease}
 .btn:hover::after{left:100%}
 .btn-g{box-shadow:0 0 15px rgba(245,197,24,0.15)}
 .btn-g:hover{box-shadow:0 4px 30px rgba(245,197,24,0.3)!important}
 .btn-r{box-shadow:0 0 15px rgba(230,57,70,0.15)}
 .btn-r:hover{box-shadow:0 4px 30px rgba(230,57,70,0.3)!important}
-
-/* ── MARQUEE GLOW ── */
 .marquee{background:rgba(245,197,24,0.015);backdrop-filter:blur(10px)}
-.mq-item{transition:all 0.3s}
-.mq-dot{box-shadow:0 0 8px rgba(245,197,24,0.4);transition:all 0.3s}
-
-/* ── SCROLL REVEAL ANIMATIONS ── */
+.mq-dot{box-shadow:0 0 8px rgba(245,197,24,0.4)}
 .sr-reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
 .sr-reveal.visible{opacity:1;transform:translateY(0)}
 .sr-reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.8s ease,transform 0.8s ease}
 .sr-reveal-left.visible{opacity:1;transform:translateX(0)}
-.sr-reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.8s ease,transform 0.8s ease}
-.sr-reveal-right.visible{opacity:1;transform:translateX(0)}
-.sr-reveal-scale{opacity:0;transform:scale(0.92);transition:opacity 0.8s ease,transform 0.8s ease}
-.sr-reveal-scale.visible{opacity:1;transform:scale(1)}
-
-/* Stagger children */
-.srv-grid .srv:nth-child(1){transition-delay:0s}
-.srv-grid .srv:nth-child(2){transition-delay:0.08s}
-.srv-grid .srv:nth-child(3){transition-delay:0.16s}
-.srv-grid .srv:nth-child(4){transition-delay:0.24s}
-.srv-grid .srv:nth-child(5){transition-delay:0.32s}
-.srv-grid .srv:nth-child(6){transition-delay:0.4s}
-.why-grid .why:nth-child(1){transition-delay:0s}
-.why-grid .why:nth-child(2){transition-delay:0.08s}
-.why-grid .why:nth-child(3){transition-delay:0.1s}
-.why-grid .why:nth-child(4){transition-delay:0.16s}
-.why-grid .why:nth-child(5){transition-delay:0.2s}
-.why-grid .why:nth-child(6){transition-delay:0.24s}
-.art-grid .art-card:nth-child(n){transition:opacity 0.6s ease,transform 0.6s ease}
-.art-grid .art-card:nth-child(1){transition-delay:0s}
-.art-grid .art-card:nth-child(2){transition-delay:0.06s}
-.art-grid .art-card:nth-child(3){transition-delay:0.12s}
-.art-grid .art-card:nth-child(4){transition-delay:0.18s}
-.art-grid .art-card:nth-child(5){transition-delay:0.24s}
-.art-grid .art-card:nth-child(6){transition-delay:0.3s}
-
-/* ── WAVE SECTION DIVIDERS ── */
-.wave-div{position:relative;height:60px;overflow:hidden;margin-top:-1px}
-.wave-div svg{position:absolute;bottom:0;width:100%;height:60px}
-.wave-div path{fill:var(--bg)}
-
-/* ── LIQUID GLASS ON FORM INPUTS ── */
-.fm-i,.fm-s,.fm-t{
-  background:rgba(22,22,31,0.6)!important;
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.05)!important;
-  transition:all 0.3s
-}
-.fm-i:focus,.fm-s:focus,.fm-t:focus{
-  border-color:rgba(245,197,24,0.3)!important;
-  box-shadow:0 0 20px rgba(245,197,24,0.06);
-  background:rgba(22,22,31,0.8)!important
-}
-
-/* ── TESTIMONIAL GLASS ── */
-.testi{backdrop-filter:blur(20px) saturate(1.3)}
-.testi::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(245,197,24,0.15),transparent)}
-
-/* ── PRICE CARD FEATURED GLASS ── */
-.price-card.ft{
-  background:rgba(245,197,24,0.04)!important;
-  border-color:rgba(245,197,24,0.2)!important;
-  box-shadow:0 4px 30px rgba(0,0,0,0.3),0 0 40px rgba(245,197,24,0.05),inset 0 1px 0 rgba(245,197,24,0.08)
-}
-
-/* ── DASHBOARD STAT GLASS ── */
+.srv-grid .srv:nth-child(1){transition-delay:0s}.srv-grid .srv:nth-child(2){transition-delay:0.08s}.srv-grid .srv:nth-child(3){transition-delay:0.16s}.srv-grid .srv:nth-child(4){transition-delay:0.24s}
+.fm-i:focus,.fm-s:focus,.fm-t:focus{border-color:rgba(245,197,24,0.4)!important;box-shadow:0 0 0 3px rgba(245,197,24,0.06);background:rgba(22,22,31,0.8)}
 .dash-stat{backdrop-filter:blur(20px)}
 .dash-stat:hover{border-color:rgba(245,197,24,0.12)!important;transform:translateY(-2px);transition:all 0.3s}
-
-/* ── HERO BADGE GLASS ── */
-.hero-badge{
-  background:rgba(245,197,24,0.06)!important;
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(245,197,24,0.12)!important;
-  box-shadow:0 0 20px rgba(245,197,24,0.05)
-}
-
-/* ── SMOOTH PAGE TRANSITIONS ── */
+.hero-badge{background:rgba(245,197,24,0.06)!important;backdrop-filter:blur(20px);border:1px solid rgba(245,197,24,0.12)!important;box-shadow:0 0 20px rgba(245,197,24,0.05)}
 .pg{animation:pageIn 0.5s ease}
 @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── ARTIST CARD GLASS OVERLAY ── */
-.art-card::after{
-  content:'';position:absolute;inset:0;z-index:1;
-  background:linear-gradient(135deg,rgba(245,197,24,0.03),transparent 50%);
-  opacity:0;transition:opacity 0.5s;pointer-events:none
-}
+.art-card::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,rgba(245,197,24,0.03),transparent 50%);opacity:0;transition:opacity 0.5s;pointer-events:none}
 .art-card:hover::after{opacity:1}
-
-/* ── TOAST GLASS ── */
 .toast{backdrop-filter:blur(20px);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
-.toast.ok{background:rgba(76,175,80,0.85)!important}
-.toast.err{background:rgba(230,57,70,0.85)!important}
-
-/* ── LOGIN GLASS ── */
-.login-card{
-  backdrop-filter:blur(30px) saturate(1.5)!important;
-  box-shadow:0 8px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)!important
-}
-
-/* ── FOOTER GLASS ── */
-footer.ft{
-  background:rgba(10,10,15,0.4)!important;
-  backdrop-filter:blur(20px) saturate(1.3);
-  border-top:1px solid rgba(255,255,255,0.04)!important
-}
-
-/* ── UPLOAD ZONE GLASS ── */
-.upload{
-  background:rgba(18,18,26,0.3);
-  backdrop-filter:blur(15px);
-  border:2px dashed rgba(255,255,255,0.08)!important
-}
-.upload:hover{
-  border-color:rgba(245,197,24,0.2)!important;
-  background:rgba(245,197,24,0.02);
-  box-shadow:0 0 30px rgba(245,197,24,0.04)
-}
+.toast.ok{background:rgba(76,175,80,0.85)!important}.toast.err{background:rgba(230,57,70,0.85)!important}
+.login-card{backdrop-filter:blur(30px) saturate(1.5)!important;box-shadow:0 8px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)!important}
+footer.ft{background:rgba(10,10,15,0.4)!important;backdrop-filter:blur(20px) saturate(1.3);border-top:1px solid rgba(255,255,255,0.04)!important}
+.upload{background:rgba(18,18,26,0.3);backdrop-filter:blur(15px);border:2px dashed rgba(255,255,255,0.08)!important}
+.upload:hover{border-color:rgba(245,197,24,0.2)!important;background:rgba(245,197,24,0.02);box-shadow:0 0 30px rgba(245,197,24,0.04)}
 .upload.has-file{border-color:rgba(76,175,80,0.3)!important;background:rgba(76,175,80,0.03)}
-
-/* ── TABS GLASS ── */
-.tab{transition:all 0.3s}
 .tab.ac{text-shadow:0 0 12px rgba(245,197,24,0.3)}
-.tab:hover{background:rgba(255,255,255,0.02)}
-
-/* ── VINYL GLOW ── */
 .hero-vinyl{box-shadow:0 0 80px rgba(245,197,24,0.05);border:1px solid rgba(245,197,24,0.08)!important}
-
-/* ── STATS COUNTER GLOW ── */
 .stat-v{text-shadow:0 0 20px rgba(255,255,255,0.06)}
 .about-stat-v{text-shadow:0 0 30px rgba(245,197,24,0.12)}
-
-/* ── STEP LINE GLOW ── */
 .step-n{box-shadow:0 0 15px rgba(245,197,24,0.1)}
-
-/* ── MOBILE MENU GLASS ── */
 .mob{background:rgba(10,10,15,0.85)!important;backdrop-filter:blur(40px) saturate(1.5)!important}
+
+/* ── ARTIST BG VIVANT ── */
+.artists-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.artists-bg-orb{position:absolute;border-radius:50%;filter:blur(120px);mix-blend-mode:screen;animation:orbFloat 15s ease-in-out infinite}
+.artists-bg-orb1{width:600px;height:600px;background:rgba(230,57,70,0.04);left:-10%;top:-10%;animation-duration:18s}
+.artists-bg-orb2{width:500px;height:500px;background:rgba(245,197,24,0.03);right:-10%;bottom:10%;animation-duration:22s;animation-delay:-7s}
+.artists-bg-orb3{width:400px;height:400px;background:rgba(79,195,247,0.03);left:40%;top:40%;animation-duration:15s;animation-delay:-3s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(40px,-50px) scale(1.05)}50%{transform:translate(-30px,40px) scale(0.95)}75%{transform:translate(50px,30px) scale(1.03)}}
+.artists-page-content{position:relative;z-index:1}
 
 @media(max-width:900px){
   .n-links{display:none}.n-ham{display:flex}
-  .hero{padding:100px 24px 40px}.hero-stats{gap:24px;flex-wrap:wrap}.hero-visual{display:none}
+  .hero{padding:100px 24px 40px}.hero-stats{gap:24px;flex-wrap:wrap}.hero-visual{display:none}.hero-slider{display:none}
   .sec{padding:60px 24px}.pg-c{padding:32px 24px}
   .pg-banner{padding:100px 24px 60px}
   footer.ft{padding:40px 24px}.ft-grid{grid-template-columns:1fr}
@@ -959,7 +932,7 @@ footer.ft{
   .art-hero{padding:100px 24px 24px}.art-big{letter-spacing:-1px}.art-name{font-size:14px}
   .ap-grid{grid-template-columns:1fr}.ap-hero-c{padding:32px 24px}.ap-body{padding:32px 24px}.ap-stats-bar{padding:20px 24px;gap:20px;flex-wrap:wrap}
   .about-stats{grid-template-columns:1fr 1fr}.about-stat{border-bottom:1px solid var(--border)}
-  .sec-banner{padding:60px 24px}
+  .tribute-card-wrapper{padding:0 24px 24px}
 }
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 `;
@@ -968,7 +941,7 @@ footer.ft{
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobOpen, setMobOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const loc = useLocation();
   useEffect(() => { const h = () => setScrolled(window.scrollY > 40); window.addEventListener("scroll", h); return () => window.removeEventListener("scroll", h); }, []);
   const links = [
@@ -979,14 +952,30 @@ function Navbar() {
   return (
     <>
       <nav className={`n ${scrolled ? "s" : ""}`}>
-        <Link to="/" className="n-logo"><span className="n-dot" /><span className="n-logo-t"><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></span></Link>
+        <Link to="/" className="n-logo">
+          {/* Logo image — remplacez /logo.png par votre vrai fichier logo */}
+          <img src="/logo.png" alt="Sterkte Records" className="n-logo-img" onError={(e) => { e.target.style.display = "none"; }} />
+          <span className="n-logo-t"><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></span>
+        </Link>
         <ul className="n-links">{links.map((l) => <li key={l.to}><Link to={l.to} className={loc.pathname === l.to ? "ac" : ""}>{l.label}</Link></li>)}</ul>
         <div className="n-acts">
-          {user ? (<><Link to="/dashboard" className="btn btn-g btn-sm">Dashboard</Link><button className="btn btn-o btn-sm" onClick={signOut}>Déconnexion</button></>) : (<Link to="/connexion" className="btn btn-r btn-sm">Espace Artiste</Link>)}
+          {user ? (
+            <>
+              {isAdmin && <Link to="/admin" className="btn btn-o btn-sm"><Icon.Shield size={12} />Admin</Link>}
+              <Link to="/dashboard" className="btn btn-g btn-sm">Dashboard</Link>
+              <button className="btn btn-o btn-sm" onClick={signOut}>Déconnexion</button>
+            </>
+          ) : (<Link to="/connexion" className="btn btn-r btn-sm">Espace Artiste</Link>)}
           <button className="n-ham" onClick={() => setMobOpen(true)}><span /><span /><span /></button>
         </div>
       </nav>
-      {mobOpen && <div className="mob"><button className="mob-close" onClick={() => setMobOpen(false)}>✕</button>{links.map((l) => <Link key={l.to} to={l.to} className={loc.pathname === l.to ? "ac" : ""} onClick={() => setMobOpen(false)}>{l.label}</Link>)}<Link to={user ? "/dashboard" : "/connexion"} onClick={() => setMobOpen(false)} style={{ color: C.gold, marginTop: 16 }}>{user ? "Dashboard" : "Connexion"}</Link></div>}
+      {mobOpen && (
+        <div className="mob">
+          <button className="mob-close" onClick={() => setMobOpen(false)}>✕</button>
+          {links.map((l) => <Link key={l.to} to={l.to} className={loc.pathname === l.to ? "ac" : ""} onClick={() => setMobOpen(false)}>{l.label}</Link>)}
+          <Link to={user ? "/dashboard" : "/connexion"} onClick={() => setMobOpen(false)} style={{ color: C.gold, marginTop: 16 }}>{user ? "Dashboard" : "Connexion"}</Link>
+        </div>
+      )}
     </>
   );
 }
@@ -994,7 +983,11 @@ function Navbar() {
 function Footer() {
   return (
     <footer className="ft"><div className="ft-grid">
-      <div className="ft-brand"><Link to="/" className="n-logo-t" style={{ fontSize: 22 }}><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></Link><p>Label musical indépendant dédié à l'essor des talents musicaux. Basé à Lubumbashi, RDC.</p></div>
+      <div className="ft-brand">
+        <img src="/logo.png" alt="Sterkte Records" style={{ height: 32, marginBottom: 12 }} onError={(e) => { e.target.style.display = "none"; }} />
+        <Link to="/" className="n-logo-t" style={{ fontSize: 22 }}><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></Link>
+        <p>Label musical indépendant dédié à l'essor des talents musicaux africains. Basé à Lubumbashi, RDC.</p>
+      </div>
       <div><h5>Services</h5><ul><li><Link to="/distribution-musique">Distribution</Link></li><li><Link to="/studio-enregistrement">Studio</Link></li><li><Link to="/booking-artistes">Booking</Link></li><li><Link to="/featurings">Featurings</Link></li><li><Link to="/services">Consulting</Link></li></ul></div>
       <div><h5>Label</h5><ul><li><Link to="/a-propos">À propos</Link></li><li><Link to="/artistes">Nos artistes</Link></li><li><Link to="/contact">Contact</Link></li></ul></div>
       <div><h5>Contact</h5><ul><li>contact.sterkterecords@gmail.com</li><li>+243 850 510 209</li><li>Lubumbashi, RDC</li><li style={{ marginTop: 8 }}><a href="https://linktr.ee/sterkterecords" target="_blank" rel="noreferrer" style={{ color: C.blue }}>Linktree ↗</a></li></ul></div>
@@ -1007,6 +1000,56 @@ function Toast({ msg, type, onClose }) {
   return <div className={`toast ${type}`}>{msg}</div>;
 }
 
+// ─── HERO SLIDER ARTISTIQUE ───
+function HeroSlider() {
+  const slides = [
+    { label: "Distribution mondiale", color: C.gold },
+    { label: "Studio professionnel", color: C.red },
+    { label: "Booking & Management", color: C.blue },
+  ];
+  const [cur, setCur] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setCur((c) => (c + 1) % slides.length), 5000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="hero-slider">
+      <div className="hero-grain" />
+      {/* Fond vivant avec dégradés animés au lieu d'images pour garantir l'affichage */}
+      <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse at 60% 40%, ${slides[cur].color}18 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(10,10,15,0.8) 0%, transparent 80%), linear-gradient(135deg, #0d0d14 0%, #1a1a25 100%)`, transition: "background 1.2s ease" }} />
+      {/* Éléments décoratifs musicaux */}
+      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.12 }} viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg">
+        {Array.from({ length: 40 }, (_, i) => {
+          const h = 20 + Math.sin(i * 0.7) * 60 + Math.cos(i * 0.3) * 40;
+          return <rect key={i} x={i * 15} y={400 - h / 2} width="10" height={h} rx="5" fill={i % 4 === 0 ? C.gold : i % 3 === 0 ? C.red : "rgba(255,255,255,0.3)"} style={{ animation: `wvPulse ${2 + (i % 3) * 0.5}s ease-in-out infinite`, animationDelay: `${(i * 0.07) % 2}s` }} />;
+        })}
+      </svg>
+      {/* Disque vinyle flottant */}
+      <div style={{ position: "absolute", right: "10%", top: "50%", transform: "translateY(-50%)", width: 200, height: 200, borderRadius: "50%", background: "conic-gradient(from 0deg, #1a1a25, #12121a, #1a1a25, #0d0d14)", border: `2px solid ${slides[cur].color}30`, animation: "spin 15s linear infinite", opacity: 0.5 }}>
+        <div style={{ position: "absolute", inset: "30%", borderRadius: "50%", background: `radial-gradient(circle, ${slides[cur].color}40, transparent)`, border: `1px solid ${slides[cur].color}30` }} />
+      </div>
+      {/* Label actuel */}
+      <div className="hero-slide-label">{slides[cur].label}</div>
+      {/* Overlay fondu vers la gauche */}
+      <div className="hero-slide-overlay" />
+      {/* Navigation dots */}
+      <div className="hero-slider-nav">
+        {slides.map((_, i) => <div key={i} className={`hero-slider-dot ${i === cur ? "ac" : ""}`} onClick={() => setCur(i)} />)}
+      </div>
+      {/* Flèches */}
+      <div className="hero-slider-arrows">
+        <button className="hero-slider-btn" onClick={() => setCur((c) => (c - 1 + slides.length) % slides.length)}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="18 15 12 9 6 15" /></svg>
+        </button>
+        <button className="hero-slider-btn" onClick={() => setCur((c) => (c + 1) % slides.length)}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── HOME ───
 function HomePage() {
   useSEO("/");
@@ -1015,34 +1058,18 @@ function HomePage() {
   const testimonials = useTestimonials();
   const platforms = ["SPOTIFY", "APPLE MUSIC", "DEEZER", "YOUTUBE MUSIC", "TIDAL", "AMAZON MUSIC", "AUDIOMACK", "BOOMPLAY"];
 
-  // Barres d'onde sonore pour la bannière
   const bars = Array.from({ length: 60 }, (_, i) => ({
     x: 60 + i * 18,
-    h: 30 + Math.sin(i * 0.45) * 25 + Math.cos(i * 0.2) * 20 + Math.random() * 20,
+    h: 30 + Math.sin(i * 0.45) * 25 + Math.cos(i * 0.2) * 20,
   }));
 
   return (
     <>
-      {/* ── HERO BANNIÈRE ── */}
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-grid" />
         <HeroBlobs />
-
-        {/* Visuel droit : onde + vinyle */}
-        <div className="hero-visual">
-          <div className="hero-orb hero-orb1" />
-          <div className="hero-orb hero-orb2" />
-          <div className="hero-vinyl" />
-          <svg className="hero-wave-svg" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-            {bars.map((b, i) => (
-              <rect key={i} className="wv" x={b.x} y={350 - b.h / 2} width="8" height={b.h} rx="4"
-                fill={i % 5 === 0 ? C.gold : i % 3 === 0 ? C.red : "rgba(255,255,255,0.12)"}
-                style={{ animationDelay: `${(i * 0.05) % 2}s` }} />
-            ))}
-          </svg>
-        </div>
-
+        <HeroSlider />
         <div className="hero-c">
           <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
           <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
@@ -1051,14 +1078,12 @@ function HomePage() {
             <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} color="currentColor" />Distribuer mon titre</Link>
             <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} color="currentColor" />Réserver le studio</Link>
           </div>
-          <div className="hero-stats">{[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "15+", l: "Pays" }].map((s) => <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
+          <div className="hero-stats">{[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "20+", l: "Pays" }].map((s) => <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
         </div>
       </section>
 
-      {/* Marquee plateformes */}
       <div className="marquee"><div className="marquee-in">{[...platforms, ...platforms].map((p, i) => <div key={i} className="mq-item"><span className="mq-dot" />{p}</div>)}</div></div>
 
-      {/* Services */}
       <section className="sec">
         <div className="sec-h">
           <div className="sec-tag">Nos services</div>
@@ -1070,12 +1095,11 @@ function HomePage() {
 
       <WaveDivider />
 
-      {/* Pourquoi nous */}
       <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
         <div className="sec-h"><div className="sec-tag">Pourquoi nous choisir</div><h2 className="sec-title">Ce qui nous différencie</h2></div>
         <div className="why-grid sr-reveal">{[
-          { Ico: Icon.Diamond, title: "Transparence totale", desc: "Accès en temps réel à vos statistiques et revenus. Pas de frais cachés." },
-          { Ico: Icon.Globe, title: "Expertise Afrique + International", desc: "Basés en RDC avec un réseau en Europe et en Afrique." },
+          { Ico: Icon.Diamond, title: "Transparence totale", desc: "Accès régulier à vos statistiques et revenus. Pas de frais cachés." },
+          { Ico: Icon.Globe, title: "Expertise Afrique + International", desc: "Basés en RDC avec un réseau en Europe, au Maroc et en Afrique." },
           { Ico: Icon.Handshake, title: "Accompagnement humain", desc: "Chaque artiste a un interlocuteur dédié qui connaît son projet." },
           { Ico: Icon.Zap, title: "Rapidité d'exécution", desc: "Distribution en 48h, réponses sous 72h, rapports mensuels." },
           { Ico: Icon.Target, title: "Stratégie personnalisée", desc: "Un plan adapté à votre style, marché cible et objectifs." },
@@ -1085,23 +1109,20 @@ function HomePage() {
 
       <WaveDivider />
 
-      {/* Roster aperçu */}
       <section className="sec">
         <div className="sec-h sr-reveal"><div className="sec-tag">Roster</div><h2 className="sec-title">Ils nous font confiance</h2></div>
         <div className="art-grid sr-reveal" style={{ padding: 0 }}>{artists.slice(0, 6).map((a) => <div key={a.id} className="art-card"><img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" /><div className="art-ov"><div className="art-name">{a.name}</div><div className="art-genre">{(a.tags || []).join(" · ")}</div></div></div>)}</div>
         <div style={{ textAlign: "center", marginTop: 40 }}><Link to="/artistes" className="btn btn-o btn-lg"><Icon.ArrowRight size={16} />Voir tous les artistes</Link></div>
       </section>
 
-      {/* Témoignages */}
       {testimonials.length > 0 && <>
         <WaveDivider />
         <section className="sec" style={{ background: "rgba(18,18,26,0.6)" }}>
-        <div className="sec-h"><div className="sec-tag">Témoignages</div><h2 className="sec-title">Ce que disent nos artistes</h2></div>
-        <div className="testi-grid sr-reveal">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
-      </section>
+          <div className="sec-h"><div className="sec-tag">Témoignages</div><h2 className="sec-title">Ce que disent nos artistes</h2></div>
+          <div className="testi-grid sr-reveal">{testimonials.map((t) => <div key={t.id} className="testi"><p>{t.text}</p><div className="testi-author">{t.name}</div><div className="testi-role">{t.role}</div></div>)}</div>
+        </section>
       </>}
 
-      {/* CTA final */}
       <section className="sec sr-reveal" style={{ textAlign: "center" }}>
         <div className="sec-tag">Prêt à commencer ?</div>
         <h2 className="sec-title" style={{ marginBottom: 20 }}>Transformez votre talent en <span className="gold">carrière musicale</span></h2>
@@ -1120,22 +1141,35 @@ function AboutPage() {
   useSEO("/a-propos");
   useScrollReveal();
   const team = [
-    { i: "AK", name: "Axel l'or Kaumba", role: "Fondateur & Distribution digitale", desc: "Visionnaire et entrepreneur passionné, Axel a fondé Sterkte Records avec la conviction profonde que la musique africaine mérite une scène mondiale. Expert en marketing digital, il orchestre les stratégies de distribution et guide chaque artiste vers la réussite." },
-    { i: "AA", name: "Abigail Angelani", role: "Directrice Marketing & Communication", desc: "Maîtresse des récits qui résonnent, Abigail construit l'image du label et de ses artistes sur tous les canaux digitaux. Ses campagnes créatives ont permis à plusieurs artistes de percer au-delà des frontières africaines." },
-    { i: "DN", name: "Diadème Ngandu", role: "Manager Artistique", desc: "Coach, stratège et confident des artistes, Diadème est le pilier humain du label. Son approche sur-mesure permet à chaque talent de s'épanouir artistiquement tout en construisant une carrière durable et cohérente." },
+    { i: "AK", name: "Axel l'or Kaumba", role: "Fondateur & Distribution digitale", desc: "Visionnaire et entrepreneur passionné, Axel a fondé Sterkte Records avec la conviction profonde que la musique africaine mérite une scène mondiale. Expert en marketing digital, il orchestre les stratégies de distribution et guide chaque artiste vers la réussite internationale." },
+    { i: "AA", name: "Abigail Angelani", role: "Directrice Marketing & Communication", desc: "Maîtresse des récits qui résonnent, Abigail construit l'image du label et de ses artistes sur tous les canaux digitaux. Ses campagnes créatives ont permis à plusieurs artistes de percer au-delà des frontières africaines, touchant des audiences en Europe, en Amérique et au Moyen-Orient." },
+    { i: "DN", name: "Diadème Ngandu", role: "Manager Artistique", desc: "Coach, stratège et confident des artistes, Diadème est le pilier humain du label. Son approche sur-mesure permet à chaque talent de s'épanouir artistiquement tout en construisant une carrière durable et cohérente. Il coordonne les projets de bout en bout, de la création à la diffusion." },
   ];
   return (
     <div className="pg">
       <PageBanner
         tag="À propos"
         title='Qui sommes-<span style="color:#F5C518">nous</span>&nbsp;?'
-        subtitle="Sterkte Records est né en 2020 de la passion pour la musique authentique et de la volonté d'accompagner les artistes africains vers le monde entier."
+        subtitle="Sterkte Records est né en 2021 de la passion pour la musique authentique et de la volonté d'accompagner les artistes africains vers le monde entier. Depuis notre création à Lubumbashi, nous avons grandi pour devenir un acteur incontournable de la distribution musicale indépendante en Afrique centrale et dans la diaspora, avec une présence croissante au Maroc et en Europe."
       />
       <div className="pg-c">
 
-        {/* Stats chiffres */}
+        {/* Qui sommes-nous — texte enrichi */}
+        <div style={{ marginBottom: 60 }}>
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, marginBottom: 16, textAlign: "justify" }}>
+            Sterkte Records est un label musical indépendant fondé à Lubumbashi, en République Démocratique du Congo. Notre mission est simple mais ambitieuse : donner aux artistes africains les outils, les ressources et le réseau nécessaires pour exister sur la scène mondiale, sans sacrifier leur authenticité artistique.
+          </p>
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, marginBottom: 16, textAlign: "justify" }}>
+            Nous croyons que la richesse musicale du Congo, de l'Afrique centrale et du continent tout entier mérite d'être entendue partout. C'est pourquoi nous proposons une distribution sur plus de 150 plateformes digitales mondiales, un accompagnement personnalisé, un studio professionnel, des services de booking et de management, et bien plus encore.
+          </p>
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, textAlign: "justify" }}>
+            Notre équipe pluridisciplinaire combine expertise musicale, maîtrise du marketing digital et passion pour les artistes. Nous ne sommes pas seulement un intermédiaire : nous sommes des partenaires de carrière engagés dans votre réussite à long terme.
+          </p>
+        </div>
+
+        {/* Stats */}
         <div className="about-stats">
-          {[{ v: "2020", l: "Année de création" }, { v: "150+", l: "Plateformes" }, { v: "1M+", l: "Streams générés" }, { v: "15+", l: "Pays atteints" }].map((s) => (
+          {[{ v: "2021", l: "Année de création" }, { v: "150+", l: "Plateformes" }, { v: "1M+", l: "Streams générés" }, { v: "+30", l: "Pays atteints" }].map((s) => (
             <div key={s.l} className="about-stat"><div className="about-stat-v">{s.v}</div><div className="about-stat-l">{s.l}</div></div>
           ))}
         </div>
@@ -1144,13 +1178,13 @@ function AboutPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, marginBottom: 60 }}>
           <div>
             <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre vision</h3>
-            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15 }}>Créer un pont solide entre la créativité débordante des artistes africains et un public mondial avide de sons nouveaux. Nous croyons que la musique de Lubumbashi, de Kinshasa, de tout le continent, a le potentiel de toucher des millions d'âmes à travers le monde.</p>
-            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16 }}>Notre ambition : faire de Sterkte Records la référence incontournable pour tout artiste africain souhaitant bâtir une carrière internationale durable, éthique et profitable.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, textAlign: "justify" }}>Créer un pont solide entre la créativité débordante des artistes africains et un public mondial avide de sons nouveaux. Nous croyons que la musique de Lubumbashi, de Kinshasa, de tout le continent, a le potentiel de toucher des millions d'âmes à travers le monde.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16, textAlign: "justify" }}>Notre ambition : faire de Sterkte Records la référence incontournable pour tout artiste africain souhaitant bâtir une carrière internationale durable, éthique et profitable.</p>
           </div>
           <div>
             <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre mission</h3>
-            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15 }}>Accompagner chaque artiste signé chez nous avec des outils professionnels, une équipe dédiée et une distribution sur plus de 150 plateformes mondiales. Nous gérons l'aspect technique, administratif et stratégique pour que l'artiste se concentre sur l'essentiel : créer.</p>
-            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16 }}>Transparence, excellence et passion sont nos trois piliers. Chaque décision que nous prenons sert d'abord les intérêts de l'artiste.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, textAlign: "justify" }}>Accompagner chaque artiste signé chez nous avec des outils professionnels, une équipe dédiée et une distribution sur plus de 150 plateformes mondiales. Nous gérons l'aspect technique, administratif et stratégique pour que l'artiste se concentre sur l'essentiel : créer.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16, textAlign: "justify" }}>Transparence, excellence et passion sont nos trois piliers. Chaque décision que nous prenons sert d'abord les intérêts de l'artiste.</p>
           </div>
         </div>
 
@@ -1175,11 +1209,11 @@ function AboutPage() {
         <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre histoire</h3>
         <div className="about-timeline">
           {[
-            { year: "2020", title: "Naissance de Sterkte Records", desc: "Fondation du label à Lubumbashi par Axel l'or Kaumba, avec la signature des deux premiers artistes et l'ouverture du studio pilote." },
-            { year: "2021", title: "Premiers succès en distribution", desc: "Lancement sur Spotify, Apple Music et Deezer. Les premières sorties dépassent rapidement les 50 000 streams sur des marchés africains et européens." },
-            { year: "2022", title: "Expansion du roster", desc: "Le label accueille de nouveaux genres : rumba, gospel, amapiano. Le réseau s'étend à Kinshasa, Brazzaville et Abidjan." },
-            { year: "2023", title: "Cap du million de streams", desc: "Le catalogue Sterkte Records franchit collectivement le million de streams. Lancement du studio mobile pour les artistes hors de Lubumbashi." },
-            { year: "2024", title: "Rayonnement international", desc: "Présence sur 15+ pays, collaborations avec des labels européens et lancement de l'espace artiste digital pour un suivi en temps réel." },
+            { year: "2021", title: "Naissance de Sterkte Records", desc: "Fondation du label à Lubumbashi par Axel l'or Kaumba. Signature des premiers artistes en distribution : Mr. Freez, Feyme, et démarrage de collaborations externes. Une aventure musicale commence, portée par une vision claire : propulser la musique congolaise sur les scènes mondiales." },
+            { year: "2022", title: "Premiers pas et chiffres", desc: "Lancement officiel sur Spotify, Apple Music, Deezer et les grandes plateformes. Les premières sorties franchissent rapidement les 50 000 streams. Le label pose ses bases solides et commence à construire sa crédibilité dans l'écosystème de la musique indépendante africaine." },
+            { year: "2023", title: "Expansion du roster", desc: "Accueil de KBG Gad pour le gospel, intégration de beatmakers talentueux et élargissement de l'équipe créative. Le catalogue s'enrichit de nouvelles sonorités et genres. Le réseau s'étend à Kinshasa, Brazzaville et Abidjan." },
+            { year: "2024", title: "Cap sur le demi-million de streams", desc: "Objectif ambitieux : atteindre les 500K streams cumulés. Lancement du studio mobile à Lubumbashi, puis à Agadir au Maroc, et dans d'autres villes. Cette innovation permet d'enregistrer les artistes là où ils se trouvent, sans contrainte géographique." },
+            { year: "2025", title: "Rayonnement international", desc: "Présence établie sur plus de 20 pays. Partenariats avec des labels étrangers dont Lghorfa Music et Arteast Music au Maroc, ainsi que d'autres structures en Europe et en Afrique. Sterkte Records s'impose comme un pont entre l'Afrique et le monde, avec une empreinte digitale toujours plus forte." },
           ].map((item) => (
             <div key={item.year} className="about-tl-item">
               <div className="about-tl-dot" />
@@ -1195,7 +1229,6 @@ function AboutPage() {
         <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Des professionnels passionnés au service de votre talent.</p>
         <div className="team-grid">{team.map((m) => <div key={m.name} className="team"><div className="team-av">{m.i}</div><h4>{m.name}</h4><div className="role">{m.role}</div><p>{m.desc}</p></div>)}</div>
 
-        {/* CTA */}
         <div style={{ marginTop: 64, padding: "48px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: "center" }}>
           <div className="sec-tag">Vous êtes artiste ?</div>
           <h3 style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1, margin: "12px 0 16px" }}>Rejoignez l'aventure <span className="gold">Sterkte Records</span></h3>
@@ -1219,34 +1252,89 @@ function ArtistsPage() {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const nav = useNavigate();
-  const filtered = artists.filter((a) => (filter === "Tout" || (a.tags || []).includes(filter)) && a.name.toLowerCase().includes(search.toLowerCase()));
-  const visible = showAll ? filtered : filtered.slice(0, 8);
+
+  const djMinhoArtist = { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://ui-avatars.com/api/?name=DJ+Minho&size=800&background=1A1A25&color=F5C518&bold=true`, tribute: true };
+  const allArtists = artists.some(a => a.name.toLowerCase().includes("minho")) ? artists : [djMinhoArtist, ...artists];
+
+  const filtered = allArtists.filter((a) => (filter === "Tout" || (a.tags || []).includes(filter)) && a.name.toLowerCase().includes(search.toLowerCase()));
+  const nonTribute = filtered.filter(a => !a.tribute);
+  const tribute = filtered.filter(a => a.tribute);
+  const visible = showAll ? nonTribute : nonTribute.slice(0, 8);
 
   const handleArtistClick = (a) => {
+    if (a.tribute) {
+      nav(`/artiste/dj-minho`, { state: { artist: a } });
+      return;
+    }
     const slug = a.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     nav(`/artiste/${slug}`, { state: { artist: a } });
   };
 
   return (
-    <div className="pg">
-      <div className="art-hero">
-        <h1 className="art-big">ARTISTES</h1>
-        <div className="art-filters">{ARTIST_GENRES.map((g) => <button key={g} className={`art-tag ${filter === g ? "ac" : ""}`} onClick={() => { setFilter(g); setShowAll(false); }}>{g}</button>)}</div>
-        <div className="art-search"><span className="art-search-ico"><Icon.Search size={16} color={C.muted} /></span><input placeholder="Rechercher un artiste..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+    <div className="pg" style={{ position: "relative" }}>
+      {/* Fond vivant */}
+      <div className="artists-bg">
+        <div className="artists-bg-orb artists-bg-orb1" />
+        <div className="artists-bg-orb artists-bg-orb2" />
+        <div className="artists-bg-orb artists-bg-orb3" />
       </div>
-      {loading ? <div className="loading-box">Chargement...</div> : filtered.length === 0 ? <div style={{ textAlign: "center", padding: "60px 24px", color: C.muted }}>Aucun artiste trouvé.</div> : <>
-        <div className="art-grid">{visible.map((a) => (
-          <div key={a.id} className="art-card" onClick={() => handleArtistClick(a)}>
-            <img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" />
-            <div className="art-ov">
-              <div className="art-name">{a.name}</div>
-              <div className="art-genre">{(a.tags || []).join(" · ")}</div>
-              <div className="art-cta"><Icon.ArrowRight size={12} />Découvrir</div>
-            </div>
-          </div>
-        ))}</div>
-        {!showAll && filtered.length > 8 && <div style={{ textAlign: "center", padding: "0 60px 80px" }}><button className="btn btn-o btn-lg" onClick={() => setShowAll(true)}>Voir plus</button></div>}
-      </>}
+      <div className="artists-page-content">
+        <div className="art-hero">
+          <h1 className="art-big">ARTISTES</h1>
+          <div className="art-filters">{ARTIST_GENRES.map((g) => <button key={g} className={`art-tag ${filter === g ? "ac" : ""}`} onClick={() => { setFilter(g); setShowAll(false); }}>{g}</button>)}</div>
+          <div className="art-search"><span className="art-search-ico"><Icon.Search size={16} color={C.muted} /></span><input placeholder="Rechercher un artiste..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+        </div>
+        {loading ? <div className="loading-box">Chargement...</div> : (
+          <>
+            {/* Carte DJ Minho — Hommage */}
+            {tribute.length > 0 && (
+              <div className="tribute-card-wrapper">
+                {tribute.map(a => (
+                  <div key={a.id} className="tribute-card-inner" onClick={() => handleArtistClick(a)}>
+                    <div className="tribute-bg" />
+                    {/* Étoiles flottantes */}
+                    <div className="tribute-particles">
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <div key={i} className="tribute-star" style={{ left: `${10 + i * 8}%`, top: `${20 + (i % 4) * 20}%`, animationDelay: `${i * 0.3}s`, animationDuration: `${3 + (i % 3)}s` }} />
+                      ))}
+                    </div>
+                    <img src={a.image_url} alt="DJ Minho" className="tribute-img" />
+                    <div className="tribute-overlay" />
+                    <div className="tribute-content">
+                      <div className="tribute-badge">
+                        <Icon.Heart size={10} color={C.gold} />
+                        <span>En mémoire</span>
+                      </div>
+                      <div className="tribute-name">DJ Minho</div>
+                      <div className="tribute-dates">1990 – 01/02/2025</div>
+                      <div className="tribute-quote">« La musique ne meurt jamais, elle vit dans chaque âme qu'elle a touchée. »</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Grille artistes normaux */}
+            {filtered.length === 0 ? <div style={{ textAlign: "center", padding: "60px 24px", color: C.muted }}>Aucun artiste trouvé.</div> : (
+              <>
+                <div className="art-grid">
+                  {visible.map((a) => (
+                    <div key={a.id} className="art-card" onClick={() => handleArtistClick(a)}>
+                      <img src={a.image_url} alt={`${a.name} – artiste chez Sterkte Records`} loading="lazy" />
+                      <div className="art-ov">
+                        <div className="art-name">{a.name}</div>
+                        <div className="art-genre">{(a.tags || []).join(" · ")}</div>
+                        <div className="art-cta"><Icon.ArrowRight size={12} />Découvrir</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {!showAll && nonTribute.length > 8 && <div style={{ textAlign: "center", padding: "0 60px 80px" }}><button className="btn btn-o btn-lg" onClick={() => setShowAll(true)}>Voir plus</button></div>}
+              </>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -1258,13 +1346,12 @@ function ArtistDetailPage() {
   const nav = useNavigate();
   const { artists } = useArtists();
 
-  // Récupère l'artiste depuis state ou depuis la liste
   const artistFromState = location.state?.artist;
   const artistFromList = artists.find((a) => {
     const s = a.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     return s === slug;
   });
-  const artist = artistFromState || artistFromList;
+  const artist = artistFromState || artistFromList || (slug === "dj-minho" ? { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://ui-avatars.com/api/?name=DJ+Minho&size=800&background=1A1A25&color=F5C518&bold=true` } : null);
 
   const detail = MOCK_ARTISTS_DETAIL[slug] || MOCK_ARTISTS_DETAIL.default;
 
@@ -1272,7 +1359,7 @@ function ArtistDetailPage() {
     return (
       <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, minHeight: "80vh" }}>
         <h2 style={{ color: C.muted }}>Artiste introuvable</h2>
-        <Link to="/artistes" className="btn btn-g">Retour aux artistes</Link>
+        <button className="btn btn-g" onClick={() => nav("/artistes")}><Icon.ArrowLeft size={14} />Retour aux artistes</button>
       </div>
     );
   }
@@ -1280,26 +1367,37 @@ function ArtistDetailPage() {
   if (!artist) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
 
   const socials = detail.socials;
-
-  // Génère un placeholder visuel si pas d'image
   const imgSrc = artist.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&size=800&background=1A1A25&color=F5C518&bold=true&font-size=0.33`;
+  const isTribute = detail.tribute;
 
   return (
     <div className="ap">
       {/* HERO */}
-      <div className="ap-hero">
+      <div className="ap-hero" style={isTribute ? { background: "linear-gradient(135deg, #0A0A0F, #12121A)" } : {}}>
         <div className="ap-hero-bg">
-          <img src={imgSrc} alt={artist.name} className="ap-hero-img" />
+          <img src={imgSrc} alt={artist.name} className="ap-hero-img" style={isTribute ? { filter: "brightness(.25) saturate(.4) sepia(.3)" } : {}} />
           <div className="ap-hero-overlay" />
+          {isTribute && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 50% 50%, rgba(245,197,24,0.04), transparent 60%)", zIndex: 1 }} />}
         </div>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 60% 100%, rgba(245,197,24,0.06), transparent 60%)", zIndex: 1 }} />
         <div className="ap-hero-c">
-          <button className="ap-back" onClick={() => nav("/artistes")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+          {/* Bouton retour amélioré */}
+          <button className="ap-back-btn" onClick={() => nav("/artistes")}>
+            <Icon.ArrowLeft size={14} />
             Retour aux artistes
           </button>
+
+          {isTribute && (
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(245,197,24,0.08)", border: "1px solid rgba(245,197,24,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 16 }}>
+              <Icon.Heart size={12} color={C.gold} />
+              <span style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2, textTransform: "uppercase" }}>Hommage · En mémoire</span>
+            </div>
+          )}
+
           <div className="ap-genre-tag"><Icon.Music size={12} />{detail.genre}</div>
-          <h1 className="ap-hero-name">{artist.name}</h1>
+          <h1 className="ap-hero-name" style={isTribute ? { color: "rgba(255,255,255,0.85)" } : {}}>{artist.name}</h1>
+
+          {isTribute && <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 13, color: "rgba(245,197,24,0.7)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 20 }}>Décédé le {detail.tributeDate}</div>}
+
           <div className="ap-hero-socials">
             {socials.instagram && <a href={socials.instagram} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Instagram size={16} /></a>}
             {socials.twitter && <a href={socials.twitter} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Twitter size={16} /></a>}
@@ -1307,14 +1405,14 @@ function ArtistDetailPage() {
             {socials.spotify && <a href={socials.spotify} target="_blank" rel="noreferrer" className="ap-social-btn"><Icon.Spotify size={16} /></a>}
           </div>
           <div className="ap-hero-acts">
-            <a href={socials.spotify || "#"} target="_blank" rel="noreferrer" className="btn btn-g btn-lg"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>
-            <Link to="/booking-artistes" className="btn btn-o btn-lg"><Icon.Calendar size={14} />Réserver cet artiste</Link>
+            {socials.spotify && <a href={socials.spotify} target="_blank" rel="noreferrer" className="btn btn-g btn-lg"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>}
+            {!isTribute && <Link to="/booking-artistes" className="btn btn-o btn-lg"><Icon.Calendar size={14} />Réserver cet artiste</Link>}
           </div>
         </div>
       </div>
 
       {/* STATS BAR */}
-      <div className="ap-stats-bar">
+      <div className="ap-stats-bar" style={isTribute ? { background: "rgba(18,18,26,0.95)", borderColor: "rgba(245,197,24,0.1)" } : {}}>
         {[{ v: detail.streams, l: "Streams totaux" }, { v: detail.plateformes, l: "Plateformes" }, { v: detail.singles.length + "+", l: "Sorties" }, { v: detail.since, l: "Avec Sterkte" }].map((s) => (
           <div key={s.l} className="ap-stat"><div className="ap-stat-v">{s.v}</div><div className="ap-stat-l">{s.l}</div></div>
         ))}
@@ -1322,13 +1420,22 @@ function ArtistDetailPage() {
 
       {/* BODY */}
       <div className="ap-body">
+        {isTribute && (
+          <div style={{ background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.12)", borderRadius: 12, padding: 28, marginBottom: 40, display: "flex", alignItems: "flex-start", gap: 16 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(245,197,24,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Icon.Heart size={18} color={C.gold} />
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 12, fontWeight: 700, color: C.gold, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Message de Sterkte Records</div>
+              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, textAlign: "justify" }}>Toute l'équipe de Sterkte Records s'incline avec profond respect devant la mémoire de DJ Minho, artiste exceptionnel et ami précieux, qui nous a quittés le 1er février 2025. Son talent, son énergie et sa générosité resteront à jamais gravés dans nos cœurs et dans la musique qu'il nous a laissée.</p>
+            </div>
+          </div>
+        )}
         <div className="ap-grid">
-          {/* Gauche : bio + discographie */}
           <div>
             <div className="ap-bio-title">Biographie</div>
             <p className="ap-bio-text">{detail.bio}</p>
             <p className="ap-bio-text">{detail.bio2}</p>
-
             <div style={{ marginTop: 48 }}>
               <div className="ap-disco-title">Discographie</div>
               {detail.singles.map((s, i) => (
@@ -1344,18 +1451,14 @@ function ArtistDetailPage() {
               ))}
             </div>
           </div>
-
-          {/* Droite : infos sidebar */}
           <div>
             <div className="ap-sidebar-card">
-              <div>
-                <div className="ap-sidebar-label">Genre</div>
-                <div className="ap-sidebar-value">{detail.genre}</div>
-                <div className="ap-sidebar-label">Origine</div>
-                <div className="ap-sidebar-value">{detail.origin}</div>
-                <div className="ap-sidebar-label">Avec Sterkte Records depuis</div>
-                <div className="ap-sidebar-value">{detail.since}</div>
-              </div>
+              <div className="ap-sidebar-label">Genre</div>
+              <div className="ap-sidebar-value">{detail.genre}</div>
+              <div className="ap-sidebar-label">Origine</div>
+              <div className="ap-sidebar-value">{detail.origin}</div>
+              <div className="ap-sidebar-label">Avec Sterkte Records depuis</div>
+              <div className="ap-sidebar-value">{detail.since}</div>
             </div>
             <div className="ap-sidebar-card">
               <div className="ap-bio-title" style={{ marginBottom: 16 }}>Tags</div>
@@ -1365,16 +1468,18 @@ function ArtistDetailPage() {
                 ))}
               </div>
             </div>
-            <div className="ap-sidebar-card">
-              <div className="ap-bio-title" style={{ marginBottom: 16 }}>Réseaux sociaux</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {socials.instagram && <a href={socials.instagram} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Instagram size={16} color="currentColor" />Instagram</a>}
-                {socials.twitter && <a href={socials.twitter} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Twitter size={16} color="currentColor" />Twitter / X</a>}
-                {socials.youtube && <a href={socials.youtube} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Youtube size={16} color="currentColor" />YouTube</a>}
-                {socials.spotify && <a href={socials.spotify} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Spotify size={16} color="currentColor" />Spotify</a>}
+            {!isTribute && (
+              <div className="ap-sidebar-card">
+                <div className="ap-bio-title" style={{ marginBottom: 16 }}>Réseaux sociaux</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {socials.instagram && <a href={socials.instagram} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Instagram size={16} color="currentColor" />Instagram</a>}
+                  {socials.twitter && <a href={socials.twitter} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Twitter size={16} color="currentColor" />Twitter / X</a>}
+                  {socials.youtube && <a href={socials.youtube} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Youtube size={16} color="currentColor" />YouTube</a>}
+                  {socials.spotify && <a href={socials.spotify} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13, transition: "color .2s" }} onMouseOver={e => e.currentTarget.style.color = C.white} onMouseOut={e => e.currentTarget.style.color = C.muted}><Icon.Spotify size={16} color="currentColor" />Spotify</a>}
+                </div>
               </div>
-            </div>
-            <Link to="/featurings" className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }}><Icon.Headphones size={16} />Demander un featuring</Link>
+            )}
+            {!isTribute && <Link to="/featurings" className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }}><Icon.Headphones size={16} />Demander un featuring</Link>}
           </div>
         </div>
       </div>
@@ -1388,19 +1493,19 @@ function DistributionPage({ toast }) {
   const { user } = useAuth();
   return (
     <div className="pg">
-      <PageBanner tag="Distribution" title='Votre musique sur <span style="color:#F5C518">150+ plateformes</span>' subtitle="Distribution en 48h, suivi en temps réel, royalties chaque mois." accent={C.gold} />
+      <PageBanner tag="Distribution" title='Distribuez votre musique sur <span style="color:#F5C518">150+ plateformes</span>' subtitle="De Spotify à Boomplay, nous mettons votre musique partout où vos fans écoutent." accent={C.gold} />
       <div className="pg-c">
-        <div className="steps">{[
-          { n: "1", t: "Créez votre compte artiste", d: "Inscription gratuite en 2 minutes." },
-          { n: "2", t: "Uploadez vos morceaux", d: "Fichiers audio (WAV, FLAC, MP3) + visuel de couverture." },
-          { n: "3", t: "Renseignez les métadonnées", d: "Titre, auteurs, genre, date de sortie." },
-          { n: "4", t: "Validation et mise en ligne", d: "Notre équipe valide sous 48h et distribue sur 150+ plateformes." },
+        <div className="steps" style={{ marginBottom: 48 }}>{[
+          { n: "1", t: "Créez votre compte artiste", d: "Inscription gratuite en 2 minutes. Recevez un code de confirmation par WhatsApp pour valider votre compte." },
+          { n: "2", t: "Uploadez vos morceaux", d: "Fichiers audio (WAV ou MP3) + visuel de couverture obligatoirement en 3000x3000px." },
+          { n: "3", t: "Renseignez les métadonnées", d: "Titre, auteurs, producteur, beatmaker, genre, date de sortie (minimum 8 jours à l'avance)." },
+          { n: "4", t: "Validation et mise en ligne", d: "Notre équipe valide sous 48h et distribue sur 150+ plateformes. Vous recevez une confirmation par e-mail." },
         ].map((s) => <div key={s.n} className="step"><div className="step-n">{s.n}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}</div>
         <div className="feats">{[
-          { Ico: Icon.BarChart, title: "Rapports en temps réel", desc: "Suivez vos streams et revenus depuis votre dashboard." },
-          { Ico: Icon.Diamond, title: "Royalties transparentes", desc: "Rapport mensuel détaillé. Paiement par virement ou Mobile Money." },
-          { Ico: Icon.Globe, title: "150+ plateformes", desc: "Spotify, Apple Music, Deezer, YouTube Music, Tidal et plus." },
-          { Ico: Icon.Zap, title: "Distribution en 48h", desc: "Validation et envoi aux plateformes en 48h maximum." },
+          { Ico: Icon.BarChart, title: "Chiffres actualisés mensuellement", desc: "Suivez vos streams et revenus depuis votre dashboard. Les statistiques sont actualisées chaque 31 du mois." },
+          { Ico: Icon.Diamond, title: "Revenus transparents", desc: "Rapport mensuel détaillé. Paiement par virement ou Mobile Money." },
+          { Ico: Icon.Globe, title: "150+ plateformes", desc: "Spotify, Apple Music, Deezer, YouTube Music, Tidal, Boomplay, Audiomack et bien plus." },
+          { Ico: Icon.Zap, title: "Distribution en 48h", desc: "Validation et envoi aux plateformes en 48h maximum après soumission." },
         ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
         <div style={{ marginTop: 40 }}><Link to={user ? "/dashboard" : "/connexion"} className="btn btn-g btn-lg"><Icon.ArrowRight size={16} />{user ? "Accéder au dashboard" : "Créer un compte pour distribuer"}</Link></div>
       </div>
@@ -1412,38 +1517,69 @@ function DistributionPage({ toast }) {
 function StudioPage({ toast }) {
   useSEO("/studio-enregistrement");
   const { user } = useAuth();
-  const [form, setForm] = useState({ type: "sur-place", date: "", duration: "2", address: "", name: "", email: "", message: "" });
+  const [form, setForm] = useState({ type: "sur-place", date: "", duration: "2", address: "", name: "", email: "", phone: "", service: "enregistrement", message: "" });
   const [sending, setSending] = useState(false);
-  const price = form.type === "mobile" ? parseInt(form.duration) * 75 : parseInt(form.duration) * 50;
+
+  const prices = { "enregistrement": 40, "mix": 80, "mobile": 65 };
+  const price = prices[form.service] ? prices[form.service] * parseInt(form.duration) : 0;
+
   const handleSubmit = async () => {
-    if (!form.name || !form.email) { toast("Nom et email requis.", "err"); return; }
+    if (!form.name || !form.email || !form.date || !form.service) { toast("Nom, email, service et date sont requis.", "err"); return; }
     setSending(true);
     const { error } = await supabase.from("studio_bookings").insert({
       user_id: user?.id || null, name: form.name, email: form.email,
-      studio_type: form.type, duration_hours: parseInt(form.duration),
+      studio_type: form.service, duration_hours: parseInt(form.duration),
       booking_date: form.date || null, address: form.address, message: form.message, estimated_price: price,
     });
-    await sendEmail({ ...form, subject: `Réservation Studio – ${form.type} – ${form.duration}h`, prix_estime: `${price}$` });
+    await sendEmail({ ...form, subject: `Réservation Studio – ${form.service} – ${form.duration}h`, prix_estime: `${price}$` });
+    const waMsg = `Nouvelle réservation studio – ${form.service} – ${form.name} – ${form.date} – ${form.duration}h – ${form.email}`;
+    sendWhatsApp(waMsg);
     toast(error ? "Erreur. Réessayez." : "Demande de réservation envoyée ! Confirmation sous 24h.", error ? "err" : "ok");
     setSending(false);
   };
+
   return (
     <div className="pg">
-      <PageBanner tag="Studio" title='Votre son, notre <span style="color:#F5C518">expertise</span>' subtitle="Studio professionnel à Lubumbashi + option mobile. Enregistrement, mixage et mastering." accent={C.blue} />
+      <PageBanner tag="Studio" title='Votre son, notre <span style="color:#F5C518">expertise</span>' subtitle="Studios professionnels à Lubumbashi + studios mobiles à Lubumbashi, au Maroc et ailleurs. Enregistrement, mixage et mastering de qualité internationale." accent={C.blue} />
       <div className="pg-c">
+        {/* Description */}
+        <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32, marginBottom: 48 }}>
+          <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginBottom: 16, textAlign: "justify" }}>
+            Sterkte Records dispose d'un studio professionnel physique à <strong style={{ color: C.white }}>Lubumbashi, RDC</strong>, équipé du meilleur matériel pour vous offrir un son de qualité internationale. Nos ingénieurs du son expérimentés maîtrisent toutes les techniques d'enregistrement pour révéler le meilleur de votre voix et de votre création.
+          </p>
+          <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, textAlign: "justify" }}>
+            En plus du studio fixe, nous proposons des <strong style={{ color: C.white }}>studios mobiles</strong> opérationnels à <strong style={{ color: C.white }}>Lubumbashi</strong>, à <strong style={{ color: C.white }}>Agadir (Maroc)</strong> et dans d'autres villes, vous permettant d'enregistrer directement là où vous vous trouvez. Un son professionnel, sans bouger.
+          </p>
+        </div>
+
         <div className="pricing">{[
-          { title: "Enregistrement", p: "50$", u: "/heure", items: ["Studio professionnel", "Ingénieur son dédié", "Export WAV/FLAC/MP3", "Coaching vocal inclus"], ft: false },
-          { title: "Mixage & Mastering", p: "200$", u: "/titre", items: ["Mix professionnel", "Mastering haute qualité", "2 révisions incluses", "Export multi-formats"], ft: true },
-          { title: "Studio Mobile", p: "75$", u: "/heure", items: ["Déplacement inclus", "Matériel professionnel", "Enregistrement sur site", "Flexibilité totale"], ft: false },
+          { title: "Enregistrement", p: "40$", u: "/heure", key: "enregistrement", items: ["Studio professionnel", "Ingénieur son dédié", "Export WAV/MP3", "Coaching vocal inclus"], ft: false },
+          { title: "Mix & Mastering", p: "80$", u: "/heure", key: "mix", items: ["Mix professionnel", "Mastering haute qualité", "2 révisions incluses", "Export multi-formats"], ft: true },
+          { title: "Studio Mobile", p: "65$", u: "/heure", key: "mobile", items: ["Déplacement inclus", "Matériel professionnel", "Enregistrement sur site", "Lubumbashi, Agadir & +"], ft: false },
         ].map((p) => <div key={p.title} className={`price-card ${p.ft ? "ft" : ""}`}><h4>{p.title}</h4><div className="price-val">{p.p}<span> {p.u}</span></div><ul>{p.items.map((it) => <li key={it}><span className="chk"><Icon.Check size={14} color={C.gold} /></span>{it}</li>)}</ul></div>)}</div>
-        <h3 style={{ fontSize: 22, fontWeight: 800, marginTop: 48, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
+
+        <div className="feats" style={{ marginBottom: 48 }}>{[
+          { Ico: Icon.Mic, title: "Enregistrement vocal", desc: "Voix, instruments, overdubs. Cabine isolée phoniquement pour une captation parfaite." },
+          { Ico: Icon.Headphones, title: "Mix & Mastering", desc: "Équilibrage, spatialisation et finalisation de votre titre pour toutes les plateformes." },
+          { Ico: Icon.Music, title: "Production musicale", desc: "Création de beats, arrangements, production complète de votre morceau." },
+          { Ico: Icon.Film, title: "Réalisation de clips", desc: "Production vidéo professionnelle pour accompagner votre sortie musicale." },
+        ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
+
+        <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
         <div className="fm">
-          <div className="fm-row"><div className="fm-g"><label className="fm-l">Votre nom *</label><input className="fm-i" placeholder="Nom complet" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div><div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div></div>
-          <div className="fm-row"><div className="fm-g"><label className="fm-l">Type</label><select className="fm-s" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}><option value="sur-place">Studio sur place</option><option value="mobile">Studio mobile</option></select></div><div className="fm-g"><label className="fm-l">Durée</label><select className="fm-s" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })}>{[1, 2, 3, 4, 5, 6, 8].map((h) => <option key={h} value={h}>{h}h</option>)}</select></div></div>
-          <div className="fm-g"><label className="fm-l">Date souhaitée</label><input className="fm-i" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
-          {form.type === "mobile" && <div className="fm-g"><label className="fm-l">Adresse</label><input className="fm-i" placeholder="Adresse complète" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>}
-          <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" placeholder="Précisions..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
-          <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 20px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}><span style={{ color: C.muted, fontSize: 13 }}>Estimation</span><span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 24, color: C.gold }}>{price}$</span></div>
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Votre nom *</label><input className="fm-i" placeholder="Nom complet" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+          </div>
+          <div className="fm-g"><label className="fm-l">Téléphone *</label><input className="fm-i" type="tel" placeholder="+243 XXX XXX XXX" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Service *</label><select className="fm-s" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })}><option value="enregistrement">Enregistrement – 40$/h</option><option value="mix">Mix & Mastering – 80$/h</option><option value="mobile">Studio Mobile – 65$/h</option></select></div>
+            <div className="fm-g"><label className="fm-l">Durée</label><select className="fm-s" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })}>{[1, 2, 3, 4, 5, 6, 8].map((h) => <option key={h} value={h}>{h}h</option>)}</select></div>
+          </div>
+          <div className="fm-g"><label className="fm-l">Date souhaitée *</label><input className="fm-i" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
+          {form.service === "mobile" && <div className="fm-g"><label className="fm-l">Adresse *</label><input className="fm-i" placeholder="Adresse complète" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>}
+          <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" placeholder="Précisions sur votre projet..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
+          <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 20px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}><span style={{ color: C.muted, fontSize: 13 }}>Estimation totale</span><span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 24, color: C.gold }}>{price}$</span></div>
           <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Envoyer la demande"}</button>
         </div>
       </div>
@@ -1526,19 +1662,27 @@ function FeaturingPage({ toast }) {
 // ─── CONSULTING ───
 function ConsultingPage() {
   useSEO("/services");
+  const handleContact = () => {
+    const msg = "Bonjour Sterkte Records, je souhaite en savoir plus sur vos services de consulting et management artistique.";
+    sendWhatsApp(msg);
+    window.open(`mailto:${WHATSAPP_EMAIL}?subject=Consulting%20%26%20Management%20Artistique&body=${encodeURIComponent(msg)}`, "_blank");
+  };
   return (
     <div className="pg">
       <PageBanner tag="Consulting & Management" title='Accompagnement <span style="color:#F5C518">stratégique</span>' subtitle="Des services adaptés à vos besoins artistiques et commerciaux." accent={C.gold} />
       <div className="pg-c">
         <div className="feats">{[
-          { Ico: Icon.Rocket, title: "Stratégie de lancement", desc: "Plan de promotion digitale personnalisé." },
-          { Ico: Icon.Clipboard, title: "Gestion de carrière", desc: "Négociation de contrats, planification stratégique." },
-          { Ico: Icon.Layers, title: "Développement de marque", desc: "Coaching artistique, image de marque." },
-          { Ico: Icon.TrendingUp, title: "Analyse de données", desc: "Optimisation des revenus et des streams." },
-          { Ico: Icon.Map, title: "Organisation de tournées", desc: "Planification logistique complète." },
-          { Ico: Icon.Film, title: "Production visuelle", desc: "Clips vidéo, photos, pochettes." },
+          { Ico: Icon.Rocket, title: "Stratégie de lancement", desc: "Plan de promotion digitale personnalisé pour maximiser l'impact de vos sorties musicales sur tous les marchés cibles." },
+          { Ico: Icon.Clipboard, title: "Gestion de carrière", desc: "Négociation de contrats, planification stratégique long terme et développement de partenariats commerciaux." },
+          { Ico: Icon.Layers, title: "Développement de marque", desc: "Coaching artistique, image de marque cohérente et identité visuelle forte pour vous démarquer." },
+          { Ico: Icon.TrendingUp, title: "Analyse de données", desc: "Optimisation des revenus et des streams grâce à une lecture fine de vos statistiques et des tendances du marché." },
+          { Ico: Icon.Map, title: "Organisation de tournées", desc: "Planification logistique complète de vos tournées nationales et internationales." },
+          { Ico: Icon.Film, title: "Production visuelle", desc: "Clips vidéo, photos professionnelles, pochettes d'album et contenu pour les réseaux sociaux." },
         ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}</div>
-        <div style={{ marginTop: 48, textAlign: "center" }}><Link to="/contact" className="btn btn-r btn-lg"><Icon.Mail size={16} />Prendre contact</Link></div>
+        <div style={{ marginTop: 48, display: "flex", gap: 14, flexWrap: "wrap" }}>
+          <button className="btn btn-r btn-lg" onClick={handleContact}><Icon.Whatsapp size={16} />Prendre contact sur WhatsApp</button>
+          <a href={`mailto:${WHATSAPP_EMAIL}?subject=Consulting%20Artistique`} className="btn btn-o btn-lg"><Icon.Mail size={16} />Envoyer un e-mail</a>
+        </div>
       </div>
     </div>
   );
@@ -1554,6 +1698,8 @@ function ContactPage({ toast }) {
     setSending(true);
     await supabase.from("contact_messages").insert({ name: form.name, email: form.email, subject: form.subject, message: form.message });
     await sendEmail({ ...form, subject: `Contact – ${form.subject || "Message"}` });
+    // Envoi aussi vers WhatsApp
+    sendWhatsApp(`Nouveau message de ${form.name} – ${form.email} : ${form.message}`);
     toast("Message envoyé !", "ok");
     setForm({ name: "", email: "", subject: "", message: "" });
     setSending(false);
@@ -1569,15 +1715,22 @@ function ContactPage({ toast }) {
             <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" placeholder="Votre message..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
             <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={sending}>{sending ? "Envoi..." : "Envoyer"}</button>
           </div>
-          <div><div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32 }}>
-            <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Informations</h4>
-            {[
-              { Ico: Icon.Mail, l: "Email", v: "contact.sterkterecords@gmail.com", c: C.blue },
-              { Ico: Icon.Phone, l: "Téléphone", v: "+243 850 510 209", c: C.white },
-              { Ico: Icon.MapPin, l: "Adresse", v: "Avenue Mama Yemo, Lubumbashi, RDC", c: C.white },
-            ].map((c) => <div key={c.l} style={{ marginBottom: 20, display: "flex", gap: 12, alignItems: "flex-start" }}><div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(245,197,24,0.08)", display: "flex", alignItems: "center", justifyContent: "center", color: C.gold, flexShrink: 0 }}><c.Ico size={16} color="currentColor" /></div><div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Montserrat',sans-serif", fontWeight: 600, marginBottom: 4 }}>{c.l}</div><div style={{ fontSize: 14, color: c.c }}>{c.v}</div></div></div>)}
-            <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.border}` }}><a href="https://linktr.ee/sterkterecords" target="_blank" rel="noreferrer" style={{ color: C.blue, fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon.Link2 size={16} color={C.blue} />Tous nos réseaux</a></div>
-          </div></div>
+          <div>
+            <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32 }}>
+              <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>Informations</h4>
+              {[
+                { Ico: Icon.Mail, l: "Email", v: "contact.sterkterecords@gmail.com", c: C.blue },
+                { Ico: Icon.Phone, l: "Téléphone", v: "+243 850 510 209", c: C.white },
+                { Ico: Icon.MapPin, l: "Adresse", v: "Avenue Mama Yemo, Lubumbashi, RDC", c: C.white },
+              ].map((c) => <div key={c.l} style={{ marginBottom: 20, display: "flex", gap: 12, alignItems: "flex-start" }}><div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(245,197,24,0.08)", display: "flex", alignItems: "center", justifyContent: "center", color: C.gold, flexShrink: 0 }}><c.Ico size={16} color="currentColor" /></div><div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Montserrat',sans-serif", fontWeight: 600, marginBottom: 4 }}>{c.l}</div><div style={{ fontSize: 14, color: c.c }}>{c.v}</div></div></div>)}
+              <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.border}` }}>
+                <a href="https://linktr.ee/sterkterecords" target="_blank" rel="noreferrer" style={{ color: C.blue, fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon.Link2 size={16} color={C.blue} />Tous nos réseaux</a>
+                <button className="btn btn-g btn-sm" style={{ marginTop: 12, width: "100%", justifyContent: "center" }} onClick={() => sendWhatsApp("Bonjour Sterkte Records, je souhaite vous contacter.")}>
+                  <Icon.Whatsapp size={14} />WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1588,21 +1741,29 @@ function ContactPage({ toast }) {
 function LoginPage() {
   const { signUp, signIn } = useAuth();
   const [isReg, setIsReg] = useState(false);
-  const [form, setForm] = useState({ name: "", pseudo: "", email: "", password: "", genre: "" });
+  const [showPwd, setShowPwd] = useState(false);
+  const [form, setForm] = useState({ name: "", pseudo: "", email: "", password: "", genre: "", whatsapp: "" });
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState("");
   const nav = useNavigate();
 
   const handleSubmit = async () => {
-    setError("");
+    setError(""); setSuccess("");
     if (!form.email || !form.password) { setError("Email et mot de passe requis."); return; }
     if (isReg && (!form.name || !form.pseudo)) { setError("Nom et nom d'artiste requis."); return; }
+    if (isReg && !form.whatsapp) { setError("Numéro WhatsApp actif requis."); return; }
     if (form.password.length < 6) { setError("Mot de passe : 6 caractères minimum."); return; }
     setSending(true);
     if (isReg) {
-      const { error: err } = await signUp(form.email, form.password, { full_name: form.name, artist_name: form.pseudo, genre: form.genre });
+      const { error: err } = await signUp(form.email, form.password, { full_name: form.name, artist_name: form.pseudo, genre: form.genre, whatsapp: form.whatsapp });
       if (err) { setError(err.message); setSending(false); return; }
-      nav("/dashboard");
+      // Notifier l'équipe
+      await sendEmail({ name: form.name, pseudo: form.pseudo, email: form.email, whatsapp: form.whatsapp, genre: form.genre, subject: `Nouvelle inscription artiste – ${form.pseudo}` });
+      sendWhatsApp(`Nouvelle inscription artiste sur Sterkte Records : ${form.pseudo} (${form.name}) – ${form.email} – WhatsApp: ${form.whatsapp}`);
+      setSuccess("Compte créé ! Bienvenue chez Sterkte Records 🎵 Vérifiez votre email pour confirmer votre compte.");
+      setSending(false);
+      setTimeout(() => nav("/dashboard"), 2000);
     } else {
       const { error: err } = await signIn(form.email, form.password);
       if (err) { setError("Email ou mot de passe incorrect."); setSending(false); return; }
@@ -1611,19 +1772,48 @@ function LoginPage() {
     setSending(false);
   };
 
-  return (<div className="login-pg"><div className="login-card">
-    <div style={{ textAlign: "center", marginBottom: 24 }}><span className="n-logo-t" style={{ fontSize: 22 }}><span style={{ color: C.white }}>Sterkte</span> <span style={{ color: C.red }}>Records</span></span></div>
-    <h2>{isReg ? "Créer un compte" : "Connexion"}</h2>
-    <p className="sub">{isReg ? "Rejoignez le label" : "Accédez à votre espace artiste"}</p>
-    {error && <div className="fm-err" style={{ textAlign: "center", marginBottom: 16 }}>{error}</div>}
-    {isReg && <><div className="fm-g"><label className="fm-l">Nom complet *</label><input className="fm-i" placeholder="Votre nom" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-    <div className="fm-g"><label className="fm-l">Nom d'artiste *</label><input className="fm-i" placeholder="Nom de scène" value={form.pseudo} onChange={(e) => setForm({ ...form, pseudo: e.target.value })} /></div></>}
-    <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-    <div className="fm-g"><label className="fm-l">Mot de passe *</label><input className="fm-i" type="password" placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
-    {isReg && <div className="fm-g"><label className="fm-l">Genre musical</label><select className="fm-s" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })}><option value="">Sélectionner</option><option value="Afrobeat">Afrobeat</option><option value="R&B">R&B</option><option value="Rap">Rap</option><option value="Rumba">Rumba</option><option value="Gospel">Gospel</option><option value="Amapiano">Amapiano</option><option value="Autre">Autre</option></select></div>}
-    <button className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginTop: 8 }} onClick={handleSubmit} disabled={sending}>{sending ? "Chargement..." : isReg ? "Créer mon compte" : "Se connecter"}</button>
-    <div style={{ textAlign: "center", marginTop: 20 }}><span style={{ fontSize: 13, color: C.muted }}>{isReg ? "Déjà un compte ? " : "Pas de compte ? "}</span><span style={{ fontSize: 13, color: C.blue, cursor: "pointer", fontWeight: 600 }} onClick={() => { setIsReg(!isReg); setError(""); }}>{isReg ? "Se connecter" : "S'inscrire"}</span></div>
-  </div></div>);
+  return (
+    <div className="login-pg">
+      <div className="login-card">
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <img src="/logo.png" alt="Sterkte Records" style={{ height: 40, marginBottom: 8 }} onError={(e) => { e.target.style.display = "none"; }} />
+          <span className="n-logo-t" style={{ fontSize: 22, display: "block" }}><span style={{ color: C.white }}>Sterkte</span> <span style={{ color: C.red }}>Records</span></span>
+        </div>
+        <h2>{isReg ? "Créer un compte" : "Connexion"}</h2>
+        <p className="sub">{isReg ? "Rejoignez le label" : "Accédez à votre espace artiste"}</p>
+
+        {error && <div className="fm-err" style={{ textAlign: "center", marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><Icon.AlertCircle size={14} color={C.red} />{error}</div>}
+        {success && <div style={{ background: "rgba(76,175,80,0.1)", border: "1px solid rgba(76,175,80,0.3)", borderRadius: 8, padding: "12px 16px", marginBottom: 16, fontSize: 13, color: C.success, textAlign: "center" }}>{success}</div>}
+
+        {isReg && <>
+          <div className="fm-g"><label className="fm-l">Nom complet *</label><input className="fm-i" placeholder="Votre nom" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+          <div className="fm-g"><label className="fm-l">Nom d'artiste *</label><input className="fm-i" placeholder="Nom de scène" value={form.pseudo} onChange={(e) => setForm({ ...form, pseudo: e.target.value })} /></div>
+        </>}
+        <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" placeholder="email@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+        <div className="fm-g" style={{ position: "relative" }}>
+          <label className="fm-l">Mot de passe *</label>
+          <input className="fm-i fm-i-pwd" type={showPwd ? "text" : "password"} placeholder="••••••••" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <button className="fm-eye" onClick={() => setShowPwd(v => !v)}>{showPwd ? <Icon.EyeOff size={16} /> : <Icon.Eye size={16} />}</button>
+        </div>
+        {isReg && <>
+          <div className="fm-g"><label className="fm-l">Numéro WhatsApp actif *</label><input className="fm-i" type="tel" placeholder="+243 XXX XXX XXX" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} /><div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>Vous recevrez un code de confirmation sur ce numéro</div></div>
+          <div className="fm-g"><label className="fm-l">Genre musical</label>
+            <select className="fm-s" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })}>
+              <option value="">Sélectionner</option>
+              {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+          </div>
+        </>}
+        <button className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginTop: 8 }} onClick={handleSubmit} disabled={sending}>{sending ? "Chargement..." : isReg ? "Créer mon compte" : "Se connecter"}</button>
+        <div style={{ textAlign: "center", marginTop: 20 }}><span style={{ fontSize: 13, color: C.muted }}>{isReg ? "Déjà un compte ? " : "Pas de compte ? "}</span><span style={{ fontSize: 13, color: C.blue, cursor: "pointer", fontWeight: 600 }} onClick={() => { setIsReg(!isReg); setError(""); setSuccess(""); }}>{isReg ? "Se connecter" : "S'inscrire"}</span></div>
+        {!isReg && (
+          <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid ${C.border}`, textAlign: "center" }}>
+            <Link to="/" style={{ fontSize: 13, color: C.muted, display: "inline-flex", alignItems: "center", gap: 6 }}><Icon.ArrowLeft size={12} />Retour à l'accueil</Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ─── DASHBOARD ───
@@ -1635,7 +1825,8 @@ function DashboardPage({ toast }) {
   const [audioFile, setAudioFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
-  const [uploadForm, setUploadForm] = useState({ title: "", genre: "", date: "", contributors: "" });
+  const [coverError, setCoverError] = useState("");
+  const [uploadForm, setUploadForm] = useState({ title: "", genre: "", date: "", contributors: "", producer: "", beatmaker: "", editors: "" });
   const [sending, setSending] = useState(false);
   const audioRef = useRef(null);
   const coverRef = useRef(null);
@@ -1644,24 +1835,77 @@ function DashboardPage({ toast }) {
 
   const handleCoverSelect = (e) => {
     const file = e.target.files[0];
-    if (file) { setCoverFile(file); const r = new FileReader(); r.onload = (ev) => setCoverPreview(ev.target.result); r.readAsDataURL(file); }
+    if (!file) return;
+    setCoverError("");
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      if (img.width < 3000 || img.height < 3000) {
+        setCoverError(`Image trop petite (${img.width}x${img.height}px). Minimum requis : 3000x3000px.`);
+        setCoverFile(null); setCoverPreview(null);
+      } else {
+        setCoverFile(file);
+        const r = new FileReader(); r.onload = (ev) => setCoverPreview(ev.target.result); r.readAsDataURL(file);
+      }
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  };
+
+  const handleAudioSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (!["wav", "mp3"].includes(ext)) { toast("Format audio invalide. Acceptés : WAV, MP3.", "err"); return; }
+    setAudioFile(file);
   };
 
   const handleUpload = async () => {
     if (!uploadForm.title) { toast("Titre requis.", "err"); return; }
+    if (!audioFile) { toast("Fichier audio requis.", "err"); return; }
+    if (!coverFile) { toast("Couverture 3000x3000px requise.", "err"); return; }
+
+    // Vérification date : minimum 8 jours
+    if (uploadForm.date) {
+      const releaseDate = new Date(uploadForm.date);
+      const minDate = new Date(); minDate.setDate(minDate.getDate() + 8);
+      if (releaseDate < minDate) {
+        toast("La date de sortie doit être au minimum 8 jours à partir d'aujourd'hui.", "err"); return;
+      }
+    } else { toast("Date de sortie requise.", "err"); return; }
+
     setSending(true);
     let audioUrl = null, coverUrl = null;
     if (audioFile) { audioUrl = await uploadFile("audio", audioFile, user.id); if (!audioUrl) { toast("Erreur upload audio.", "err"); setSending(false); return; } }
     if (coverFile) { coverUrl = await uploadFile("covers", coverFile, user.id); }
+
     const { error } = await supabase.from("tracks").insert({
       user_id: user.id, title: uploadForm.title, genre: uploadForm.genre,
       release_date: uploadForm.date || null, contributors: uploadForm.contributors,
+      producer: uploadForm.producer || "STERKTE RECORDS sous licence de " + (uploadForm.producer || "l'artiste"),
+      beatmaker: uploadForm.beatmaker, editors: uploadForm.editors,
       audio_url: audioUrl, cover_url: coverUrl, status: "pending",
     });
     if (error) { toast("Erreur. Réessayez.", "err"); } else {
-      await sendEmail({ name: profile?.artist_name || "Artiste", subject: `Distribution – ${uploadForm.title}`, titre: uploadForm.title, genre: uploadForm.genre, date_sortie: uploadForm.date, contributeurs: uploadForm.contributors, fichier_audio: audioFile?.name || "—", visuel: coverFile?.name || "—" });
-      toast("Titre soumis ! Confirmation sous 48h.", "ok");
-      setAudioFile(null); setCoverFile(null); setCoverPreview(null); setUploadForm({ title: "", genre: "", date: "", contributors: "" });
+      // Email de confirmation artiste
+      await sendEmail({
+        name: profile?.artist_name || "Artiste",
+        email: user.email,
+        subject: `✅ Distribution confirmée – ${uploadForm.title} | Sterkte Records`,
+        titre: uploadForm.title, genre: uploadForm.genre, date_sortie: uploadForm.date,
+        producteur: uploadForm.producer || "STERKTE RECORDS",
+        beatmaker: uploadForm.beatmaker, contributeurs: uploadForm.contributors,
+        message: `Bonjour ${profile?.artist_name || "Artiste"},\n\nVotre titre "${uploadForm.title}" a bien été soumis pour distribution. Notre équipe le validera sous 48h et le distribuera sur 150+ plateformes. Vous recevrez une confirmation dès qu'il sera en ligne.\n\nBienvenue dans la famille Sterkte Records 🎵`
+      });
+      // Notif équipe
+      await sendEmail({
+        name: "Site Web", email: WHATSAPP_EMAIL,
+        subject: `Nouveau titre soumis – ${uploadForm.title} par ${profile?.artist_name}`,
+        titre: uploadForm.title, artiste: profile?.artist_name || user.email, genre: uploadForm.genre, date_sortie: uploadForm.date
+      });
+      toast("Titre soumis ! Confirmation envoyée par email. Validation sous 48h.", "ok");
+      setAudioFile(null); setCoverFile(null); setCoverPreview(null);
+      setUploadForm({ title: "", genre: "", date: "", contributors: "", producer: "", beatmaker: "", editors: "" });
       refetch();
     }
     setSending(false);
@@ -1669,75 +1913,281 @@ function DashboardPage({ toast }) {
 
   if (!user) return null;
 
-  return (<div className="pg"><div style={{ padding: "100px 60px 40px", background: "linear-gradient(180deg,rgba(230,57,70,.05) 0%,transparent 100%)" }}><div className="sec-tag">Dashboard</div><h1 style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 40, fontWeight: 900, letterSpacing: -2 }}>Bienvenue, <span className="gold">{profile?.artist_name || "Artiste"}</span></h1><p style={{ color: C.muted, marginTop: 8 }}>Suivez vos performances et distribuez votre musique.</p></div><div className="pg-c">
-    <div className="tabs">
-      <button className={`tab ${dashTab === "overview" ? "ac" : ""}`} onClick={() => setDashTab("overview")}>Vue d'ensemble</button>
-      <button className={`tab ${dashTab === "upload" ? "ac" : ""}`} onClick={() => setDashTab("upload")}>Distribuer un titre</button>
-      <button className={`tab ${dashTab === "tracks" ? "ac" : ""}`} onClick={() => setDashTab("tracks")}>Mes titres</button>
-    </div>
+  // Calcul date minimum pour sortie
+  const today = new Date(); today.setDate(today.getDate() + 8);
+  const minDate = today.toISOString().split("T")[0];
 
-    {dashTab === "overview" && <>
-      <div className="dash-grid">
-        <div className="dash-stat"><div className="dash-stat-l">Streams totaux</div><div className="dash-stat-v" style={{ color: C.gold }}>{stats.totalStreams.toLocaleString()}</div></div>
-        <div className="dash-stat"><div className="dash-stat-l">Revenus totaux</div><div className="dash-stat-v" style={{ color: C.success }}>${stats.totalRevenue}</div></div>
-        <div className="dash-stat"><div className="dash-stat-l">Titres distribués</div><div className="dash-stat-v" style={{ color: C.blue }}>{stats.count}</div></div>
-        <div className="dash-stat"><div className="dash-stat-l">Plateformes actives</div><div className="dash-stat-v">{stats.platforms}</div></div>
+  return (
+    <div className="pg">
+      <div style={{ padding: "100px 60px 40px", background: "linear-gradient(180deg,rgba(230,57,70,.05) 0%,transparent 100%)" }}>
+        <div className="sec-tag">Dashboard Artiste</div>
+        <h1 style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 40, fontWeight: 900, letterSpacing: -2 }}>Bienvenue, <span className="gold">{profile?.artist_name || "Artiste"}</span></h1>
+        <p style={{ color: C.muted, marginTop: 8 }}>Suivez vos performances et distribuez votre musique.</p>
       </div>
-      {loading ? <div className="loading-box">Chargement...</div> : tracks.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-          <p style={{ fontSize: 16, marginBottom: 20 }}>Aucun titre distribué pour l'instant.</p>
-          <button className="btn btn-g btn-lg" onClick={() => setDashTab("upload")}>Distribuer mon premier titre</button>
+      <div className="pg-c">
+        <div className="tabs">
+          <button className={`tab ${dashTab === "overview" ? "ac" : ""}`} onClick={() => setDashTab("overview")}>Vue d'ensemble</button>
+          <button className={`tab ${dashTab === "upload" ? "ac" : ""}`} onClick={() => setDashTab("upload")}>Distribuer un titre</button>
+          <button className={`tab ${dashTab === "tracks" ? "ac" : ""}`} onClick={() => setDashTab("tracks")}>Mes titres</button>
         </div>
-      ) : (
-        <div className="dash-tracks"><div className="dash-tracks-h"><h3>Mes titres</h3></div>
-          {tracks.slice(0, 5).map((t, i) => (
-            <div key={t.id} className="tr-row">
-              <div className="tr-num">{i + 1}</div><div className="tr-title">{t.title}</div>
-              <div className="tr-info">{(t.streams || 0).toLocaleString()} streams</div><div className="tr-info">${parseFloat(t.revenue || 0).toFixed(2)}</div>
-              <div className={`tr-status ${t.status}`}><span className="tr-dot" style={{ background: t.status === "live" ? C.success : C.gold }} />{t.status === "live" ? "En ligne" : t.status === "pending" ? "En attente" : "Rejeté"}</div>
+
+        {dashTab === "overview" && <>
+          <div className="dash-grid">
+            <div className="dash-stat">
+              <div className="dash-stat-l">Streams totaux</div>
+              <div className="dash-stat-v" style={{ color: C.gold }}>{stats.totalStreams.toLocaleString()}</div>
+              <div className="dash-stat-note">Actualisé chaque 31 du mois</div>
             </div>
+            <div className="dash-stat">
+              <div className="dash-stat-l">Revenus totaux</div>
+              <div className="dash-stat-v" style={{ color: C.success }}>${stats.totalRevenue}</div>
+              <div className="dash-stat-note">Actualisé chaque 31 du mois</div>
+            </div>
+            <div className="dash-stat">
+              <div className="dash-stat-l">Titres distribués</div>
+              <div className="dash-stat-v" style={{ color: C.blue }}>{stats.count}</div>
+            </div>
+            <div className="dash-stat">
+              <div className="dash-stat-l">Plateformes actives</div>
+              <div className="dash-stat-v">{stats.platforms > 0 ? "+20" : "0"}</div>
+            </div>
+          </div>
+          {loading ? <div className="loading-box">Chargement...</div> : tracks.length === 0 ? (
+            <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
+              <p style={{ fontSize: 16, marginBottom: 20 }}>Aucun titre distribué pour l'instant.</p>
+              <button className="btn btn-g btn-lg" onClick={() => setDashTab("upload")}>Distribuer mon premier titre</button>
+            </div>
+          ) : (
+            <div className="dash-tracks">
+              <div className="dash-tracks-h"><h3>Mes titres</h3></div>
+              {tracks.slice(0, 5).map((t, i) => (
+                <div key={t.id} className="tr-row">
+                  <div className="tr-num">{i + 1}</div>
+                  <div className="tr-title">{t.title}</div>
+                  <div className="tr-info">{(t.streams || 0).toLocaleString()} streams</div>
+                  <div className="tr-info">${parseFloat(t.revenue || 0).toFixed(2)}</div>
+                  <div className={`tr-status ${t.status}`}>
+                    <span className="tr-dot" style={{ background: t.status === "live" ? C.success : t.status === "pending" ? C.gold : C.red }} />
+                    {t.status === "live" ? "En ligne" : t.status === "pending" ? "En attente" : "Rejeté"}
+                  </div>
+                </div>
+              ))}
+              {tracks.some(t => t.status === "rejected") && (
+                <div style={{ padding: "12px 24px", background: "rgba(230,57,70,0.05)", borderTop: `1px solid rgba(230,57,70,0.1)`, display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon.AlertCircle size={14} color={C.red} />
+                  <span style={{ fontSize: 13, color: C.red }}>Un ou plusieurs titres ont été refusés. Contactez-nous pour plus d'informations.</span>
+                </div>
+              )}
+            </div>
+          )}
+        </>}
+
+        {dashTab === "upload" && (
+          <div style={{ maxWidth: 640 }}>
+            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Distribuer un <span className="gold">nouveau titre</span></h3>
+            <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Uploadez votre morceau et le visuel. Validation sous 48h. Vous recevrez un email de confirmation.</p>
+
+            {/* Audio */}
+            <div className={`upload ${audioFile ? "has-file" : ""}`} onClick={() => audioRef.current?.click()}>
+              <div className="upload-ico"><Icon.Upload size={40} color={audioFile ? C.success : C.muted} /></div>
+              <h4>{audioFile ? audioFile.name : "Cliquez pour ajouter le fichier audio *"}</h4>
+              <p>{audioFile ? `${(audioFile.size / 1024 / 1024).toFixed(1)} MB` : "WAV ou MP3 uniquement"}</p>
+              <input ref={audioRef} type="file" accept=".wav,.mp3" style={{ display: "none" }} onChange={handleAudioSelect} />
+            </div>
+
+            {/* Cover */}
+            <div className={`upload ${coverFile ? "has-file" : coverError ? "" : ""}`} onClick={() => coverRef.current?.click()} style={{ padding: coverPreview ? 24 : 48, borderColor: coverError ? C.red : undefined }}>
+              {coverPreview
+                ? <div style={{ display: "flex", alignItems: "center", gap: 20 }}><img src={coverPreview} alt="Cover" style={{ width: 100, height: 100, borderRadius: 8, objectFit: "cover" }} /><div style={{ textAlign: "left" }}><h4 style={{ marginBottom: 4 }}>{coverFile.name}</h4><p>{(coverFile.size / 1024 / 1024).toFixed(1)} MB</p></div></div>
+                : <><div className="upload-ico"><Icon.Image size={40} color={coverError ? C.red : C.muted} /></div><h4>Couverture obligatoire *</h4><p>PNG ou JPG — Minimum 3000x3000px (obligatoire)</p></>}
+              <input ref={coverRef} type="file" accept=".png,.jpg,.jpeg,image/*" style={{ display: "none" }} onChange={handleCoverSelect} />
+            </div>
+            {coverError && <div className="fm-err" style={{ marginTop: -16, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}><Icon.AlertCircle size={12} />{coverError}</div>}
+
+            <div className="fm">
+              <div className="fm-g"><label className="fm-l">Titre *</label><input className="fm-i" placeholder="Nom du titre" value={uploadForm.title} onChange={(e) => setUploadForm({ ...uploadForm, title: e.target.value })} /></div>
+              <div className="fm-row">
+                <div className="fm-g"><label className="fm-l">Genre *</label>
+                  <select className="fm-s" value={uploadForm.genre} onChange={(e) => setUploadForm({ ...uploadForm, genre: e.target.value })}>
+                    <option value="">Sélectionner</option>
+                    {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+                  </select>
+                </div>
+                <div className="fm-g">
+                  <label className="fm-l">Date de sortie * <span style={{ color: C.muted, fontSize: 10 }}>(min. 8 jours)</span></label>
+                  <input className="fm-i" type="date" min={minDate} value={uploadForm.date} onChange={(e) => setUploadForm({ ...uploadForm, date: e.target.value })} />
+                </div>
+              </div>
+              <div className="fm-g"><label className="fm-l">Producteur <span style={{ color: C.muted, fontSize: 10 }}>(défaut: Sterkte Records)</span></label><input className="fm-i" placeholder="STERKTE RECORDS sous licence de…" value={uploadForm.producer} onChange={(e) => setUploadForm({ ...uploadForm, producer: e.target.value })} /></div>
+              <div className="fm-g"><label className="fm-l">Beatmaker</label><input className="fm-i" placeholder="Nom du beatmaker" value={uploadForm.beatmaker} onChange={(e) => setUploadForm({ ...uploadForm, beatmaker: e.target.value })} /></div>
+              <div className="fm-g"><label className="fm-l">Éditeurs</label><input className="fm-i" placeholder="Noms des éditeurs" value={uploadForm.editors} onChange={(e) => setUploadForm({ ...uploadForm, editors: e.target.value })} /></div>
+              <div className="fm-g"><label className="fm-l">Contributeurs</label><input className="fm-i" placeholder="Noms séparés par virgules" value={uploadForm.contributors} onChange={(e) => setUploadForm({ ...uploadForm, contributors: e.target.value })} /></div>
+              <button className="btn btn-g btn-lg" style={{ marginTop: 16 }} onClick={handleUpload} disabled={sending}>{sending ? "Upload en cours..." : "Soumettre pour distribution"}</button>
+            </div>
+          </div>
+        )}
+
+        {dashTab === "tracks" && (
+          loading ? <div className="loading-box">Chargement...</div> :
+          <div className="dash-tracks">
+            <div className="dash-tracks-h"><h3>Tous mes titres ({tracks.length})</h3><button className="btn btn-g btn-sm" onClick={() => setDashTab("upload")}>+ Nouveau</button></div>
+            {tracks.length === 0 ? <div style={{ padding: 40, textAlign: "center", color: C.muted }}>Aucun titre.</div> :
+            tracks.map((t, i) => (
+              <div key={t.id} className="tr-row">
+                <div className="tr-num">{i + 1}</div>
+                <div className="tr-title">{t.title}</div>
+                <div className="tr-info">{(t.streams || 0).toLocaleString()} streams</div>
+                <div className="tr-info">${parseFloat(t.revenue || 0).toFixed(2)}</div>
+                <div className={`tr-status ${t.status}`}>
+                  <span className="tr-dot" style={{ background: t.status === "live" ? C.success : t.status === "pending" ? C.gold : C.red }} />
+                  {t.status === "live" ? "En ligne" : t.status === "pending" ? "En attente" : "Rejeté"}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── ADMIN DASHBOARD ───
+function AdminPage({ toast }) {
+  const { user, isAdmin } = useAuth();
+  const nav = useNavigate();
+  const [tab, setTab] = useState("tracks");
+  const [tracks, setTracks] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [stats, setStats] = useState({ totalArtists: 0, totalTracks: 0, pendingTracks: 0, totalStreams: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) { nav("/connexion"); return; }
+    if (!isAdmin) { nav("/dashboard"); return; }
+    loadData();
+  }, [user, isAdmin]);
+
+  const loadData = async () => {
+    setLoading(true);
+    const { data: t } = await supabase.from("tracks").select("*, profiles(artist_name, full_name)").order("created_at", { ascending: false });
+    const { data: p } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    setTracks(t || []);
+    setProfiles(p || []);
+    const totalStreams = (t || []).reduce((s, tr) => s + (tr.streams || 0), 0);
+    setStats({ totalArtists: (p || []).length, totalTracks: (t || []).length, pendingTracks: (t || []).filter(tr => tr.status === "pending").length, totalStreams });
+    setLoading(false);
+  };
+
+  const updateTrackStatus = async (id, status, artistEmail, trackTitle) => {
+    await supabase.from("tracks").update({ status }).eq("id", id);
+    if (status === "rejected") {
+      await sendEmail({ name: "Artiste", email: artistEmail, subject: `❌ Titre refusé – ${trackTitle} | Sterkte Records`, message: `Votre titre "${trackTitle}" a malheureusement été refusé. Notre équipe a examiné votre soumission et elle ne répond pas à nos critères actuels. Contactez-nous pour plus d'informations.` });
+    } else if (status === "live") {
+      await sendEmail({ name: "Artiste", email: artistEmail, subject: `✅ Titre approuvé et en ligne – ${trackTitle} | Sterkte Records`, message: `Félicitations ! Votre titre "${trackTitle}" est maintenant disponible sur toutes les plateformes. Bonne diffusion !` });
+    }
+    toast(`Statut mis à jour : ${status}`, "ok");
+    loadData();
+  };
+
+  if (!isAdmin) return null;
+
+  return (
+    <div className="pg">
+      <div style={{ padding: "100px 60px 40px", background: "linear-gradient(180deg,rgba(245,197,24,.05) 0%,transparent 100%)" }}>
+        <div className="sec-tag" style={{ color: C.gold, display: "flex", alignItems: "center", gap: 8 }}><Icon.Shield size={14} />Dashboard Admin</div>
+        <h1 style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 40, fontWeight: 900, letterSpacing: -2 }}>Gestion <span className="gold">Sterkte Records</span></h1>
+        <p style={{ color: C.muted, marginTop: 8 }}>Espace réservé à l'équipe Sterkte Records.</p>
+      </div>
+      <div className="pg-c">
+        {/* Stats globales */}
+        <div className="admin-grid" style={{ marginBottom: 32 }}>
+          {[
+            { l: "Artistes inscrits", v: stats.totalArtists, c: C.blue },
+            { l: "Titres soumis", v: stats.totalTracks, c: C.gold },
+            { l: "En attente", v: stats.pendingTracks, c: C.red },
+            { l: "Streams totaux", v: stats.totalStreams.toLocaleString(), c: C.success },
+          ].map(s => (
+            <div key={s.l} className="dash-stat"><div className="dash-stat-l">{s.l}</div><div className="dash-stat-v" style={{ color: s.c }}>{s.v}</div></div>
           ))}
         </div>
-      )}
-    </>}
 
-    {dashTab === "upload" && <div style={{ maxWidth: 640 }}>
-      <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Distribuer un <span className="gold">nouveau titre</span></h3>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Uploadez votre morceau et le visuel. Validation sous 48h.</p>
-      <div className={`upload ${audioFile ? "has-file" : ""}`} onClick={() => audioRef.current?.click()}>
-        <div className="upload-ico"><Icon.Upload size={40} color={audioFile ? C.success : C.muted} /></div>
-        <h4>{audioFile ? audioFile.name : "Cliquez pour ajouter le fichier audio"}</h4>
-        <p>{audioFile ? `${(audioFile.size / 1024 / 1024).toFixed(1)} MB` : "WAV, FLAC, MP3"}</p>
-        <input ref={audioRef} type="file" accept=".wav,.flac,.mp3,audio/*" style={{ display: "none" }} onChange={(e) => e.target.files[0] && setAudioFile(e.target.files[0])} />
-      </div>
-      <div className={`upload ${coverFile ? "has-file" : ""}`} onClick={() => coverRef.current?.click()} style={{ padding: coverPreview ? 24 : 48 }}>
-        {coverPreview ? <div style={{ display: "flex", alignItems: "center", gap: 20 }}><img src={coverPreview} alt="Cover" style={{ width: 100, height: 100, borderRadius: 8, objectFit: "cover" }} /><div style={{ textAlign: "left" }}><h4 style={{ marginBottom: 4 }}>{coverFile.name}</h4><p>{(coverFile.size / 1024 / 1024).toFixed(1)} MB</p></div></div>
-        : <><div className="upload-ico"><Icon.Image size={40} color={C.muted} /></div><h4>Cliquez pour ajouter la couverture</h4><p>PNG ou JPG, 3000x3000px recommandé</p></>}
-        <input ref={coverRef} type="file" accept=".png,.jpg,.jpeg,image/*" style={{ display: "none" }} onChange={handleCoverSelect} />
-      </div>
-      <div className="fm">
-        <div className="fm-g"><label className="fm-l">Titre *</label><input className="fm-i" placeholder="Nom du titre" value={uploadForm.title} onChange={(e) => setUploadForm({ ...uploadForm, title: e.target.value })} /></div>
-        <div className="fm-row"><div className="fm-g"><label className="fm-l">Genre</label><select className="fm-s" value={uploadForm.genre} onChange={(e) => setUploadForm({ ...uploadForm, genre: e.target.value })}><option value="">Sélectionner</option><option value="Afrobeat">Afrobeat</option><option value="R&B">R&B</option><option value="Rap">Rap</option><option value="Rumba">Rumba</option><option value="Gospel">Gospel</option><option value="Amapiano">Amapiano</option><option value="Autre">Autre</option></select></div><div className="fm-g"><label className="fm-l">Date de sortie</label><input className="fm-i" type="date" value={uploadForm.date} onChange={(e) => setUploadForm({ ...uploadForm, date: e.target.value })} /></div></div>
-        <div className="fm-g"><label className="fm-l">Contributeurs</label><input className="fm-i" placeholder="Noms séparés par virgules" value={uploadForm.contributors} onChange={(e) => setUploadForm({ ...uploadForm, contributors: e.target.value })} /></div>
-        <button className="btn btn-g btn-lg" style={{ marginTop: 16 }} onClick={handleUpload} disabled={sending}>{sending ? "Upload en cours..." : "Soumettre pour distribution"}</button>
-      </div>
-    </div>}
+        <div className="tabs">
+          <button className={`tab ${tab === "tracks" ? "ac" : ""}`} onClick={() => setTab("tracks")}>Titres soumis</button>
+          <button className={`tab ${tab === "artists" ? "ac" : ""}`} onClick={() => setTab("artists")}>Artistes inscrits</button>
+        </div>
 
-    {dashTab === "tracks" && (
-      loading ? <div className="loading-box">Chargement...</div> :
-      <div className="dash-tracks"><div className="dash-tracks-h"><h3>Tous mes titres ({tracks.length})</h3><button className="btn btn-g btn-sm" onClick={() => setDashTab("upload")}>+ Nouveau</button></div>
-        {tracks.length === 0 ? <div style={{ padding: 40, textAlign: "center", color: C.muted }}>Aucun titre.</div> :
-        tracks.map((t, i) => <div key={t.id} className="tr-row"><div className="tr-num">{i + 1}</div><div className="tr-title">{t.title}</div><div className="tr-info">{(t.streams || 0).toLocaleString()} streams</div><div className="tr-info">${parseFloat(t.revenue || 0).toFixed(2)}</div><div className={`tr-status ${t.status}`}><span className="tr-dot" style={{ background: t.status === "live" ? C.success : t.status === "pending" ? C.gold : C.red }} />{t.status === "live" ? "En ligne" : t.status === "pending" ? "En attente" : "Rejeté"}</div></div>)}
+        {loading ? <div className="loading-box">Chargement...</div> : (
+          <>
+            {tab === "tracks" && (
+              <div className="dash-tracks">
+                <div className="dash-tracks-h"><h3>Tous les titres ({tracks.length})</h3></div>
+                {tracks.length === 0 ? <div style={{ padding: 40, textAlign: "center", color: C.muted }}>Aucun titre.</div> :
+                tracks.map((t) => (
+                  <div key={t.id} className="admin-row">
+                    <div className={`admin-badge ${t.status}`}>{t.status === "live" ? "En ligne" : t.status === "pending" ? "En attente" : "Rejeté"}</div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14 }}>{t.title}</div>
+                      <div style={{ fontSize: 12, color: C.muted }}>{t.profiles?.artist_name || "—"} · {t.genre}</div>
+                    </div>
+                    <div style={{ fontSize: 13, color: C.muted }}>{t.release_date || "—"}</div>
+                    <div style={{ fontSize: 13, color: C.muted }}>{(t.streams || 0).toLocaleString()} streams</div>
+                    <div style={{ fontSize: 13, color: C.muted }}>Posté : {new Date(t.created_at).toLocaleDateString("fr-FR")}</div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {t.status !== "live" && <button className="admin-action approve" onClick={() => updateTrackStatus(t.id, "live", t.user_id, t.title)}>Approuver</button>}
+                      {t.status !== "rejected" && <button className="admin-action reject" onClick={() => updateTrackStatus(t.id, "rejected", t.user_id, t.title)}>Refuser</button>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {tab === "artists" && (
+              <div className="dash-tracks">
+                <div className="dash-tracks-h"><h3>Artistes inscrits ({profiles.length})</h3></div>
+                {profiles.length === 0 ? <div style={{ padding: 40, textAlign: "center", color: C.muted }}>Aucun artiste.</div> :
+                profiles.map((p) => (
+                  <div key={p.id} className="admin-reg-row">
+                    <div style={{ width: 40, height: 40, borderRadius: "50%", background: `linear-gradient(135deg, ${C.red}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 14, color: "#000", flexShrink: 0 }}>{(p.artist_name || "?")[0].toUpperCase()}</div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14 }}>{p.artist_name || "—"}</div>
+                      <div style={{ fontSize: 12, color: C.muted }}>{p.full_name || "—"}</div>
+                    </div>
+                    <div style={{ fontSize: 13, color: C.muted }}>{p.genre || "—"}</div>
+                    <div style={{ fontSize: 13, color: C.muted }}>{p.whatsapp || "—"}</div>
+                    <div style={{ fontSize: 12, color: C.muted }}>Inscrit : {new Date(p.created_at).toLocaleDateString("fr-FR")}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
-    )}
-  </div></div>);
+    </div>
+  );
 }
 
 // ─── PROTECTED ROUTE ───
 function ProtectedRoute({ children, toast }) {
   const { user, loading } = useAuth();
+  const nav = useNavigate();
   if (loading) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
   if (!user) return <LoginPage />;
+  return children;
+}
+
+// ─── ADMIN PROTECTED ROUTE ───
+function AdminProtectedRoute({ children, toast }) {
+  const { user, isAdmin, loading } = useAuth();
+  if (loading) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
+  if (!user) return <LoginPage />;
+  if (!isAdmin) return (
+    <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, minHeight: "80vh" }}>
+      <Icon.Shield size={48} color={C.red} />
+      <h2 style={{ color: C.white }}>Accès restreint</h2>
+      <p style={{ color: C.muted }}>Cette page est réservée à l'équipe Sterkte Records.</p>
+      <Link to="/" className="btn btn-g">Retour à l'accueil</Link>
+    </div>
+  );
   return children;
 }
 
@@ -1767,6 +2217,7 @@ export default function App() {
           <Route path="/contact" element={<ContactPage toast={showToast} />} />
           <Route path="/connexion" element={<LoginPage />} />
           <Route path="/dashboard" element={<ProtectedRoute toast={showToast}><DashboardPage toast={showToast} /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminProtectedRoute toast={showToast}><AdminPage toast={showToast} /></AdminProtectedRoute>} />
         </Routes>
         {!isLogin && <Footer />}
         {toastData && <Toast msg={toastData.msg} type={toastData.type} onClose={() => setToastData(null)} />}
