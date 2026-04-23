@@ -8,11 +8,11 @@ const EMAIL_CONFIG = {
   ENDPOINT: "https://api.web3forms.com/submit",
 };
 
-const WHATSAPP_NUMBER = "212600000000"; // ← Remplacez par votre vrai numéro WhatsApp (format international sans +)
+const WHATSAPP_NUMBER = "+243850510209"; // ← Remplacez par votre vrai numéro WhatsApp (format international sans +)
 const WHATSAPP_EMAIL = "contact.sterkterecords@gmail.com";
 
 // ADMIN CONFIG — emails des membres de l'équipe autorisés à accéder au dashboard admin
-const ADMIN_EMAILS = ["axel@sterkterecords.com", "contact.sterkterecords@gmail.com"];
+const ADMIN_EMAILS = ["contact@sterkterecords.com", "contact.sterkterecords@gmail.com"];
 
 // ─── COLORS ───
 const C = {
@@ -287,20 +287,20 @@ const SERVICES_LIST = [
 const MOCK_ARTISTS_DETAIL = {
   "dj-minho": {
     bio: "DJ Minho était l'une des figures les plus emblématiques de la scène musicale de Lubumbashi. Reconnu pour son énergie incomparable sur les platines et sa capacité à transcender les foules, il a marqué de son empreinte indélébile la scène musicale congolaise et africaine.",
-    bio2: "Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le 01 février 2025. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.",
+    bio2: "Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le 01 Aout 2025. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.",
     genre: "DJ / Afrobeat",
     origin: "Lubumbashi, RDC",
     since: "2021",
-    streams: "500K+",
+    streams: "50K+",
     plateformes: "150+",
     singles: [
-      { title: "Nuit de Lubumbashi", year: "2024", streams: "180K" },
-      { title: "Afrika Rising", year: "2023", streams: "145K" },
-      { title: "On Fire", year: "2022", streams: "120K" },
+      { title: "Breakfast (feat. Hbeatz)", year: "2024", streams: "180K" },
+      { title: "Ama vibe", year: "2023", streams: "145K" },
+      { title: "Ama vibe", year: "2022", streams: "120K" },
     ],
     socials: { instagram: "https://instagram.com", spotify: "https://open.spotify.com" },
     tribute: true,
-    tributeDate: "01/02/2025",
+    tributeDate: "01/08/2025",
   },
   default: {
     bio: "Artiste emblématique du roster Sterkte Records, il incarne la fusion entre les sonorités africaines authentiques et les productions modernes. Depuis ses débuts, il s'est imposé comme une voix incontournable de la scène musicale de Lubumbashi, portant haut les couleurs d'une Afrique créative et résolument tournée vers le monde.",
@@ -1253,7 +1253,7 @@ function ArtistsPage() {
   const [showAll, setShowAll] = useState(false);
   const nav = useNavigate();
 
-  const djMinhoArtist = { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://ui-avatars.com/api/?name=DJ+Minho&size=800&background=1A1A25&color=F5C518&bold=true`, tribute: true };
+  const djMinhoArtist = { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://aaanvxwmhvddncarrgpn.supabase.co/storage/v1/object/public/avatars/DJ%20MINHO.jpg`, tribute: true };
   const allArtists = artists.some(a => a.name.toLowerCase().includes("minho")) ? artists : [djMinhoArtist, ...artists];
 
   const filtered = allArtists.filter((a) => (filter === "Tout" || (a.tags || []).includes(filter)) && a.name.toLowerCase().includes(search.toLowerCase()));
