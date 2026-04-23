@@ -1351,7 +1351,7 @@ function ArtistDetailPage() {
     const s = a.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     return s === slug;
   });
-  const artist = artistFromState || artistFromList || (slug === "dj-minho" ? { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://ui-avatars.com/api/?name=DJ+Minho&size=800&background=1A1A25&color=F5C518&bold=true` } : null);
+  const artist = artistFromState || artistFromList || (slug === "dj-minho" ? { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: `https://aaanvxwmhvddncarrgpn.supabase.co/storage/v1/object/public/avatars/DJ%20MINHO.jpg` } : null);
 
   const detail = MOCK_ARTISTS_DETAIL[slug] || MOCK_ARTISTS_DETAIL.default;
 
