@@ -1128,7 +1128,7 @@ function HomePage() {
         </div>
       </section>
     </>
- );
+);
 }
 
 // ─── ABOUT ───
