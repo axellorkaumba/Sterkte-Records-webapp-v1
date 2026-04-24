@@ -1196,8 +1196,7 @@ function HomePage() {
             </div>
           ))}
         </div>
-
-        {/* Timeline */}
+       {/* Timeline */}
         <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre histoire</h3>
         <div className="about-timeline">
           {[
