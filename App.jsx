@@ -1215,12 +1215,10 @@ function HomePage() {
             </div>
           ))}
         </div>
-
         {/* Équipe */}
         <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>L'équipe dirigeante</h3>
         <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Des professionnels passionnés au service de votre talent.</p>
         <div className="team-grid">{team.map((m) => <div key={m.name} className="team"><div className="team-av">{m.i}</div><h4>{m.name}</h4><div className="role">{m.role}</div><p>{m.desc}</p></div>)}</div>
-
         <div style={{ marginTop: 64, padding: "48px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: "center" }}>
           <div className="sec-tag">Vous êtes artiste ?</div>
           <h3 style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1, margin: "12px 0 16px" }}>Rejoignez l'aventure <span className="gold">Sterkte Records</span></h3>
@@ -1229,10 +1227,9 @@ function HomePage() {
             <Link to="/connexion" className="btn btn-g btn-lg"><Icon.User size={16} />Créer mon espace artiste</Link>
             <Link to="/contact" className="btn btn-o btn-lg"><Icon.Mail size={16} />Nous contacter</Link>
           </div>
-       </div>
+        </div>
       </div>
     </div>
-    </>
   );
 }
 
