@@ -1229,9 +1229,8 @@ function HomePage() {
             <Link to="/connexion" className="btn btn-g btn-lg"><Icon.User size={16} />Créer mon espace artiste</Link>
             <Link to="/contact" className="btn btn-o btn-lg"><Icon.Mail size={16} />Nous contacter</Link>
           </div>
-        </div>
-      </div>
-    </div>
+        </div></section>
+    </>
   );
 }
 
