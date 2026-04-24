@@ -1061,7 +1061,7 @@ function HomePage() {
       <section className="hero">
         <div className="hero-bg" />
         <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.15,pointerEvents:"none",zIndex:0}} viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          {Array.from({length:12},(_,i)=>(
+        {Array.from({length:12},(_,i)=>(
             <path key={i} d={`M0,${180+i*38} C360,${140+i*38} 720,${220+i*38} 1080,${180+i*38} C1260,${160+i*38} 1380,${200+i*38} 1440,${190+i*38}`} stroke="#F5C518" strokeWidth="0.8" fill="none" opacity={0.55-i*0.03}/>
           ))}
         </svg>
@@ -1286,7 +1286,7 @@ function ArtistsPage() {
                     <div className="tribute-bg" />
                     {/* Étoiles flottantes */}
                     <div className="tribute-particles">
-                      {Array.from({ length: 12 }, (_, i) => (
+                      {Array.from({length:12},(_,i)=>(
                         <div key={i} className="tribute-star" style={{ left: `${10 + i * 8}%`, top: `${20 + (i % 4) * 20}%`, animationDelay: `${i * 0.3}s`, animationDuration: `${3 + (i % 3)}s` }} />
                       ))}
                     </div>
