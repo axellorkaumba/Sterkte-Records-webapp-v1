@@ -1088,7 +1088,7 @@ function HomePage() {
         <div style={{ position: "relative", zIndex: 2, maxWidth: 700, margin: "0 auto" }}>
           <div className="hero-badge" style={{ display: "inline-flex", marginBottom: 32 }}><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
           <h1 style={{ fontSize: "clamp(28px,3vw,42px)", fontWeight: 600, lineHeight: 1.3, letterSpacing: 1, marginBottom: 48, textTransform: "uppercase" }}>
-            VOTRE MUSIQUE SUR <span className="gold">150+ PLATEFORMES</span><br />EN QUELQUES <span className="red">JOURS</span>
+            VOTRE MUSIQUE SUR <span className="gold">150+ PLATEFORMES</span><br/>EN QUELQUES <span className="red">JOURS</span>
           </h1>
         </div>
 
