@@ -1086,35 +1086,48 @@ function HomePage() {
 
         {/* Texte centré */}
         <div style={{ position: "relative", zIndex: 2, maxWidth: 700, margin: "0 auto" }}>
-          <div className="hero-badge" style={{ display: "inline-flex", marginBottom: 24 }}><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
-          <h1 style={{ fontSize: "clamp(28px,3.5vw,46px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: -1, marginBottom: 40 }}>
-            Votre musique sur <span className="gold">150+ plateformes</span> en quelques <span className="red">jours</span>
+          <div className="hero-badge" style={{ display: "inline-flex", marginBottom: 32 }}><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
+          <h1 style={{ fontSize: "clamp(28px,3vw,42px)", fontWeight: 600, lineHeight: 1.3, letterSpacing: 1, marginBottom: 48, textTransform: "uppercase" }}>
+            VOTRE MUSIQUE SUR <span className="gold">150+ PLATEFORMES</span><br />EN QUELQUES <span className="red">JOURS</span>
           </h1>
         </div>
 
         {/* Cartes artistes en éventail */}
-        {cards.length > 0 && (
+       {cards.length > 0 && (
           <div style={{ position: "relative", zIndex: 2, width: "100%", height: 320, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 48 }}>
             {cards.map((a, i) => {
               const rot = rotations[i] || 0;
               const ty = (translateY[i] || 0) + offset * 0.04 * (i % 2 === 0 ? 1 : -1);
               return (
-                <div key={a.id} style={{
-                  position: "absolute",
-                  width: 160,
-                  height: 220,
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  border: "3px solid rgba(255,255,255,0.15)",
-                  transform: `rotate(${rot}deg) translateY(${ty}px)`,
-                  transition: "transform 0.1s ease-out",
-                  boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-                  left: `calc(50% + ${(i - 2) * 110}px)`,
-                  zIndex: i === 2 ? 5 : i === 1 || i === 3 ? 4 : 3,
-                }}>
+                <div key={a.id}
+                  style={{
+                    position: "absolute",
+                    width: 160,
+                    height: 220,
+                    borderRadius: 16,
+                    overflow: "hidden",
+                    border: "3px solid rgba(255,255,255,0.15)",
+                    transform: `rotate(${rot}deg) translateY(${ty}px)`,
+                    transition: "transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.3s ease",
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+                    left: `calc(50% - 80px + ${(i - 2) * 120}px)`,
+                    zIndex: i === 2 ? 5 : i === 1 || i === 3 ? 4 : 3,
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = `rotate(${rot * 0.3}deg) translateY(${ty - 20}px) scale(1.08)`;
+                    e.currentTarget.style.boxShadow = "0 30px 80px rgba(0,0,0,0.6)";
+                    e.currentTarget.style.zIndex = "10";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = `rotate(${rot}deg) translateY(${ty}px) scale(1)`;
+                    e.currentTarget.style.boxShadow = "0 20px 60px rgba(0,0,0,0.4)";
+                    e.currentTarget.style.zIndex = String(i === 2 ? 5 : i === 1 || i === 3 ? 4 : 3);
+                  }}
+                >
                   <img src={a.image_url} alt={a.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "20px 12px 12px" }}>
-                    <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 12, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: 1 }}>{a.name}</div>
+                    <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: 1 }}>{a.name}</div>
                   </div>
                 </div>
               );
