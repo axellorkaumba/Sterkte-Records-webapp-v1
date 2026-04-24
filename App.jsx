@@ -1128,8 +1128,11 @@ function HomePage() {
         </div>
       </section>
     </>
-  );
+ );
 }
+
+// ─── ABOUT ───
+function AboutPage() {
   useSEO("/a-propos");
   useScrollReveal();
   const team = [
