@@ -1087,21 +1087,14 @@ function HomePage() {
         {/* Texte centré */}
         <div style={{ position: "relative", zIndex: 2, maxWidth: 700, margin: "0 auto" }}>
           <div className="hero-badge" style={{ display: "inline-flex", marginBottom: 24 }}><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
-          <h1 style={{ fontSize: "clamp(32px,4.5vw,58px)", fontWeight: 900, lineHeight: 1.1, letterSpacing: -2, marginBottom: 20 }}>
-            Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span>
+          <h1 style={{ fontSize: "clamp(28px,3.5vw,46px)", fontWeight: 700, lineHeight: 1.2, letterSpacing: -1, marginBottom: 40 }}>
+            Votre musique sur <span className="gold">150+ plateformes</span> en quelques <span className="red">jours</span>
           </h1>
-          <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--muted)", maxWidth: 520, margin: "0 auto 32px" }}>
-            Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management.
-          </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 60 }}>
-            <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} />Distribuer mon titre</Link>
-            <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} />Réserver le studio</Link>
-          </div>
         </div>
 
         {/* Cartes artistes en éventail */}
         {cards.length > 0 && (
-          <div style={{ position: "relative", zIndex: 2, width: "100%", height: 320, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 60 }}>
+          <div style={{ position: "relative", zIndex: 2, width: "100%", height: 320, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 48 }}>
             {cards.map((a, i) => {
               const rot = rotations[i] || 0;
               const ty = (translateY[i] || 0) + offset * 0.04 * (i % 2 === 0 ? 1 : -1);
@@ -1129,11 +1122,10 @@ function HomePage() {
           </div>
         )}
 
-        {/* Stats */}
-        <div className="hero-stats" style={{ justifyContent: "center", position: "relative", zIndex: 2 }}>
-          {[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "20+", l: "Pays" }].map((s) => (
-            <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>
-          ))}
+        {/* Boutons */}
+        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 60, position: "relative", zIndex: 2 }}>
+          <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} />Distribuer mon titre</Link>
+          <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} />Réserver le studio</Link>
         </div>
       </section>
 
