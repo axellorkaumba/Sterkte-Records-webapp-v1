@@ -519,6 +519,7 @@ const css = `
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:${C.bg};--card:${C.bgCard};--hover:${C.bgHover};--input:${C.bgInput};--border:${C.border};--white:${C.white};--gold:${C.gold};--red:${C.red};--blue:${C.blue};--muted:${C.muted};--ok:${C.success}}
 body{background:var(--bg);color:var(--white)}
+body[data-theme="light"]{--bg:#F5F5F0;--card:#FFFFFF;--hover:#EEEEEA;--input:#F0F0EB;--border:#DDDDD8;--white:#111111;--muted:#666660;--gold:#C9920A;--red:#E63946;--blue:#1565C0}
 .app{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden}
 h1,h2,h3,h4,h5,h6{font-family:'Montserrat',sans-serif}
 a{text-decoration:none;color:inherit}
@@ -534,7 +535,7 @@ nav.n.s{background:rgba(10,10,15,0.95)}
 .n-links a{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);transition:color .3s;position:relative}
 .n-links a:hover,.n-links a.ac{color:var(--white)}
 .n-links a.ac::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--gold);border-radius:1px}
-.n-acts{display:flex;gap:12px;align-items:center}
+.n-acts{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
 .n-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
 .n-ham span{display:block;width:24px;height:2px;background:var(--white);transition:all .3s}
 
@@ -920,6 +921,7 @@ footer.ft{background:rgba(10,10,15,0.4)!important;backdrop-filter:blur(20px) sat
 
 @media(max-width:900px){
   .n-links{display:none}.n-ham{display:flex}
+  .n-acts .btn-r{font-size:10px;padding:6px 10px;letter-spacing:0}
   .hero{padding:100px 24px 40px}.hero-stats{gap:24px;flex-wrap:wrap}.hero-visual{display:none}.hero-slider{display:none}
   .sec{padding:60px 24px}.pg-c{padding:32px 24px}
   .pg-banner{padding:100px 24px 60px}
@@ -937,8 +939,12 @@ footer.ft{background:rgba(10,10,15,0.4)!important;backdrop-filter:blur(20px) sat
 
 // ─── NAV ───
 function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobOpen, setMobOpen] = useState(false);
+const [scrolled, setScrolled] = useState(false);
+const [mobOpen, setMobOpen] = useState(false);
+const [dark, setDark] = useState(true);
+useEffect(() => {
+  document.body.setAttribute("data-theme", dark ? "dark" : "light");
+}, [dark]);
   const { user, signOut, isAdmin } = useAuth();
   const loc = useLocation();
   useEffect(() => { const h = () => setScrolled(window.scrollY > 40); window.addEventListener("scroll", h); return () => window.removeEventListener("scroll", h); }, []);
@@ -964,6 +970,7 @@ function Navbar() {
               <button className="btn btn-o btn-sm" onClick={signOut}>Déconnexion</button>
             </>
           ) : (<Link to="/connexion" className="btn btn-r btn-sm">Espace Artiste</Link>)}
+          <button className="btn btn-o btn-sm" onClick={() => setDark(d => !d)} style={{fontSize:11,padding:"6px 12px"}}>{dark ? "☀️" : "🌙"}</button>
           <button className="n-ham" onClick={() => setMobOpen(true)}><span /><span /><span /></button>
         </div>
       </nav>
@@ -1055,25 +1062,78 @@ function HomePage() {
   const { artists } = useArtists();
   const testimonials = useTestimonials();
   const platforms = ["SPOTIFY", "APPLE MUSIC", "DEEZER", "YOUTUBE MUSIC", "TIDAL", "AMAZON MUSIC", "AUDIOMACK", "BOOMPLAY"];
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setOffset(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const cards = artists.slice(0, 5);
+  const rotations = [-18, -9, 0, 9, 18];
+  const translateY = [-20, -35, -45, -35, -20];
 
   return (
     <>
-      <section className="hero">
+      <section className="hero" style={{ justifyContent: "center", flexDirection: "column", alignItems: "center", textAlign: "center", minHeight: "100vh", padding: "120px 60px 80px" }}>
         <div className="hero-bg" />
-        <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.15,pointerEvents:"none",zIndex:0}} viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-        {Array.from({length:12},(_,i)=>(
-            <path key={i} d={`M0,${180+i*38} C360,${140+i*38} 720,${220+i*38} 1080,${180+i*38} C1260,${160+i*38} 1380,${200+i*38} 1440,${190+i*38}`} stroke="#F5C518" strokeWidth="0.8" fill="none" opacity={0.55-i*0.03}/>
+        <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.12, pointerEvents: "none", zIndex: 0 }} viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          {Array.from({ length: 12 }, (_, i) => (
+            <path key={i} d={`M0,${180 + i * 38} C360,${140 + i * 38} 720,${220 + i * 38} 1080,${180 + i * 38} C1260,${160 + i * 38} 1380,${200 + i * 38} 1440,${190 + i * 38}`} stroke="#F5C518" strokeWidth="0.8" fill="none" opacity={0.55 - i * 0.03} />
           ))}
         </svg>
-        <div className="hero-c">
-          <div className="hero-badge"><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
-          <h1>Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span></h1>
-          <p className="hero-sub">Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management. Nous transformons votre talent en carrière.</p>
-          <div className="hero-acts">
-            <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} color="currentColor" />Distribuer mon titre</Link>
-            <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} color="currentColor" />Réserver le studio</Link>
+
+        {/* Texte centré */}
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 700, margin: "0 auto" }}>
+          <div className="hero-badge" style={{ display: "inline-flex", marginBottom: 24 }}><div className="hero-badge-dot" />Label indépendant · From Lubumbashi to the World</div>
+          <h1 style={{ fontSize: "clamp(32px,4.5vw,58px)", fontWeight: 900, lineHeight: 1.1, letterSpacing: -2, marginBottom: 20 }}>
+            Votre musique sur<br /><span className="gold">150+ plateformes</span><br />en quelques <span className="red">jours</span>
+          </h1>
+          <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--muted)", maxWidth: 520, margin: "0 auto 32px" }}>
+            Sterkte Records accompagne les artistes africains de A à Z : distribution digitale mondiale, studio professionnel, booking et management.
+          </p>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 60 }}>
+            <Link to="/distribution-musique" className="btn btn-r btn-lg"><Icon.Music size={16} />Distribuer mon titre</Link>
+            <Link to="/studio-enregistrement" className="btn btn-o btn-lg"><Icon.Mic size={16} />Réserver le studio</Link>
           </div>
-          <div className="hero-stats">{[{v:"150+",l:"Plateformes"},{v:`${artists.length||10}+`,l:"Artistes"},{v:"1M+",l:"Streams"},{v:"20+",l:"Pays"}].map((s)=><div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>)}</div>
+        </div>
+
+        {/* Cartes artistes en éventail */}
+        {cards.length > 0 && (
+          <div style={{ position: "relative", zIndex: 2, width: "100%", height: 320, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 60 }}>
+            {cards.map((a, i) => {
+              const rot = rotations[i] || 0;
+              const ty = (translateY[i] || 0) + offset * 0.04 * (i % 2 === 0 ? 1 : -1);
+              return (
+                <div key={a.id} style={{
+                  position: "absolute",
+                  width: 160,
+                  height: 220,
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  border: "3px solid rgba(255,255,255,0.15)",
+                  transform: `rotate(${rot}deg) translateY(${ty}px)`,
+                  transition: "transform 0.1s ease-out",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+                  left: `calc(50% + ${(i - 2) * 110}px)`,
+                  zIndex: i === 2 ? 5 : i === 1 || i === 3 ? 4 : 3,
+                }}>
+                  <img src={a.image_url} alt={a.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "20px 12px 12px" }}>
+                    <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 12, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: 1 }}>{a.name}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="hero-stats" style={{ justifyContent: "center", position: "relative", zIndex: 2 }}>
+          {[{ v: "150+", l: "Plateformes" }, { v: `${artists.length || 10}+`, l: "Artistes" }, { v: "1M+", l: "Streams" }, { v: "20+", l: "Pays" }].map((s) => (
+            <div key={s.l}><div className="stat-v">{s.v}</div><div className="stat-l">{s.l}</div></div>
+          ))}
         </div>
       </section>
 
@@ -1128,9 +1188,8 @@ function HomePage() {
         </div>
       </section>
     </>
-);
+  );
 }
-
 // ─── ABOUT ───
 function AboutPage() {
   useSEO("/a-propos");
