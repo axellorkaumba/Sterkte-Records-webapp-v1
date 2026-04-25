@@ -360,4 +360,372 @@ const SERVICES_LIST = [
   { Icon: Icon.BarChart, title: "Consulting & Management", desc: "Stratégie de lancement, gestion de carrière et coaching artistique personnalisé.", link: "/services" },
   { Icon: Icon.User, title: "Espace Artiste", desc: "Dashboard personnel : suivez vos streams et gérez vos sorties.", link: "/dashboard" },
 ];
+// ─── AUTH CONTEXT ───
+const AuthContext = createContext(null);
+function useAuth() { return useContext(AuthContext); }
 
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!supabaseConfigured) { setLoading(false); return; }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      setLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else setProfile(null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (uid) => {
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", uid).maybeSingle();
+    if (!error && data) setProfile(data);
+  };
+
+  const signUp = async (email, password, meta) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: meta.full_name, artist_name: meta.artist_name },
+        emailRedirectTo: `${SITE_URL}/connexion?confirmed=1`,
+      },
+    });
+    if (!error && data.user) {
+      // Le profil est créé automatiquement via un trigger Supabase (voir SUPABASE_SCHEMA.sql)
+      // On met à jour les champs additionnels
+      await supabase.from("profiles").upsert({
+        id: data.user.id,
+        full_name: meta.full_name,
+        artist_name: meta.artist_name,
+        genre: meta.genre,
+        whatsapp: meta.whatsapp,
+        email: email,
+        cgu_accepted_at: new Date().toISOString(),
+      });
+    }
+    return { data, error };
+  };
+
+  const signIn = async (email, password) => {
+    return await supabase.auth.signInWithPassword({ email, password });
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null); setProfile(null);
+  };
+
+  const resetPassword = async (email) => {
+    return await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${SITE_URL}/connexion?reset=1`,
+    });
+  };
+
+  const deleteAccount = async () => {
+    if (!user) return { error: new Error("Non connecté") };
+    // Suppression du profil (cascade automatique via SQL si bien configuré)
+    const { error: profileErr } = await supabase.from("profiles").delete().eq("id", user.id);
+    if (profileErr) return { error: profileErr };
+    // Note : la suppression complète du user dans auth.users nécessite un appel admin (Edge Function)
+    // Pour l'instant, on déconnecte et on marque le profil comme supprimé via trigger DB
+    await signOut();
+    return { error: null };
+  };
+
+  // Vérification admin via colonne DB (et non liste d'emails hardcodée)
+  const isAdmin = profile?.is_admin === true;
+  const isEmailConfirmed = user?.email_confirmed_at != null;
+
+  return (
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, resetPassword, deleteAccount, fetchProfile, isAdmin, isEmailConfirmed }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// ─── DATA HOOKS ───
+function useArtists(limit = 50) {
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    if (!supabaseConfigured) { setLoading(false); setError("Configuration Supabase manquante"); return; }
+    supabase.from("artists").select("*").order("created_at", { ascending: true }).limit(limit)
+      .then(({ data, error }) => {
+        if (error) setError(error.message);
+        else setArtists(data || []);
+        setLoading(false);
+      });
+  }, [limit]);
+  return { artists, loading, error };
+}
+
+function useTestimonials(limit = 12) {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!supabaseConfigured) { setLoading(false); return; }
+    supabase.from("testimonials").select("*").eq("featured", true).limit(limit)
+      .then(({ data }) => { setTestimonials(data || []); setLoading(false); });
+  }, [limit]);
+  return { testimonials, loading };
+}
+
+function useTracks() {
+  const { user } = useAuth();
+  const [tracks, setTracks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ totalStreams: 0, totalRevenue: "0.00", count: 0, livePlatforms: 0 });
+
+  const fetchTracks = async () => {
+    if (!user) { setLoading(false); return; }
+    setLoading(true);
+    const { data, error } = await supabase.from("tracks").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+    if (error) { setLoading(false); return; }
+    const t = data || [];
+    setTracks(t);
+    const totalStreams = t.reduce((s, tr) => s + (tr.streams || 0), 0);
+    const totalRevenue = t.reduce((s, tr) => s + parseFloat(tr.revenue || 0), 0);
+    // Calcul réel du nombre de plateformes : somme des platforms uniques sur les tracks live
+    const livePlatforms = new Set();
+    t.filter(tr => tr.status === "live").forEach(tr => {
+      (tr.platforms || []).forEach(p => livePlatforms.add(p));
+    });
+    setStats({
+      totalStreams,
+      totalRevenue: totalRevenue.toFixed(2),
+      count: t.length,
+      livePlatforms: livePlatforms.size,
+    });
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchTracks(); }, [user]);
+  return { tracks, stats, loading, refetch: fetchTracks };
+}
+
+// ─── HELPERS ───
+function useSEO(path) {
+  const seo = SEO[path] || SEO["/"];
+  useEffect(() => {
+    document.title = seo.title;
+    const d = document.querySelector('meta[name="description"]');
+    if (d) d.setAttribute("content", seo.desc);
+    const ogt = document.querySelector('meta[property="og:title"]');
+    if (ogt) ogt.setAttribute("content", seo.title);
+    const ogd = document.querySelector('meta[property="og:description"]');
+    if (ogd) ogd.setAttribute("content", seo.desc);
+  }, [path, seo]);
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+function useScrollReveal() {
+  useEffect(() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); } });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+    const els = document.querySelectorAll(".sr-reveal,.sr-reveal-left,.sr-reveal-right,.sr-reveal-scale");
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  });
+}
+
+function HeroBlobs() {
+  return (
+    <div className="hero-blobs" aria-hidden="true">
+      <div className="hero-blob hero-blob-r" />
+      <div className="hero-blob hero-blob-g" />
+      <div className="hero-blob hero-blob-b" />
+    </div>
+  );
+}
+
+function WaveDivider() {
+  return (
+    <div className="wave-div" aria-hidden="true">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,40 L1440,60 L0,60 Z" opacity="0.6" />
+        <path d="M0,35 C360,5 720,55 1080,25 C1260,15 1380,35 1440,30 L1440,60 L0,60 Z" opacity="0.3" />
+      </svg>
+    </div>
+  );
+}
+
+async function sendEmail(data) {
+  if (!EMAIL_CONFIG.ACCESS_KEY) {
+    console.warn("[Sterkte] VITE_WEB3FORMS_KEY manquant — email non envoyé");
+    return false;
+  }
+  try {
+    const fd = new FormData();
+    fd.append("access_key", EMAIL_CONFIG.ACCESS_KEY);
+    fd.append("subject", data.subject || "Nouveau message - Sterkte Records");
+    fd.append("from_name", data.name || "Site Web");
+    Object.entries(data).forEach(([k, v]) => { if (k !== "subject" && v && typeof v === "string") fd.append(k, v); });
+    const res = await fetch(EMAIL_CONFIG.ENDPOINT, { method: "POST", body: fd });
+    return (await res.json()).success;
+  } catch { return false; }
+}
+
+// Notif équipe : ouvrir WhatsApp dans un nouvel onglet
+// Note: dépend du clic utilisateur. À remplacer par un webhook serveur (Twilio/Meta API) en prod.
+function sendWhatsApp(message) {
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}?text=${encoded}`, "_blank", "noopener,noreferrer");
+}
+
+// Génération ISRC (placeholder — à remplacer par vrai système quand label aura son préfixe officiel)
+// Format ISRC: CC-XXX-YY-NNNNN (Pays-Code label-Année-Numéro)
+function generateISRC(year = new Date().getFullYear()) {
+  const yy = String(year).slice(-2);
+  const num = String(Math.floor(Math.random() * 99999)).padStart(5, "0");
+  // CD = République Démocratique du Congo. STK = code label proposé pour Sterkte Records
+  return `CD-STK-${yy}-${num}`;
+}
+
+// Génération UPC (placeholder — 12 chiffres)
+function generateUPC() {
+  const base = String(Math.floor(Math.random() * 1e11)).padStart(11, "0");
+  // Chiffre de contrôle UPC-A
+  let sum = 0;
+  for (let i = 0; i < 11; i++) {
+    sum += parseInt(base[i]) * (i % 2 === 0 ? 3 : 1);
+  }
+  const checkDigit = (10 - (sum % 10)) % 10;
+  return base + checkDigit;
+}
+
+// Validation email
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+// Validation WhatsApp (international, +XXX...)
+function isValidPhone(p) {
+  return /^\+\d{8,15}$/.test(p.replace(/\s/g, ""));
+}
+
+// Force du mot de passe (0-4)
+function passwordStrength(p) {
+  let score = 0;
+  if (!p) return 0;
+  if (p.length >= 8) score++;
+  if (p.length >= 12) score++;
+  if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+  if (/\d/.test(p)) score++;
+  if (/[^A-Za-z0-9]/.test(p)) score++;
+  return Math.min(score, 4);
+}
+
+// Upload sécurisé : path = userId/filename, validation côté client
+async function uploadFile(bucket, file, userId, options = {}) {
+  const maxSize = options.maxSize || 100 * 1024 * 1024; // 100MB par défaut
+  const allowedMimes = options.allowedMimes || [];
+
+  if (file.size > maxSize) {
+    return { url: null, error: `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum : ${maxSize / 1024 / 1024} MB.` };
+  }
+  if (allowedMimes.length > 0 && !allowedMimes.some(m => file.type.startsWith(m))) {
+    return { url: null, error: `Type de fichier non autorisé : ${file.type}` };
+  }
+
+  const ext = file.name.split(".").pop().toLowerCase();
+  // Path UID-protégé (à combiner avec RLS Supabase qui vérifie storage.foldername(name)[1] = auth.uid())
+  const path = `${userId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+
+  const { data, error } = await supabase.storage.from(bucket).upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) return { url: null, error: error.message };
+
+  // Stocker le path interne (pas l'URL publique) — on génère une signed URL à la lecture
+  return { url: data.path, error: null };
+}
+
+// Génère une signed URL valide 1h pour un path stocké (audio/cover)
+async function getSignedUrl(bucket, path, expiresIn = 3600) {
+  if (!path) return null;
+  const { data } = await supabase.storage.from(bucket).createSignedUrl(path, expiresIn);
+  return data?.signedUrl || null;
+}
+
+function PageBanner({ tag, title, subtitle, accent = C.red }) {
+  return (
+    <div className="pg-banner">
+      <div className="pg-banner-bg" style={{ background: `radial-gradient(ellipse at 30% 50%, ${accent}14 0%, transparent 65%), radial-gradient(ellipse at 80% 20%, ${C.gold}08 0%, transparent 50%)` }} />
+      <svg className="pg-banner-deco" viewBox="0 0 1200 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0,150 Q300,80 600,150 T1200,150" stroke={`${accent}20`} strokeWidth="1" fill="none" />
+        <path d="M0,200 Q400,120 800,200 T1600,200" stroke={`${C.gold}10`} strokeWidth="1" fill="none" />
+        <circle cx="80" cy="80" r="60" stroke={`${accent}0A`} strokeWidth="1" fill="none" />
+        <circle cx="1100" cy="220" r="80" stroke={`${C.gold}08`} strokeWidth="1" fill="none" />
+      </svg>
+      <div className="pg-banner-in">
+        <div className="sec-tag">{tag}</div>
+        <h1>{title}</h1>
+        {subtitle && <p>{subtitle}</p>}
+      </div>
+      <div className="pg-banner-fade" />
+    </div>
+  );
+}
+
+// Modale générique réutilisable
+function Modal({ open, onClose, title, children, maxWidth = 480 }) {
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
+  }, [open, onClose]);
+  if (!open) return null;
+  return (
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div className="modal-card" style={{ maxWidth }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3 id="modal-title">{title}</h3>
+          <button className="modal-close" onClick={onClose} aria-label="Fermer"><Icon.X size={18} /></button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// Lecteur audio inline (pour Admin & Dashboard artiste)
+function AudioPlayer({ url, label }) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+
+  if (!url) return <div style={{ fontSize: 12, color: C.muted }}>Audio indisponible</div>;
+
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (playing) { audioRef.current.pause(); setPlaying(false); }
+    else { audioRef.current.play(); setPlaying(true); }
+  };
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: C.bgInput, borderRadius: 8, border: `1px solid ${C.border}` }}>
+      <button onClick={toggle} className="btn btn-g btn-sm" aria-label={playing ? "Pause" : "Lecture"} style={{ width: 32, height: 32, padding: 0, justifyContent: "center" }}>
+        {playing ? <Icon.Pause size={14} /> : <Icon.Play size={14} />}
+      </button>
+      <span style={{ fontSize: 12, color: C.muted }}>{label || "Aperçu"}</span>
+      <audio ref={audioRef} src={url} onEnded={() => setPlaying(false)} preload="none" style={{ display: "none" }} />
+    </div>
+  );
+}
