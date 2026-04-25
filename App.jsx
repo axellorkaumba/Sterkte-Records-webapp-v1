@@ -1653,7 +1653,10 @@ function ArtistDetailPage() {
         </div>
       </div>
     </div>
-    // ─── DISTRIBUTION PAGE ───
+  );
+}
+
+// ─── DISTRIBUTION PAGE ───
 function DistributionPage() {
   useSEO("/distribution-musique");
   useScrollReveal();
