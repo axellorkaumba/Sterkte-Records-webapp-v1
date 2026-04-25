@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext, useContext, lazy, Suspense } from "react";
+import React, { useState, useEffect, useRef, createContext, useContext, lazy, Suspense } from "react";
 import { Routes, Route, Link, useLocation, useNavigate, useParams, Navigate } from "react-router-dom";
 import { supabase, supabaseConfigured } from "./supabase.js";
 
@@ -360,6 +360,7 @@ const SERVICES_LIST = [
   { Icon: Icon.BarChart, title: "Consulting & Management", desc: "Stratégie de lancement, gestion de carrière et coaching artistique personnalisé.", link: "/services" },
   { Icon: Icon.User, title: "Espace Artiste", desc: "Dashboard personnel : suivez vos streams et gérez vos sorties.", link: "/dashboard" },
 ];
+
 // ─── AUTH CONTEXT ───
 const AuthContext = createContext(null);
 function useAuth() { return useContext(AuthContext); }
@@ -729,6 +730,7 @@ function AudioPlayer({ url, label }) {
     </div>
   );
 }
+
 // ─── ALL CSS ───
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Raleway:wght@300;400;500;600;700&display=swap');
@@ -1129,6 +1131,7 @@ footer.ft{background:rgba(10,10,15,.95);border-top:1px solid var(--border);paddi
 }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 `;
+
 // ─── NAVBAR ───
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -1402,6 +1405,7 @@ function AboutPage() {
     </div>
   );
 }
+
 // ─── ARTISTS PAGE ───
 function ArtistsPage() {
   useSEO("/artistes");
@@ -1660,63 +1664,44 @@ function ArtistDetailPage() {
 function DistributionPage() {
   useSEO("/distribution-musique");
   useScrollReveal();
+  const { user } = useAuth();
+  const nav = useNavigate();
+
   return (
     <div className="pg">
-      <PageBanner tag="Distribution" title={<>Votre musique sur <span className="gold">150+ plateformes</span></>} subtitle="Spotify, Apple Music, Deezer, Boomplay et bien plus. Distribution rapide, transparente et sans frais cachés." accent={C.blue} />
+      <PageBanner tag="Distribution" title="Votre musique partout dans le monde" subtitle="Distribuez votre musique sur Spotify, Apple Music, Deezer, YouTube Music, TikTok, Boomplay et 150+ plateformes — depuis votre dashboard, en quelques clics." accent={C.gold} />
       <div className="pg-c">
         <div className="sr-reveal">
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Comment ça <span className="gold">fonctionne</span></h3>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>Comment ça <span className="gold">marche</span></h3>
           <div className="steps">
             {[
-              { n: "01", title: "Créez votre compte artiste", desc: "Inscription gratuite en 2 minutes. Renseignez votre profil et vos informations de paiement." },
-              { n: "02", title: "Soumettez votre titre", desc: "Uploadez votre fichier audio (WAV ou MP3 HD), votre cover art et vos métadonnées." },
-              { n: "03", title: "Validation par notre équipe", desc: "Notre équipe vérifie la qualité audio et les droits sous 24-48h." },
-              { n: "04", title: "Distribution mondiale", desc: "Votre musique est envoyée sur toutes les plateformes sélectionnées." },
-              { n: "05", title: "Suivi & revenus", desc: "Accédez à vos statistiques en temps réel et recevez vos royalties mensuellement." },
-            ].map((s) => (
-              <div key={s.n} className="step">
-                <div className="step-n">{s.n}</div>
-                <div className="step-c"><h4>{s.title}</h4><p>{s.desc}</p></div>
-              </div>
-            ))}
+              { t: "Créez votre compte", d: "Inscription gratuite. Vérifiez votre email pour activer votre espace artiste." },
+              { t: "Préparez vos fichiers", d: "Audio en WAV (16/24-bit, 44.1kHz min) et cover carrée 3000×3000 px en JPG/PNG sRGB." },
+              { t: "Uploadez et renseignez", d: "Métadonnées DDEX complètes : titre, ISRC/UPC, langue, contenu explicite, splits royalties, plateformes ciblées." },
+              { t: "Validation par notre équipe", d: "Notre équipe vérifie la qualité audio, la cover et les droits sous 24-72h ouvrées." },
+              { t: "Distribution et suivi", d: "Votre titre est envoyé aux DSP. Suivez le statut par étape et récupérez vos statistiques mensuelles." },
+            ].map((s, i) => <div key={i} className="step"><div className="step-n">{i + 1}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}
           </div>
         </div>
 
         <div className="sr-reveal" style={{ marginTop: 60 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Plateformes <span className="gold">disponibles</span></h3>
-          <div className="dsp-grid">
-            {DSP_PLATFORMS.map((p) => (
-              <div key={p.id} className="dsp-item" style={{ cursor: "default" }}>
-                <Icon.Music size={14} color={C.gold} />
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
-                  <div style={{ fontSize: 11, color: C.muted }}>{p.category}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="sr-reveal" style={{ marginTop: 60 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Nos <span className="gold">offres</span></h3>
-          <div className="pricing">
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>Pourquoi nous <span className="gold">choisir</span></h3>
+          <div className="feats">
             {[
-              { name: "Starter", price: "Gratuit", sub: "pour les membres", features: ["1 single / an", "Spotify + Apple Music + Deezer", "Rapport trimestriel", "Support email"], featured: false },
-              { name: "Pro", price: "$9", sub: "/ mois", features: ["Singles & EPs illimités", "150+ plateformes", "Rapport mensuel détaillé", "Support prioritaire", "ISRC & UPC inclus"], featured: true },
-              { name: "Label", price: "Sur devis", sub: "", features: ["Artistes illimités", "Distribution accélérée", "Manager dédié", "Négociation DSP", "Rapports personnalisés"], featured: false },
-            ].map((p) => (
-              <div key={p.name} className={`price-card ${p.featured ? "ft" : ""}`}>
-                <h4>{p.name}</h4>
-                <div className="price-val">{p.price}<span> {p.sub}</span></div>
-                <ul>{p.features.map((f) => <li key={f}><div className="chk"><Icon.Check size={10} color={C.gold} /></div>{f}</li>)}</ul>
-                <Link to="/connexion" className={`btn ${p.featured ? "btn-g" : "btn-o"} btn-lg`} style={{ width: "100%", justifyContent: "center", marginTop: 20 }}>Commencer</Link>
-              </div>
-            ))}
+              { Ico: Icon.Globe, title: "150+ plateformes", desc: "Spotify, Apple Music, Deezer, YouTube Music, TikTok, Boomplay, Audiomack, Tidal, Amazon Music, Anghami, Qobuz et bien plus." },
+              { Ico: Icon.Layers, title: "Métadonnées DDEX", desc: "ISRC, UPC, P-line, C-line, songwriters, langue, explicit content, splits royalties — toutes les données pro." },
+              { Ico: Icon.Diamond, title: "Splits royalties illimités", desc: "Configurez les pourcentages entre artistes, beatmakers, songwriters et éditeurs. Paiement direct à chaque ayant droit." },
+              { Ico: Icon.Zap, title: "Statut par étape", desc: "Suivez où en est votre titre : reçu, en validation, approuvé, envoyé aux DSP, live." },
+              { Ico: Icon.Award, title: "Validation humaine", desc: "Notre équipe vérifie chaque titre avant envoi pour éviter les rejets DSP et préserver votre image." },
+              { Ico: Icon.Shield, title: "Vos masters protégés", desc: "Fichiers chiffrés et accessibles uniquement par vous et notre équipe. Pas de fuite avant sortie." },
+            ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}
           </div>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 48 }}>
-          <Link to="/connexion" className="btn btn-r btn-lg"><Icon.Rocket size={16} />Distribuer ma musique</Link>
+        <div className="sr-reveal" style={{ textAlign: "center", marginTop: 48 }}>
+          {user
+            ? <button className="btn btn-g btn-lg" onClick={() => nav("/dashboard")}><Icon.Music size={16} />Distribuer un titre maintenant</button>
+            : <button className="btn btn-g btn-lg" onClick={() => nav("/connexion")}><Icon.Rocket size={16} />Créer mon compte gratuit</button>}
         </div>
       </div>
     </div>
@@ -1727,30 +1712,104 @@ function DistributionPage() {
 function StudioPage() {
   useSEO("/studio-enregistrement");
   useScrollReveal();
+  const { user, profile } = useAuth();
+  const [form, setForm] = useState({ name: "", email: "", phone: "", studioType: "Studio Lubumbashi", duration: "2", date: "", address: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (user && profile) {
+      setForm(f => ({ ...f, name: profile.full_name || f.name, email: user.email || f.email, phone: profile.whatsapp || f.phone }));
+    }
+  }, [user, profile]);
+
+  const pricing = {
+    "Studio Lubumbashi": { hourly: 15, currency: "USD", desc: "Notre studio principal à Lubumbashi" },
+    "Studio mobile RDC": { hourly: 25, currency: "USD", desc: "Studio mobile dans le Haut-Katanga" },
+    "Studio mobile Maroc": { hourly: 30, currency: "EUR", desc: "Studio mobile à Casablanca/Rabat" },
+  };
+  const currentPrice = pricing[form.studioType];
+  const totalPrice = parseFloat(form.duration) * currentPrice.hourly;
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Nom requis";
+    if (!isValidEmail(form.email)) e.email = "Email invalide";
+    if (!form.phone || !isValidPhone(form.phone)) e.phone = "Téléphone international requis (ex : +243...)";
+    if (!form.date) e.date = "Date requise";
+    if (parseFloat(form.duration) < 1) e.duration = "Durée minimum 1h";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) { setToast({ msg: "Vérifiez les champs en rouge", type: "err" }); return; }
+    setSending(true);
+    if (supabaseConfigured) {
+      await supabase.from("studio_bookings").insert({
+        user_id: user?.id || null,
+        name: form.name, email: form.email, phone: form.phone,
+        studio_type: form.studioType, duration_hours: parseFloat(form.duration),
+        booking_date: form.date, address: form.address, message: form.message,
+        estimated_price: `${totalPrice} ${currentPrice.currency}`,
+      });
+    }
+    await sendEmail({
+      subject: `[Studio] Réservation - ${form.studioType} - ${form.name}`,
+      name: form.name, email: form.email, phone: form.phone,
+      message: `Type: ${form.studioType}\nDate: ${form.date}\nDurée: ${form.duration}h\nPrix estimé: ${totalPrice} ${currentPrice.currency}\nAdresse: ${form.address}\n\nMessage:\n${form.message}`,
+    });
+    setToast({ msg: "Demande envoyée. Réponse sous 24h.", type: "ok" });
+    setForm({ name: "", email: "", phone: "", studioType: "Studio Lubumbashi", duration: "2", date: "", address: "", message: "" });
+    setSending(false);
+  };
+
   return (
     <div className="pg">
-      <PageBanner tag="Studio" title={<>Studio d'enregistrement <span className="gold">professionnel</span></>} subtitle="Enregistrement, mixage et mastering de haute qualité à Lubumbashi. Studio mobile disponible pour vos événements." accent={C.gold} />
+      <PageBanner tag="Studio" title="Studio professionnel & studios mobiles" subtitle="Enregistrement, mixage et mastering. Notre studio fixe à Lubumbashi et nos studios mobiles en RDC et au Maroc s'adaptent à vos besoins." accent={C.gold} />
       <div className="pg-c">
-        <div className="feats sr-reveal">
-          {[
-            { Ico: Icon.Mic, title: "Enregistrement HD", desc: "Prise de son de qualité professionnelle avec équipement haut de gamme." },
-            { Ico: Icon.Headphones, title: "Mixage & Mastering", desc: "Ingénieurs du son expérimentés pour un rendu radio-ready." },
-            { Ico: Icon.Map, title: "Studio Mobile", desc: "On vient à vous : studio mobile disponible à Lubumbashi et au Maroc." },
-            { Ico: Icon.Film, title: "Clip vidéo", desc: "Production de clips musicaux professionnels en partenariat avec nos réalisateurs." },
-          ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}
+        <div className="sr-reveal">
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Nos <span className="gold">tarifs</span></h3>
+          <div className="pricing">
+            {Object.entries(pricing).map(([name, p], i) => (
+              <div key={name} className={`price-card ${i === 0 ? "ft" : ""}`}>
+                <h4>{name}</h4>
+                <div className="price-val">{p.hourly} {p.currency}<span>/heure</span></div>
+                <p style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>{p.desc}</p>
+                <ul>
+                  <li><div className="chk"><Icon.Check size={11} color={C.gold} /></div>Ingénieur son inclus</li>
+                  <li><div className="chk"><Icon.Check size={11} color={C.gold} /></div>Mixage de base inclus</li>
+                  <li><div className="chk"><Icon.Check size={11} color={C.gold} /></div>Mastering en option</li>
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="sr-reveal" style={{ marginTop: 60 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
-          <p style={{ color: C.muted, marginBottom: 32, lineHeight: 1.7 }}>
-            Pour réserver une session studio, contactez-nous via WhatsApp ou par email. Nous vous répondons sous 24h avec les disponibilités et les tarifs adaptés à votre projet.
-          </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <button className="btn btn-g btn-lg" onClick={() => sendWhatsApp("Bonjour, je souhaite réserver une session studio.")}><Icon.Whatsapp size={16} />Réserver via WhatsApp</button>
-            <a href={`mailto:${CONTACT_EMAIL}?subject=Réservation Studio`} className="btn btn-o btn-lg"><Icon.Mail size={16} />Réserver par email</a>
-          </div>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Réserver une session</h3>
+          <form onSubmit={handleSubmit} className="fm">
+            <div className="fm-row">
+              <div className="fm-g"><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />{errors.name && <div className="fm-help" style={{ color: C.red }}>{errors.name}</div>}</div>
+              <div className="fm-g"><label className="fm-l">Email *</label><input type="email" className="fm-i" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />{errors.email && <div className="fm-help" style={{ color: C.red }}>{errors.email}</div>}</div>
+            </div>
+            <div className="fm-row">
+              <div className="fm-g"><label className="fm-l">Téléphone (international, +XXX...) *</label><input type="tel" className="fm-i" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+243850510209" />{errors.phone && <div className="fm-help" style={{ color: C.red }}>{errors.phone}</div>}</div>
+              <div className="fm-g"><label className="fm-l">Type de studio *</label><select className="fm-s" value={form.studioType} onChange={(e) => setForm({ ...form, studioType: e.target.value })}>{Object.keys(pricing).map(s => <option key={s}>{s}</option>)}</select></div>
+            </div>
+            <div className="fm-row">
+              <div className="fm-g"><label className="fm-l">Date souhaitée *</label><input type="date" className="fm-i" value={form.date} min={new Date().toISOString().split("T")[0]} onChange={(e) => setForm({ ...form, date: e.target.value })} />{errors.date && <div className="fm-help" style={{ color: C.red }}>{errors.date}</div>}</div>
+              <div className="fm-g"><label className="fm-l">Durée (heures) *</label><input type="number" min="1" max="12" step="0.5" className="fm-i" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} /><div className="fm-help">Prix estimé : <span className="gold">{totalPrice} {currentPrice.currency}</span></div></div>
+            </div>
+            {form.studioType.includes("mobile") && <div className="fm-g"><label className="fm-l">Adresse de la session *</label><input className="fm-i" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Adresse complète" /></div>}
+            <div className="fm-g"><label className="fm-l">Message (instruments, équipement spécifique, projet...)</label><textarea className="fm-t" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></div>
+            <button type="submit" className="btn btn-g btn-lg" disabled={sending}>{sending ? "Envoi..." : <><Icon.Send size={14} />Envoyer la demande</>}</button>
+          </form>
         </div>
       </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
@@ -1759,102 +1818,153 @@ function StudioPage() {
 function BookingPage() {
   useSEO("/booking-artistes");
   useScrollReveal();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", event: "", date: "", artist: "", message: "" });
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const { artists } = useArtists();
+  const [form, setForm] = useState({ name: "", email: "", phone: "", artistName: "", eventType: "Concert", eventDate: "", budget: "", location: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Nom requis";
+    if (!isValidEmail(form.email)) e.email = "Email invalide";
+    if (!form.artistName) e.artistName = "Choisissez un artiste";
+    if (!form.eventDate) e.eventDate = "Date requise";
+    if (!form.location.trim()) e.location = "Lieu requis";
+    if (!form.message.trim() || form.message.length < 30) e.message = "Décrivez votre événement (30 caractères min)";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !isValidEmail(form.email) || !form.event) { setError("Veuillez remplir tous les champs obligatoires."); return; }
-    setLoading(true); setError("");
-    const ok = await sendEmail({ ...form, subject: `Demande de booking – ${form.artist || "Artiste"} – ${form.event}` });
-    setLoading(false);
-    if (ok) { setSent(true); }
-    else { setError("Erreur d'envoi. Contactez-nous directement par WhatsApp."); }
+    if (!validate()) { setToast({ msg: "Vérifiez les champs en rouge", type: "err" }); return; }
+    setSending(true);
+    if (supabaseConfigured) {
+      await supabase.from("booking_requests").insert({
+        name: form.name, email: form.email, phone: form.phone,
+        artist_name: form.artistName, event_type: form.eventType,
+        event_date: form.eventDate, budget: form.budget,
+        location: form.location, message: form.message,
+      });
+    }
+    await sendEmail({
+      subject: `[Booking] ${form.artistName} - ${form.eventType}`,
+      name: form.name, email: form.email, phone: form.phone,
+      message: `Artiste: ${form.artistName}\nType: ${form.eventType}\nDate: ${form.eventDate}\nLieu: ${form.location}\nBudget: ${form.budget}\n\nMessage:\n${form.message}`,
+    });
+    setToast({ msg: "Demande de booking envoyée. Réponse sous 48h.", type: "ok" });
+    setForm({ name: "", email: "", phone: "", artistName: "", eventType: "Concert", eventDate: "", budget: "", location: "", message: "" });
+    setSending(false);
   };
 
   return (
     <div className="pg">
-      <PageBanner tag="Booking" title={<>Réservez nos <span className="gold">artistes</span></>} subtitle="Concerts, festivals, événements corporate, mariages et soirées privées. Nous gérons tout pour vous." accent={C.red} />
+      <PageBanner tag="Booking" title="Réservez nos artistes" subtitle="Pour vos concerts, festivals, événements privés et corporate. Notre équipe vous répond sous 48h." accent={C.red} />
       <div className="pg-c">
-        {sent ? (
-          <div style={{ maxWidth: 500, margin: "0 auto", textAlign: "center", padding: "60px 0" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>Demande envoyée !</h3>
-            <p style={{ color: C.muted }}>Notre équipe vous contactera sous 48h pour confirmer les détails.</p>
+        <form onSubmit={handleSubmit} className="fm sr-reveal">
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Votre nom *</label><input className="fm-i" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />{errors.name && <div className="fm-help" style={{ color: C.red }}>{errors.name}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Email *</label><input type="email" className="fm-i" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />{errors.email && <div className="fm-help" style={{ color: C.red }}>{errors.email}</div>}</div>
           </div>
-        ) : (
-          <div className="fm sr-reveal">
-            {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
-            <div className="fm-row fm-g">
-              <div><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
-              <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-            </div>
-            <div className="fm-row fm-g">
-              <div><label className="fm-l">Téléphone / WhatsApp</label><input className="fm-i" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
-              <div><label className="fm-l">Date de l'événement</label><input className="fm-i" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} /></div>
-            </div>
-            <div className="fm-g"><label className="fm-l">Type d'événement *</label><input className="fm-i" placeholder="Concert, festival, mariage, corporate..." value={form.event} onChange={e => setForm(f => ({ ...f, event: e.target.value }))} /></div>
-            <div className="fm-g"><label className="fm-l">Artiste souhaité</label><input className="fm-i" placeholder="Nom de l'artiste ou 'À définir'" value={form.artist} onChange={e => setForm(f => ({ ...f, artist: e.target.value }))} /></div>
-            <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Décrivez votre événement, le lieu, le public attendu..." /></div>
-            <button className="btn btn-r btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Send size={16} />{loading ? "Envoi..." : "Envoyer la demande"}</button>
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Téléphone</label><input type="tel" className="fm-i" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+243..." /></div>
+            <div className="fm-g"><label className="fm-l">Artiste souhaité *</label><select className="fm-s" value={form.artistName} onChange={(e) => setForm({ ...form, artistName: e.target.value })}><option value="">— Sélectionner —</option>{artists.filter(a => !a.tribute && !(a.name || "").toLowerCase().includes("minho")).map(a => <option key={a.id}>{a.name}</option>)}<option value="Plusieurs / À déterminer">Plusieurs / À déterminer</option></select>{errors.artistName && <div className="fm-help" style={{ color: C.red }}>{errors.artistName}</div>}</div>
           </div>
-        )}
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Type d'événement *</label><select className="fm-s" value={form.eventType} onChange={(e) => setForm({ ...form, eventType: e.target.value })}><option>Concert</option><option>Festival</option><option>Mariage</option><option>Événement privé</option><option>Événement corporate</option><option>Autre</option></select></div>
+            <div className="fm-g"><label className="fm-l">Date de l'événement *</label><input type="date" className="fm-i" value={form.eventDate} min={new Date().toISOString().split("T")[0]} onChange={(e) => setForm({ ...form, eventDate: e.target.value })} />{errors.eventDate && <div className="fm-help" style={{ color: C.red }}>{errors.eventDate}</div>}</div>
+          </div>
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Lieu (ville, pays) *</label><input className="fm-i" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />{errors.location && <div className="fm-help" style={{ color: C.red }}>{errors.location}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Budget approximatif</label><input className="fm-i" value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} placeholder="Ex : 5000 USD" /></div>
+          </div>
+          <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Détaillez votre événement : audience attendue, durée du show, conditions techniques..." />{errors.message && <div className="fm-help" style={{ color: C.red }}>{errors.message}</div>}</div>
+          <button type="submit" className="btn btn-r btn-lg" disabled={sending}>{sending ? "Envoi..." : <><Icon.Send size={14} />Envoyer la demande</>}</button>
+        </form>
       </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
 
-// ─── FEATURINGS PAGE ───
-function FeaturingsPage() {
+// ─── FEATURING PAGE ───
+function FeaturingPage() {
   useSEO("/featurings");
   useScrollReveal();
-  const [form, setForm] = useState({ name: "", email: "", artist: "", genre: "", message: "", link: "" });
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const { artists } = useArtists();
+  const [form, setForm] = useState({ name: "", email: "", phone: "", artistName: "", projectName: "", deadline: "", projectLink: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async () => {
-    if (!form.name || !isValidEmail(form.email) || !form.artist) { setError("Veuillez remplir les champs obligatoires."); return; }
-    setLoading(true); setError("");
-    const ok = await sendEmail({ ...form, subject: `Demande de featuring – ${form.artist}` });
-    setLoading(false);
-    if (ok) setSent(true);
-    else setError("Erreur. Contactez-nous par WhatsApp.");
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Nom requis";
+    if (!isValidEmail(form.email)) e.email = "Email invalide";
+    if (!form.artistName) e.artistName = "Choisissez un artiste";
+    if (!form.projectName.trim()) e.projectName = "Nom du projet requis";
+    if (!form.message.trim() || form.message.length < 50) e.message = "Décrivez votre projet (50 caractères min)";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) { setToast({ msg: "Vérifiez les champs en rouge", type: "err" }); return; }
+    setSending(true);
+    if (supabaseConfigured) {
+      await supabase.from("featuring_requests").insert({
+        name: form.name, email: form.email, phone: form.phone,
+        artist_name: form.artistName, project_name: form.projectName,
+        deadline: form.deadline, project_link: form.projectLink, message: form.message,
+      });
+    }
+    await sendEmail({
+      subject: `[Featuring] ${form.artistName} - ${form.projectName}`,
+      name: form.name, email: form.email, phone: form.phone,
+      message: `Artiste: ${form.artistName}\nProjet: ${form.projectName}\nDeadline: ${form.deadline}\nLien: ${form.projectLink}\n\n${form.message}`,
+    });
+    setToast({ msg: "Demande envoyée. Réponse sous 7 jours.", type: "ok" });
+    setForm({ name: "", email: "", phone: "", artistName: "", projectName: "", deadline: "", projectLink: "", message: "" });
+    setSending(false);
   };
 
   return (
     <div className="pg">
-      <PageBanner tag="Featurings" title={<>Collaborez avec nos <span className="gold">artistes</span></>} subtitle="Proposez un featuring avec les artistes du roster Sterkte Records. Réponse garantie sous 7 jours ouvrés." accent={C.gold} />
+      <PageBanner tag="Featurings" title="Collaborer avec nos artistes" subtitle="Demandez un featuring avec l'un de nos artistes. Réponse sous 7 jours ouvrés." accent={C.blue} />
       <div className="pg-c">
-        {sent ? (
-          <div style={{ textAlign: "center", padding: "60px 0" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🤝</div>
-            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>Demande reçue !</h3>
-            <p style={{ color: C.muted }}>Nous vous répondrons sous 7 jours ouvrés.</p>
+        <div className="sr-reveal" style={{ marginBottom: 32 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Comment ça marche</h3>
+          <div className="steps">
+            {[
+              { t: "Soumettez votre demande", d: "Présentez votre projet, l'artiste souhaité et joignez une démo." },
+              { t: "Évaluation par l'équipe", d: "Notre équipe et l'artiste examinent ensemble la pertinence artistique." },
+              { t: "Devis et contrat", d: "Si validé, nous vous envoyons les conditions tarifaires et le contrat de collaboration." },
+              { t: "Production du featuring", d: "Enregistrement et coordination en studio (présentiel ou à distance)." },
+            ].map((s, i) => <div key={i} className="step"><div className="step-n">{i + 1}</div><div className="step-c"><h4>{s.t}</h4><p>{s.d}</p></div></div>)}
           </div>
-        ) : (
-          <div className="fm sr-reveal">
-            {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
-            <div className="fm-row fm-g">
-              <div><label className="fm-l">Votre nom *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
-              <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-            </div>
-            <div className="fm-g"><label className="fm-l">Nom d'artiste *</label><input className="fm-i" value={form.artist} onChange={e => setForm(f => ({ ...f, artist: e.target.value }))} /></div>
-            <div className="fm-g">
-              <label className="fm-l">Genre musical</label>
-              <select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}>
-                <option value="">Sélectionner...</option>
-                {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-            </div>
-            <div className="fm-g"><label className="fm-l">Lien démo / portfolio</label><input className="fm-i" placeholder="SoundCloud, YouTube, Spotify..." value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} /></div>
-            <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Décrivez votre projet, l'artiste souhaité, le type de collaboration..." /></div>
-            <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Handshake size={16} />{loading ? "Envoi..." : "Envoyer la demande"}</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="fm sr-reveal">
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Votre nom *</label><input className="fm-i" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />{errors.name && <div className="fm-help" style={{ color: C.red }}>{errors.name}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Email *</label><input type="email" className="fm-i" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />{errors.email && <div className="fm-help" style={{ color: C.red }}>{errors.email}</div>}</div>
           </div>
-        )}
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Téléphone</label><input type="tel" className="fm-i" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+243..." /></div>
+            <div className="fm-g"><label className="fm-l">Artiste souhaité *</label><select className="fm-s" value={form.artistName} onChange={(e) => setForm({ ...form, artistName: e.target.value })}><option value="">— Sélectionner —</option>{artists.filter(a => !a.tribute && !(a.name || "").toLowerCase().includes("minho")).map(a => <option key={a.id}>{a.name}</option>)}</select>{errors.artistName && <div className="fm-help" style={{ color: C.red }}>{errors.artistName}</div>}</div>
+          </div>
+          <div className="fm-row">
+            <div className="fm-g"><label className="fm-l">Nom du projet *</label><input className="fm-i" value={form.projectName} onChange={(e) => setForm({ ...form, projectName: e.target.value })} />{errors.projectName && <div className="fm-help" style={{ color: C.red }}>{errors.projectName}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Deadline souhaitée</label><input type="date" className="fm-i" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} /></div>
+          </div>
+          <div className="fm-g"><label className="fm-l">Lien démo / WeTransfer / Drive</label><input type="url" className="fm-i" value={form.projectLink} onChange={(e) => setForm({ ...form, projectLink: e.target.value })} placeholder="https://..." /></div>
+          <div className="fm-g"><label className="fm-l">Présentation du projet *</label><textarea className="fm-t" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Style, vibe, label, références, vision artistique..." />{errors.message && <div className="fm-help" style={{ color: C.red }}>{errors.message}</div>}</div>
+          <button type="submit" className="btn btn-g btn-lg" disabled={sending}>{sending ? "Envoi..." : <><Icon.Send size={14} />Envoyer la demande</>}</button>
+        </form>
       </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
@@ -1865,21 +1975,20 @@ function ServicesPage() {
   useScrollReveal();
   return (
     <div className="pg">
-      <PageBanner tag="Services" title={<>Consulting & <span className="gold">Management</span></>} subtitle="Stratégie de lancement, gestion de carrière et coaching artistique pour atteindre vos objectifs." accent={C.blue} />
+      <PageBanner tag="Services" title="Consulting & Management" subtitle="Stratégie de lancement, gestion de carrière, coaching et accompagnement personnalisé." accent={C.blue} />
       <div className="pg-c">
         <div className="feats sr-reveal">
           {[
-            { Ico: Icon.Rocket, title: "Stratégie de lancement", desc: "Plan complet pour votre sortie : timing, plateformes, communication, presse." },
-            { Ico: Icon.BarChart, title: "Analyse de données", desc: "Comprenez vos audiences et optimisez vos sorties grâce aux données de streaming." },
-            { Ico: Icon.Globe, title: "Développement international", desc: "Ouverture de marchés en Europe, en Afrique et au Moyen-Orient." },
-            { Ico: Icon.Users, title: "Management artistique", desc: "Représentation complète : négociations, contrats, relations avec les labels et DSP." },
-            { Ico: Icon.Crown, title: "Coaching artistique", desc: "Travail sur l'image, le discours, la cohérence artistique et la présence scénique." },
-            { Ico: Icon.Layers, title: "Relations presse", desc: "Communiqués, interviews, playlisting et placement éditorial sur les plateformes." },
-          ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}
+            { Ico: Icon.Target, title: "Stratégie de lancement", desc: "Plan détaillé pour votre prochain single ou EP : positionnement, calendrier de release, plan promo." },
+            { Ico: Icon.BarChart, title: "Management de carrière", desc: "Accompagnement long-terme : direction artistique, négociation, gestion d'équipe." },
+            { Ico: Icon.Award, title: "Coaching artistique", desc: "Travail vocal, présence scénique, identité visuelle. Sessions individuelles." },
+            { Ico: Icon.Mic, title: "Direction de production", desc: "Choix des beatmakers, supervision du studio, decision A&R sur votre projet." },
+            { Ico: Icon.Globe, title: "Stratégie internationale", desc: "Développement sur l'Europe, l'Afrique francophone et le marché MENA." },
+            { Ico: Icon.Layers, title: "Stratégie sociale et digitale", desc: "Plans de contenu Instagram/TikTok, calendrier éditorial, ghostwriting." },
+          ].map((s) => <div key={s.title} className="feat"><div className="feat-ico"><s.Ico size={22} /></div><h4>{s.title}</h4><p>{s.desc}</p></div>)}
         </div>
-        <div style={{ textAlign: "center", marginTop: 60 }}>
-          <p style={{ color: C.muted, marginBottom: 24 }}>Tous nos services sont proposés sur devis selon votre projet et vos objectifs.</p>
-          <Link to="/contact" className="btn btn-g btn-lg"><Icon.Mail size={16} />Demander un devis</Link>
+        <div className="sr-reveal" style={{ textAlign: "center", marginTop: 48 }}>
+          <Link to="/contact" className="btn btn-g btn-lg"><Icon.Mail size={16} />Discutons de votre projet</Link>
         </div>
       </div>
     </div>
@@ -1889,184 +1998,306 @@ function ServicesPage() {
 // ─── CONTACT PAGE ───
 function ContactPage() {
   useSEO("/contact");
-  useScrollReveal();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async () => {
-    if (!form.name || !isValidEmail(form.email) || !form.message) { setError("Veuillez remplir tous les champs."); return; }
-    setLoading(true); setError("");
-    const ok = await sendEmail({ ...form, subject: form.subject || "Contact – Sterkte Records" });
-    setLoading(false);
-    if (ok) setSent(true);
-    else setError("Erreur d'envoi. Essayez WhatsApp.");
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Nom requis";
+    if (!isValidEmail(form.email)) e.email = "Email invalide";
+    if (!form.subject.trim()) e.subject = "Objet requis";
+    if (!form.message.trim() || form.message.length < 20) e.message = "Message trop court (min. 20 caractères)";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) { setToast({ msg: "Vérifiez les champs en rouge", type: "err" }); return; }
+    setSending(true);
+    if (supabaseConfigured) {
+      await supabase.from("contact_messages").insert({ name: form.name, email: form.email, subject: form.subject, message: form.message });
+    }
+    await sendEmail({ subject: `[Contact] ${form.subject}`, name: form.name, email: form.email, message: form.message });
+    setToast({ msg: "Message envoyé. Réponse sous 24h.", type: "ok" });
+    setForm({ name: "", email: "", subject: "", message: "" });
+    setSending(false);
   };
 
   return (
     <div className="pg">
-      <PageBanner tag="Contact" title="Parlons de votre projet" subtitle="Notre équipe vous répond sous 72h. Pour les urgences, utilisez WhatsApp." accent={C.red} />
-      <div className="pg-c" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
-        <div className="sr-reveal-left">
-          <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 24 }}>Informations de <span className="gold">contact</span></h3>
-          {[
-            { Ico: Icon.Mail, label: "Email", val: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
-            { Ico: Icon.Whatsapp, label: "WhatsApp", val: WHATSAPP_NUMBER, href: `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}` },
-            { Ico: Icon.MapPin, label: "Adresse", val: "Lubumbashi, Haut-Katanga, RDC", href: null },
-          ].map(({ Ico, label, val, href }) => (
-            <div key={label} style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 8, background: "rgba(245,197,24,.08)", display: "flex", alignItems: "center", justifyContent: "center", color: C.gold, flexShrink: 0 }}><Ico size={20} /></div>
-              <div>
-                <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Montserrat',sans-serif", fontWeight: 600, marginBottom: 4 }}>{label}</div>
-                {href ? <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.white, fontSize: 14 }}>{val}</a> : <div style={{ color: C.white, fontSize: 14 }}>{val}</div>}
+      <PageBanner tag="Contact" title="Restons en contact" subtitle="Une question, un projet ? Notre équipe vous répond sous 24h." accent={C.gold} />
+      <div className="pg-c">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
+          <div>
+            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Nos coordonnées</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <a href={`mailto:${CONTACT_EMAIL}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10, color: C.white }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(245,197,24,.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon.Mail size={18} color={C.gold} /></div>
+                <div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>Email</div><div style={{ fontSize: 14, fontWeight: 600 }}>{CONTACT_EMAIL}</div></div>
+              </a>
+              <a href={`tel:${WHATSAPP_NUMBER}`} style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10, color: C.white }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(76,175,80,.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon.Whatsapp size={18} color={C.success} /></div>
+                <div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>WhatsApp / Téléphone</div><div style={{ fontSize: 14, fontWeight: 600 }}>{WHATSAPP_NUMBER}</div></div>
+              </a>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(230,57,70,.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon.MapPin size={18} color={C.red} /></div>
+                <div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>Adresse</div><div style={{ fontSize: 14, fontWeight: 600 }}>Lubumbashi, Haut-Katanga, RDC</div></div>
               </div>
+              <a href="https://linktr.ee/sterkterecords" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10, color: C.white }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(79,195,247,.1)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon.Link2 size={18} color={C.blue} /></div>
+                <div><div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>Réseaux sociaux</div><div style={{ fontSize: 14, fontWeight: 600 }}>linktr.ee/sterkterecords</div></div>
+              </a>
             </div>
-          ))}
-          <button className="btn btn-g btn-lg" style={{ marginTop: 16 }} onClick={() => sendWhatsApp("Bonjour Sterkte Records, je souhaite vous contacter pour...")}>
-            <Icon.Whatsapp size={16} />Ouvrir WhatsApp
-          </button>
-        </div>
+          </div>
 
-        <div className="sr-reveal-right">
-          {sent ? (
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>✉️</div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>Message envoyé !</h3>
-              <p style={{ color: C.muted }}>Nous vous répondrons sous 72h.</p>
-            </div>
-          ) : (
-            <>
-              {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
-              <div className="fm-row fm-g">
-                <div><label className="fm-l">Nom *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
-                <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-              </div>
-              <div className="fm-g"><label className="fm-l">Sujet</label><input className="fm-i" value={form.subject} onChange={e => setForm(f => ({ ...f, subject: e.target.value }))} /></div>
-              <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" style={{ minHeight: 140 }} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} /></div>
-              <button className="btn btn-r btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Send size={16} />{loading ? "Envoi..." : "Envoyer"}</button>
-            </>
-          )}
+          <form onSubmit={handleSubmit} className="fm" style={{ maxWidth: "100%" }}>
+            <div className="fm-g"><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />{errors.name && <div className="fm-help" style={{ color: C.red }}>{errors.name}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Email *</label><input type="email" className="fm-i" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />{errors.email && <div className="fm-help" style={{ color: C.red }}>{errors.email}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Objet *</label><input className="fm-i" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />{errors.subject && <div className="fm-help" style={{ color: C.red }}>{errors.subject}</div>}</div>
+            <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />{errors.message && <div className="fm-help" style={{ color: C.red }}>{errors.message}</div>}</div>
+            <button type="submit" className="btn btn-g btn-lg" disabled={sending}>{sending ? "Envoi..." : <><Icon.Send size={14} />Envoyer le message</>}</button>
+          </form>
         </div>
       </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
     </div>
   );
 }
 
-// ─── LOGIN PAGE ───
+// ─── LOGIN PAGE — refonte complète sécurité + RGPD ───
 function LoginPage() {
-  useSEO("/connexion");
-  const { signIn, signUp, resetPassword, user } = useAuth();
-  const nav = useNavigate();
-  const [tab, setTab] = useState("login");
-  const [form, setForm] = useState({ email: "", password: "", full_name: "", artist_name: "", genre: "", whatsapp: "", cgu: false });
-  const [showPwd, setShowPwd] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [mode, setMode] = useState("signin"); // signin | signup | reset | confirm-pending
   const loc = useLocation();
+  const nav = useNavigate();
+  const { signUp, signIn, resetPassword, user } = useAuth();
+  const [showPwd, setShowPwd] = useState(false);
 
+  // Notifications post-redirection
+  const [globalMsg, setGlobalMsg] = useState(null);
   useEffect(() => {
-    if (user) nav("/dashboard", { replace: true });
     const params = new URLSearchParams(loc.search);
-    if (params.get("confirmed") === "1") setSuccess("Email confirmé ! Vous pouvez vous connecter.");
-    if (params.get("reset") === "1") setSuccess("Mot de passe réinitialisé. Connectez-vous.");
-  }, [user, loc]);
+    if (params.get("confirmed") === "1") setGlobalMsg({ msg: "Email confirmé ! Vous pouvez maintenant vous connecter.", type: "ok" });
+    if (params.get("reset") === "1") setGlobalMsg({ msg: "Lien de réinitialisation valide. Choisissez un nouveau mot de passe ci-dessous.", type: "ok" });
+  }, [loc.search]);
 
-  const pwdStr = passwordStrength(form.password);
-  const pwdColors = ["", "f1", "f2", "f3", "f4"];
+  // Si déjà connecté ET email vérifié → dashboard
+  useEffect(() => {
+    if (user && user.email_confirmed_at) nav("/dashboard");
+  }, [user, nav]);
 
-  const handleLogin = async () => {
-    if (!form.email || !form.password) { setError("Email et mot de passe requis."); return; }
-    setLoading(true); setError("");
-    const { error: e } = await signIn(form.email, form.password);
+  const [signin, setSignin] = useState({ email: "", password: "" });
+  const [signup, setSignup] = useState({
+    fullName: "", artistName: "", email: "", whatsapp: "",
+    password: "", passwordConfirm: "", genre: "",
+    cgu: false, privacy: false, newsletter: false,
+  });
+  const [resetEmail, setResetEmail] = useState("");
+
+  const [err, setErr] = useState(null);
+  const [msg, setMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSignin = async (e) => {
+    e.preventDefault();
+    setErr(null); setMsg(null); setLoading(true);
+    if (!isValidEmail(signin.email)) { setErr("Email invalide"); setLoading(false); return; }
+    if (!signin.password) { setErr("Mot de passe requis"); setLoading(false); return; }
+    const { data, error } = await signIn(signin.email, signin.password);
     setLoading(false);
-    if (e) setError(e.message === "Invalid login credentials" ? "Email ou mot de passe incorrect." : e.message);
-    else nav("/dashboard");
+    if (error) {
+      if (error.message.includes("Email not confirmed")) setErr("Email non vérifié. Cliquez sur le lien dans le mail reçu lors de votre inscription.");
+      else if (error.message.includes("Invalid login")) setErr("Email ou mot de passe incorrect.");
+      else setErr(error.message);
+      return;
+    }
+    if (data?.user && !data.user.email_confirmed_at) {
+      setMode("confirm-pending");
+      return;
+    }
+    nav("/dashboard");
   };
 
-  const handleRegister = async () => {
-    if (!form.email || !form.password || !form.full_name || !form.artist_name) { setError("Tous les champs obligatoires doivent être remplis."); return; }
-    if (!isValidEmail(form.email)) { setError("Email invalide."); return; }
-    if (form.password.length < 8) { setError("Mot de passe trop court (8 caractères minimum)."); return; }
-    if (!form.cgu) { setError("Vous devez accepter les CGU."); return; }
-    setLoading(true); setError("");
-    const { error: e } = await signUp(form.email, form.password, { full_name: form.full_name, artist_name: form.artist_name, genre: form.genre, whatsapp: form.whatsapp });
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setErr(null); setMsg(null);
+
+    // Validation complète
+    if (!signup.fullName.trim() || signup.fullName.trim().length < 2) return setErr("Nom complet requis");
+    if (!signup.artistName.trim()) return setErr("Nom d'artiste requis");
+    if (!isValidEmail(signup.email)) return setErr("Email invalide");
+    if (!signup.whatsapp || !isValidPhone(signup.whatsapp)) return setErr("Numéro de téléphone international requis (ex : +243850510209)");
+    if (!signup.genre) return setErr("Sélectionnez un genre musical");
+    if (signup.password.length < 8) return setErr("Le mot de passe doit faire au moins 8 caractères");
+    if (passwordStrength(signup.password) < 2) return setErr("Mot de passe trop faible — utilisez majuscules, chiffres ou symboles");
+    if (signup.password !== signup.passwordConfirm) return setErr("Les mots de passe ne correspondent pas");
+    if (!signup.cgu) return setErr("Vous devez accepter les Conditions Générales d'Utilisation");
+    if (!signup.privacy) return setErr("Vous devez accepter la Politique de confidentialité");
+
+    setLoading(true);
+    const { data, error } = await signUp(signup.email, signup.password, {
+      full_name: signup.fullName,
+      artist_name: signup.artistName,
+      genre: signup.genre,
+      whatsapp: signup.whatsapp,
+    });
     setLoading(false);
-    if (e) setError(e.message);
-    else setSuccess("Compte créé ! Vérifiez votre email pour confirmer votre inscription.");
+
+    if (error) {
+      if (error.message.includes("already registered") || error.message.includes("User already")) setErr("Un compte existe déjà avec cet email.");
+      else setErr(error.message);
+      return;
+    }
+
+    // Notif équipe (clic utilisateur — à remplacer par webhook serveur en prod)
+    sendWhatsApp(`🎵 *Nouvelle inscription Sterkte Records*\n\n👤 ${signup.fullName} (${signup.artistName})\n📧 ${signup.email}\n📞 ${signup.whatsapp}\n🎼 ${signup.genre}`);
+
+    setMode("confirm-pending");
   };
 
-  const handleReset = async () => {
-    if (!form.email) { setError("Entrez votre email."); return; }
-    setLoading(true); setError("");
-    const { error: e } = await resetPassword(form.email);
+  const handleReset = async (e) => {
+    e.preventDefault();
+    setErr(null); setMsg(null);
+    if (!isValidEmail(resetEmail)) { setErr("Email invalide"); return; }
+    setLoading(true);
+    const { error } = await resetPassword(resetEmail);
     setLoading(false);
-    if (e) setError(e.message);
-    else setSuccess("Email de réinitialisation envoyé !");
+    if (error) { setErr(error.message); return; }
+    setMsg("Si un compte existe avec cet email, vous recevrez un lien de réinitialisation dans quelques minutes.");
+    setResetEmail("");
   };
+
+  const ps = passwordStrength(signup.password);
+  const psLabel = ["", "Faible", "Moyen", "Bon", "Excellent"][ps];
 
   return (
     <div className="login-pg">
       <div className="login-card">
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <Link to="/"><span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 22 }}><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></span></Link>
-        </div>
-        <div className="tabs" style={{ marginBottom: 24 }}>
-          <button className={`tab ${tab === "login" ? "ac" : ""}`} onClick={() => { setTab("login"); setError(""); setSuccess(""); }}>Connexion</button>
-          <button className={`tab ${tab === "register" ? "ac" : ""}`} onClick={() => { setTab("register"); setError(""); setSuccess(""); }}>Inscription</button>
-          <button className={`tab ${tab === "reset" ? "ac" : ""}`} onClick={() => { setTab("reset"); setError(""); setSuccess(""); }}>Mot de passe</button>
-        </div>
+        <Link to="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16 }}>
+          <img src="/logo.png" alt="" style={{ height: 32 }} onError={(e) => { e.target.style.display = "none"; }} />
+          <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 18 }}>
+            <span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span>
+          </span>
+        </Link>
 
-        {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
-        {success && <div style={{ padding: "10px 14px", background: "rgba(76,175,80,.08)", border: "1px solid rgba(76,175,80,.25)", borderRadius: 6, fontSize: 12, color: C.success, marginBottom: 16 }}>{success}</div>}
+        {globalMsg && <div style={{ padding: 12, background: globalMsg.type === "ok" ? "rgba(76,175,80,.08)" : "rgba(230,57,70,.08)", border: `1px solid ${globalMsg.type === "ok" ? "rgba(76,175,80,.3)" : "rgba(230,57,70,.3)"}`, borderRadius: 8, fontSize: 13, color: globalMsg.type === "ok" ? C.success : C.red, marginBottom: 16 }}>{globalMsg.msg}</div>}
 
-        {tab === "login" && (
+        {mode === "confirm-pending" && (
           <>
-            <div className="fm-g"><label className="fm-l">Email</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} onKeyDown={e => e.key === "Enter" && handleLogin()} /></div>
-            <div className="fm-g" style={{ position: "relative" }}>
-              <label className="fm-l">Mot de passe</label>
-              <input className="fm-i fm-i-pwd" type={showPwd ? "text" : "password"} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} onKeyDown={e => e.key === "Enter" && handleLogin()} />
-              <button className="fm-eye" onClick={() => setShowPwd(v => !v)}>{showPwd ? <Icon.EyeOff size={16} /> : <Icon.Eye size={16} />}</button>
+            <div style={{ textAlign: "center", padding: "16px 0" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(245,197,24,.1)", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                <Icon.Mail size={28} color={C.gold} />
+              </div>
+              <h2>Vérifiez votre email</h2>
+              <p className="sub" style={{ marginTop: 12 }}>Nous venons de vous envoyer un email de confirmation. <br/>Cliquez sur le lien à l'intérieur pour activer votre compte, puis revenez vous connecter.</p>
+              <p className="sub" style={{ marginTop: 16, fontSize: 12 }}>Pas reçu ? Vérifiez vos spams ou contactez-nous à {CONTACT_EMAIL}</p>
+              <button onClick={() => setMode("signin")} className="btn btn-o" style={{ marginTop: 24 }}>Retour à la connexion</button>
             </div>
-            <button className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleLogin} disabled={loading}>{loading ? "Connexion..." : "Se connecter"}</button>
           </>
         )}
 
-        {tab === "register" && (
+        {mode === "signin" && (
           <>
-            <div className="fm-row fm-g">
-              <div><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} /></div>
-              <div><label className="fm-l">Nom d'artiste *</label><input className="fm-i" value={form.artist_name} onChange={e => setForm(f => ({ ...f, artist_name: e.target.value }))} /></div>
-            </div>
-            <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-            <div className="fm-g" style={{ position: "relative" }}>
-              <label className="fm-l">Mot de passe * (8 car. min.)</label>
-              <input className="fm-i fm-i-pwd" type={showPwd ? "text" : "password"} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
-              <button className="fm-eye" onClick={() => setShowPwd(v => !v)}>{showPwd ? <Icon.EyeOff size={16} /> : <Icon.Eye size={16} />}</button>
-              {form.password && <div className="pwd-strength">{[1,2,3,4].map(i => <div key={i} className={`pwd-bar ${pwdStr >= i ? pwdColors[pwdStr] : ""}`} />)}</div>}
-            </div>
-            <div className="fm-g">
-              <label className="fm-l">Genre musical</label>
-              <select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}>
-                <option value="">Sélectionner...</option>
-                {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-            </div>
-            <div className="fm-g"><label className="fm-l">WhatsApp (format +XXX...)</label><input className="fm-i" placeholder="+243..." value={form.whatsapp} onChange={e => setForm(f => ({ ...f, whatsapp: e.target.value }))} /></div>
-            <label className="fm-cb fm-g">
-              <input type="checkbox" checked={form.cgu} onChange={e => setForm(f => ({ ...f, cgu: e.target.checked }))} />
-              <span>J'accepte les <Link to="/cgu" style={{ color: C.blue }}>CGU</Link> et la <Link to="/confidentialite" style={{ color: C.blue }}>politique de confidentialité</Link></span>
-            </label>
-            <button className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleRegister} disabled={loading}>{loading ? "Création..." : "Créer mon compte"}</button>
+            <h2>Connexion</h2>
+            <p className="sub">Bienvenue sur votre espace artiste</p>
+            <form onSubmit={handleSignin}>
+              <div className="fm-g"><label className="fm-l">Email</label><input type="email" className="fm-i" value={signin.email} onChange={(e) => setSignin({ ...signin, email: e.target.value })} required autoComplete="email" /></div>
+              <div className="fm-g" style={{ position: "relative" }}>
+                <label className="fm-l">Mot de passe</label>
+                <input type={showPwd ? "text" : "password"} className="fm-i fm-i-pwd" value={signin.password} onChange={(e) => setSignin({ ...signin, password: e.target.value })} required autoComplete="current-password" />
+                <button type="button" className="fm-eye" onClick={() => setShowPwd(!showPwd)} aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}>
+                  {showPwd ? <Icon.EyeOff /> : <Icon.Eye />}
+                </button>
+              </div>
+              {err && <div className="fm-err" style={{ marginBottom: 12 }}>{err}</div>}
+              <button type="submit" className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginBottom: 12 }} disabled={loading}>{loading ? "Connexion..." : "Se connecter"}</button>
+              <div style={{ textAlign: "center", marginBottom: 16 }}>
+                <button type="button" className="btn-ghost" onClick={() => { setMode("reset"); setErr(null); setMsg(null); }}>Mot de passe oublié ?</button>
+              </div>
+              <div style={{ textAlign: "center", borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+                <span style={{ fontSize: 13, color: C.muted }}>Pas encore de compte ? </span>
+                <button type="button" onClick={() => { setMode("signup"); setErr(null); setMsg(null); }} style={{ background: "none", border: "none", color: C.gold, fontWeight: 600, cursor: "pointer", fontSize: 13 }}>Créer un compte</button>
+              </div>
+            </form>
           </>
         )}
 
-        {tab === "reset" && (
+        {mode === "signup" && (
           <>
-            <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>Entrez votre email pour recevoir un lien de réinitialisation.</p>
-            <div className="fm-g"><label className="fm-l">Email</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-            <button className="btn btn-o btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleReset} disabled={loading}>{loading ? "Envoi..." : "Envoyer le lien"}</button>
+            <h2>Créer un compte</h2>
+            <p className="sub">Rejoignez Sterkte Records gratuitement</p>
+            <form onSubmit={handleSignup}>
+              <div className="fm-row">
+                <div className="fm-g"><label className="fm-l">Nom complet *</label><input className="fm-i" value={signup.fullName} onChange={(e) => setSignup({ ...signup, fullName: e.target.value })} required autoComplete="name" /></div>
+                <div className="fm-g"><label className="fm-l">Nom d'artiste *</label><input className="fm-i" value={signup.artistName} onChange={(e) => setSignup({ ...signup, artistName: e.target.value })} required /></div>
+              </div>
+              <div className="fm-g"><label className="fm-l">Email *</label><input type="email" className="fm-i" value={signup.email} onChange={(e) => setSignup({ ...signup, email: e.target.value })} required autoComplete="email" /></div>
+              <div className="fm-g"><label className="fm-l">WhatsApp / Téléphone (international) *</label><input type="tel" className="fm-i" value={signup.whatsapp} onChange={(e) => setSignup({ ...signup, whatsapp: e.target.value })} required placeholder="+243850510209" /><div className="fm-help">Format international, commençant par +</div></div>
+              <div className="fm-g"><label className="fm-l">Genre musical principal *</label><select className="fm-s" value={signup.genre} onChange={(e) => setSignup({ ...signup, genre: e.target.value })} required>
+                <option value="">— Sélectionner —</option>
+                {MUSIC_GENRES.map(g => <option key={g}>{g}</option>)}
+              </select></div>
+              <div className="fm-g" style={{ position: "relative" }}>
+                <label className="fm-l">Mot de passe * (8 caractères min.)</label>
+                <input type={showPwd ? "text" : "password"} className="fm-i fm-i-pwd" value={signup.password} onChange={(e) => setSignup({ ...signup, password: e.target.value })} required minLength={8} autoComplete="new-password" />
+                <button type="button" className="fm-eye" onClick={() => setShowPwd(!showPwd)} aria-label={showPwd ? "Masquer le mot de passe" : "Afficher le mot de passe"}>
+                  {showPwd ? <Icon.EyeOff /> : <Icon.Eye />}
+                </button>
+                {signup.password && (
+                  <>
+                    <div className="pwd-strength">
+                      {[1,2,3,4].map(i => <div key={i} className={`pwd-bar ${ps >= i ? `f${ps}` : ""}`} />)}
+                    </div>
+                    <div className="fm-help">Force : {psLabel}</div>
+                  </>
+                )}
+              </div>
+              <div className="fm-g"><label className="fm-l">Confirmation du mot de passe *</label><input type={showPwd ? "text" : "password"} className="fm-i" value={signup.passwordConfirm} onChange={(e) => setSignup({ ...signup, passwordConfirm: e.target.value })} required autoComplete="new-password" /></div>
+
+              <div className="fm-g">
+                <label className="fm-cb">
+                  <input type="checkbox" checked={signup.cgu} onChange={(e) => setSignup({ ...signup, cgu: e.target.checked })} required />
+                  <span>J'accepte les <Link to="/cgu" target="_blank">Conditions Générales d'Utilisation</Link> *</span>
+                </label>
+              </div>
+              <div className="fm-g">
+                <label className="fm-cb">
+                  <input type="checkbox" checked={signup.privacy} onChange={(e) => setSignup({ ...signup, privacy: e.target.checked })} required />
+                  <span>J'accepte la <Link to="/confidentialite" target="_blank">Politique de confidentialité</Link> *</span>
+                </label>
+              </div>
+              <div className="fm-g">
+                <label className="fm-cb">
+                  <input type="checkbox" checked={signup.newsletter} onChange={(e) => setSignup({ ...signup, newsletter: e.target.checked })} />
+                  <span>Je souhaite recevoir les actualités de Sterkte Records</span>
+                </label>
+              </div>
+
+              {err && <div className="fm-err" style={{ marginBottom: 12 }}>{err}</div>}
+              <button type="submit" className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginBottom: 12 }} disabled={loading}>{loading ? "Création..." : "Créer mon compte"}</button>
+              <div style={{ textAlign: "center", borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+                <span style={{ fontSize: 13, color: C.muted }}>Déjà un compte ? </span>
+                <button type="button" onClick={() => { setMode("signin"); setErr(null); setMsg(null); }} style={{ background: "none", border: "none", color: C.gold, fontWeight: 600, cursor: "pointer", fontSize: 13 }}>Se connecter</button>
+              </div>
+            </form>
+          </>
+        )}
+
+        {mode === "reset" && (
+          <>
+            <h2>Mot de passe oublié</h2>
+            <p className="sub">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+            <form onSubmit={handleReset}>
+              <div className="fm-g"><label className="fm-l">Email</label><input type="email" className="fm-i" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required autoComplete="email" /></div>
+              {err && <div className="fm-err" style={{ marginBottom: 12 }}>{err}</div>}
+              {msg && <div style={{ padding: 12, background: "rgba(76,175,80,.08)", border: `1px solid rgba(76,175,80,.3)`, borderRadius: 8, fontSize: 13, color: C.success, marginBottom: 12 }}>{msg}</div>}
+              <button type="submit" className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginBottom: 12 }} disabled={loading}>{loading ? "Envoi..." : "Envoyer le lien"}</button>
+              <div style={{ textAlign: "center" }}>
+                <button type="button" onClick={() => { setMode("signin"); setErr(null); setMsg(null); }} className="btn-ghost">← Retour à la connexion</button>
+              </div>
+            </form>
           </>
         )}
       </div>
@@ -2074,474 +2305,1055 @@ function LoginPage() {
   );
 }
 
-// ─── DASHBOARD PAGE ───
-function DashboardPage() {
-  const { user, profile, signOut, loading: authLoading, isEmailConfirmed } = useAuth();
-  const { tracks, stats, loading: tracksLoading, refetch } = useTracks();
-  const nav = useNavigate();
-  const [tab, setTab] = useState("overview");
-  const [showUpload, setShowUpload] = useState(false);
-  const [toast, setToast] = useState(null);
-  const showToast = (msg, type = "ok") => setToast({ msg, type });
+// ─── DASHBOARD — refonte complète DDEX + splits + plateformes ───
+const TRACK_STATUSES = [
+  { value: "received", label: "Reçu", color: C.muted },
+  { value: "review", label: "En validation", color: C.blue },
+  { value: "approved", label: "Approuvé", color: C.gold },
+  { value: "sent", label: "Envoyé aux DSP", color: "#FF9800" },
+  { value: "live", label: "Live", color: C.success },
+  { value: "rejected", label: "Refusé", color: C.red },
+];
 
-  useEffect(() => { if (!authLoading && !user) nav("/connexion", { replace: true }); }, [user, authLoading]);
-  if (authLoading) return <div className="loading-box">Chargement...</div>;
-  if (!user) return null;
+function statusInfo(s) { return TRACK_STATUSES.find(t => t.value === s) || TRACK_STATUSES[0]; }
 
-  const statusColors = { live: C.success, pending: C.gold, review: C.blue, rejected: C.red, draft: C.muted };
-  const statusLabels = { live: "Live", pending: "En attente", review: "En révision", rejected: "Rejeté", draft: "Brouillon" };
+function TimelineStatus({ status }) {
+  const order = ["received", "review", "approved", "sent", "live"];
+  if (status === "rejected") {
+    return <div style={{ padding: 16, background: "rgba(230,57,70,.08)", border: "1px solid rgba(230,57,70,.3)", borderRadius: 10, color: C.red, fontSize: 13 }}>Ce titre a été refusé. Consultez le motif dans les détails.</div>;
+  }
+  const idx = order.indexOf(status);
+  return (
+    <div className="timeline">
+      {order.map((s, i) => {
+        const info = statusInfo(s);
+        const cls = i < idx ? "done" : i === idx ? "current" : "";
+        return (
+          <div key={s} className={`timeline-step ${cls}`}>
+            <div className="timeline-dot">{i < idx ? <Icon.Check size={12} /> : i + 1}</div>
+            <div className="timeline-label">{info.label}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Sub-composant : éditeur de splits royalties
+function SplitsEditor({ splits, onChange }) {
+  const total = splits.reduce((s, sp) => s + parseFloat(sp.percent || 0), 0);
+  const isOk = Math.abs(total - 100) < 0.01;
+
+  const update = (i, field, val) => {
+    const next = [...splits];
+    next[i] = { ...next[i], [field]: val };
+    onChange(next);
+  };
+  const add = () => onChange([...splits, { name: "", role: "Artiste", percent: 0 }]);
+  const remove = (i) => onChange(splits.filter((_, idx) => idx !== i));
 
   return (
-    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
-      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
-      <div style={{ padding: "40px 60px", maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-          <div>
-            <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: -1 }}>Dashboard</h1>
-            <p style={{ color: C.muted, fontSize: 14, marginTop: 4 }}>Bienvenue, <span style={{ color: C.white }}>{profile?.artist_name || profile?.full_name || user.email}</span></p>
-          </div>
-          <button className="btn btn-r" onClick={() => setShowUpload(true)}><Icon.Plus size={14} />Nouvelle sortie</button>
+    <div className="splits-box">
+      {splits.map((s, i) => (
+        <div key={i} className="split-row">
+          <input className="fm-i" placeholder="Nom complet de l'ayant droit" value={s.name} onChange={(e) => update(i, "name", e.target.value)} aria-label={`Nom split ${i + 1}`} />
+          <select className="fm-s" value={s.role} onChange={(e) => update(i, "role", e.target.value)} aria-label={`Rôle split ${i + 1}`}>
+            <option>Artiste principal</option>
+            <option>Featuring</option>
+            <option>Beatmaker / Producer</option>
+            <option>Songwriter / Compositeur</option>
+            <option>Éditeur / Publisher</option>
+            <option>Autre</option>
+          </select>
+          <input type="number" min="0" max="100" step="0.1" className="fm-i" placeholder="%" value={s.percent} onChange={(e) => update(i, "percent", e.target.value)} aria-label={`Pourcentage split ${i + 1}`} />
+          <button type="button" className="tr-act-btn danger" onClick={() => remove(i)} aria-label="Supprimer ce split"><Icon.Trash size={14} /></button>
         </div>
+      ))}
+      <button type="button" className="btn btn-o btn-sm" onClick={add} style={{ marginTop: 8 }}><Icon.Plus size={12} />Ajouter un ayant droit</button>
+      <div className={`split-total ${isOk ? "ok" : "err"}`}>
+        <span>Total :</span>
+        <span style={{ fontWeight: 700 }}>{total.toFixed(1)}% {isOk ? "✓" : `(doit faire 100%)`}</span>
+      </div>
+    </div>
+  );
+}
 
-        {!isEmailConfirmed && (
-          <div style={{ padding: "12px 16px", background: "rgba(245,197,24,.08)", border: "1px solid rgba(245,197,24,.3)", borderRadius: 8, marginBottom: 24, fontSize: 13, color: C.gold, display: "flex", alignItems: "center", gap: 8 }}>
-            <Icon.AlertCircle size={16} />Confirmez votre email pour accéder à toutes les fonctionnalités.
+function DashboardPage() {
+  const { user, profile, signOut, deleteAccount, fetchProfile } = useAuth();
+  const { tracks, stats, loading, refetch } = useTracks();
+  const [tab, setTab] = useState("overview");
+  const [toast, setToast] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  useEffect(() => { document.title = "Mon dashboard - Sterkte Records"; }, []);
+
+  const handleExport = async () => {
+    if (!user) return;
+    const exportData = {
+      exported_at: new Date().toISOString(),
+      profile: profile,
+      tracks: tracks,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sterkte-export-${user.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setToast({ msg: "Données exportées avec succès", type: "ok" });
+  };
+
+  return (
+    <div className="pg">
+      <div className="pg-c">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 4 }}>Bienvenue, <span className="gold">{profile?.artist_name || profile?.full_name || "Artiste"}</span></h1>
+            <p style={{ color: C.muted, fontSize: 14 }}>Espace artiste · Statistiques mises à jour mensuellement (le 31 du mois)</p>
           </div>
-        )}
+        </div>
 
         <div className="tabs">
-          {["overview", "tracks", "profile"].map(t => <button key={t} className={`tab ${tab === t ? "ac" : ""}`} onClick={() => setTab(t)}>{t === "overview" ? "Vue d'ensemble" : t === "tracks" ? "Mes titres" : "Profil"}</button>)}
+          <button className={`tab ${tab === "overview" ? "ac" : ""}`} onClick={() => setTab("overview")}>Vue d'ensemble</button>
+          <button className={`tab ${tab === "upload" ? "ac" : ""}`} onClick={() => setTab("upload")}>Distribuer un titre</button>
+          <button className={`tab ${tab === "tracks" ? "ac" : ""}`} onClick={() => setTab("tracks")}>Mes titres ({tracks.length})</button>
+          <button className={`tab ${tab === "profile" ? "ac" : ""}`} onClick={() => setTab("profile")}>Mon profil</button>
+          <button className={`tab ${tab === "account" ? "ac" : ""}`} onClick={() => setTab("account")}>Compte & RGPD</button>
         </div>
 
-        {tab === "overview" && (
-          <>
-            <div className="dash-grid">
-              <div className="dash-stat"><div className="dash-stat-l">Streams totaux</div><div className="dash-stat-v" style={{ color: C.gold }}>{stats.totalStreams.toLocaleString()}</div><div className="dash-stat-note">Tous titres confondus</div></div>
-              <div className="dash-stat"><div className="dash-stat-l">Revenus estimés</div><div className="dash-stat-v" style={{ color: C.success }}>${stats.totalRevenue}</div><div className="dash-stat-note">Prochain versement fin du mois</div></div>
-              <div className="dash-stat"><div className="dash-stat-l">Titres distribués</div><div className="dash-stat-v">{stats.count}</div></div>
-              <div className="dash-stat"><div className="dash-stat-l">Plateformes actives</div><div className="dash-stat-v" style={{ color: C.blue }}>{stats.livePlatforms}</div></div>
-            </div>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <button className="btn btn-g" onClick={() => setShowUpload(true)}><Icon.Plus size={14} />Distribuer un titre</button>
-              <button className="btn btn-o" onClick={() => sendWhatsApp(`Bonjour, je suis ${profile?.artist_name || user.email} et j'ai une question sur mon compte.`)}><Icon.Whatsapp size={14} />Contacter l'équipe</button>
-            </div>
-          </>
-        )}
-
-        {tab === "tracks" && (
-          <div className="dash-tracks">
-            <div className="dash-tracks-h">
-              <h3>Mes titres</h3>
-              <button className="btn btn-r btn-sm" onClick={() => setShowUpload(true)}><Icon.Plus size={12} />Ajouter</button>
-            </div>
-            {tracksLoading ? <div className="loading-box">Chargement...</div> : tracks.length === 0 ? (
-              <div style={{ padding: "60px 24px", textAlign: "center", color: C.muted }}>
-                <Icon.Music size={40} color={C.border} />
-                <p style={{ marginTop: 16 }}>Aucun titre distribué pour le moment.</p>
-                <button className="btn btn-g" style={{ marginTop: 16 }} onClick={() => setShowUpload(true)}>Distribuer mon premier titre</button>
-              </div>
-            ) : (
-              <>
-                <div className="tr-row" style={{ background: C.bgCard, fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>
-                  <span>#</span><span>Titre</span><span>Genre</span><span>Streams</span><span>Statut</span><span>Actions</span>
-                </div>
-                {tracks.map((t, i) => (
-                  <div key={t.id} className="tr-row">
-                    <span className="tr-num">{i + 1}</span>
-                    <div><div className="tr-title">{t.title}</div><div className="tr-info" style={{ fontSize: 11 }}>{t.release_date || ""}</div></div>
-                    <span className="tr-info">{t.genre || "—"}</span>
-                    <span className="tr-info">{(t.streams || 0).toLocaleString()}</span>
-                    <div className="tr-status"><div className="tr-dot" style={{ background: statusColors[t.status] || C.muted }} />{statusLabels[t.status] || t.status}</div>
-                    <div className="tr-actions">
-                      <button className="tr-act-btn" title="Voir détails" onClick={() => showToast(`Détails de "${t.title}"`, "ok")}><Icon.Eye size={12} /></button>
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        )}
-
-        {tab === "profile" && (
-          <div style={{ maxWidth: 500 }}>
-            <div style={{ padding: 24, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
-              <div style={{ width: 60, height: 60, borderRadius: "50%", background: `linear-gradient(135deg, ${C.red}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat',sans-serif", fontWeight: 900, fontSize: 24, marginBottom: 16 }}>
-                {(profile?.artist_name || user.email)[0].toUpperCase()}
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{profile?.artist_name || "—"}</h3>
-              <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>{profile?.full_name}</p>
-              {[
-                { l: "Email", v: user.email },
-                { l: "Genre", v: profile?.genre || "Non renseigné" },
-                { l: "WhatsApp", v: profile?.whatsapp || "Non renseigné" },
-                { l: "Membre depuis", v: user.created_at ? new Date(user.created_at).toLocaleDateString("fr-FR") : "—" },
-              ].map(({ l, v }) => (
-                <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
-                  <span style={{ color: C.muted }}>{l}</span>
-                  <span>{v}</span>
-                </div>
-              ))}
-              <button className="btn btn-o btn-sm" style={{ marginTop: 20 }} onClick={signOut}>Déconnexion</button>
-            </div>
-          </div>
-        )}
+        {tab === "overview" && <OverviewTab stats={stats} />}
+        {tab === "upload" && <UploadTab onSuccess={() => { refetch(); setTab("tracks"); setToast({ msg: "Titre soumis avec succès. Notre équipe le validera sous 24-72h.", type: "ok" }); }} />}
+        {tab === "tracks" && <TracksTab tracks={tracks} loading={loading} onRefresh={refetch} setToast={setToast} />}
+        {tab === "profile" && <ProfileTab profile={profile} user={user} onUpdate={() => fetchProfile(user.id)} setToast={setToast} />}
+        {tab === "account" && <AccountTab onExport={handleExport} onDelete={() => setDeleteOpen(true)} onSignOut={signOut} />}
       </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
-      <Modal open={showUpload} onClose={() => setShowUpload(false)} title="Soumettre un nouveau titre" maxWidth={600}>
-        <UploadTrackForm onSuccess={() => { setShowUpload(false); refetch(); showToast("Titre soumis avec succès ! Notre équipe va le valider.", "ok"); }} onClose={() => setShowUpload(false)} />
+      <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)} title="Supprimer mon compte">
+        <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>
+          Cette action est <strong style={{ color: C.red }}>irréversible</strong>. Toutes vos données (profil, titres, statistiques) seront effacées définitivement, conformément à l'article 17 du RGPD.
+        </p>
+        <p style={{ color: C.muted, fontSize: 13, marginBottom: 24 }}>
+          Si vous avez des titres en distribution, ils continueront d'être diffusés sur les plateformes mais ne vous seront plus rattachés. Pour un retrait complet des plateformes, contactez {CONTACT_EMAIL} avant la suppression.
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button className="btn btn-o" onClick={() => setDeleteOpen(false)}>Annuler</button>
+          <button className="btn btn-danger" onClick={async () => {
+            const { error } = await deleteAccount();
+            if (error) { setToast({ msg: "Erreur : " + error.message, type: "err" }); }
+            else { setDeleteOpen(false); }
+          }}>Confirmer la suppression</button>
+        </div>
       </Modal>
     </div>
   );
 }
 
-// ─── UPLOAD TRACK FORM ───
-function UploadTrackForm({ onSuccess, onClose }) {
-  const { user } = useAuth();
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
-    title: "", genre: "", release_type: "single", release_date: "",
-    language: "", explicit: false, platforms: ["spotify", "apple_music", "deezer", "youtube_music", "tidal", "boomplay"],
-    isrc: generateISRC(), upc: generateUPC(),
-    splits: [{ name: "", role: "Artiste principal", percent: 100 }],
+function OverviewTab({ stats }) {
+  return (
+    <>
+      <div className="dash-grid">
+        <div className="dash-stat"><div className="dash-stat-l">Streams totaux</div><div className="dash-stat-v" style={{ color: C.gold }}>{(stats.totalStreams || 0).toLocaleString("fr-FR")}</div><div className="dash-stat-note">Cumulés sur tous vos titres</div></div>
+        <div className="dash-stat"><div className="dash-stat-l">Revenus estimés</div><div className="dash-stat-v" style={{ color: C.success }}>${stats.totalRevenue}</div><div className="dash-stat-note">Avant retenues label / splits</div></div>
+        <div className="dash-stat"><div className="dash-stat-l">Titres distribués</div><div className="dash-stat-v" style={{ color: C.blue }}>{stats.count}</div></div>
+        <div className="dash-stat"><div className="dash-stat-l">Plateformes actives</div><div className="dash-stat-v" style={{ color: C.red }}>{stats.livePlatforms}</div><div className="dash-stat-note">Calculé sur titres live</div></div>
+      </div>
+      <div style={{ padding: 24, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>À savoir</h3>
+        <ul style={{ listStyle: "none", color: C.muted, fontSize: 13, lineHeight: 2 }}>
+          <li>• Les statistiques sont mises à jour le 31 de chaque mois (données J-30 fournies par les DSP).</li>
+          <li>• Les revenus affichés sont des estimations brutes. Le détail par plateforme et par track est envoyé chaque trimestre.</li>
+          <li>• Pour toute question, contactez votre interlocuteur Sterkte ou {CONTACT_EMAIL}.</li>
+        </ul>
+      </div>
+    </>
+  );
+}
+
+function UploadTab({ onSuccess, editingTrack = null }) {
+  const { user, profile } = useAuth();
+  const [form, setForm] = useState(() => editingTrack || {
+    // Métadonnées principales
+    title: "",
+    release_type: "single",
+    primary_artist: profile?.artist_name || "",
+    featured_artists: "",
+    genre: "",
+    secondary_genre: "",
+    language: "Français",
+    release_date: "",
+    pre_order_date: "",
+    explicit: "no",
+    // Identifiants
+    isrc: "",
+    upc: "",
+    // Crédits
+    songwriters: "", // séparés par virgule
+    composers: "",
+    producer: "",
+    publisher: "",
+    label: "Sterkte Records",
+    // Copyright
+    p_line: `${new Date().getFullYear()} Sterkte Records`,
+    c_line: `${new Date().getFullYear()} Sterkte Records`,
+    // Détails techniques optionnels
+    bpm: "",
+    musical_key: "",
+    // Distribution
+    territories: "worldwide",
+    platforms: DSP_PLATFORMS.map(p => p.id), // tout par défaut
+    splits: [{ name: profile?.full_name || profile?.artist_name || "", role: "Artiste principal", percent: 100 }],
   });
+
   const [audioFile, setAudioFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [audioMeta, setAudioMeta] = useState(null); // { duration, ... }
+  const [coverErr, setCoverErr] = useState(null);
+  const [audioErr, setAudioErr] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const audioRef = useRef(null);
-  const coverRef = useRef(null);
+  const handleAudio = (file) => {
+    setAudioErr(null);
+    if (!file) return;
+    const okType = file.type === "audio/wav" || file.type === "audio/x-wav" || file.name.toLowerCase().endsWith(".wav") || file.type === "audio/flac";
+    if (!okType) { setAudioErr("Format requis : WAV ou FLAC. MP3 non accepté pour préserver la qualité."); return; }
+    if (file.size > 200 * 1024 * 1024) { setAudioErr("Fichier > 200 MB. Vérifiez votre export."); return; }
 
-  const togglePlatform = (id) => {
-    setForm(f => ({ ...f, platforms: f.platforms.includes(id) ? f.platforms.filter(p => p !== id) : [...f.platforms, id] }));
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.onloadedmetadata = () => {
+      const dur = audio.duration;
+      if (dur < 30) { setAudioErr("Durée trop courte : minimum 30 secondes (refusé par Spotify)."); return; }
+      if (dur > 600) { setAudioErr("Durée maximale 10 minutes par track (au-delà, contactez-nous)."); return; }
+      setAudioMeta({ duration: dur, sizeMB: (file.size / 1024 / 1024).toFixed(1) });
+      setAudioFile(file);
+    };
+    audio.onerror = () => setAudioErr("Fichier audio illisible.");
   };
 
-  const splitTotal = form.splits.reduce((s, r) => s + Number(r.percent || 0), 0);
+  const handleCover = (file) => {
+    setCoverErr(null);
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setCoverErr("Format requis : JPG ou PNG."); return; }
+    if (file.size > 10 * 1024 * 1024) { setCoverErr("Cover > 10 MB."); return; }
+    const img = new Image();
+    img.onload = () => {
+      if (img.width < 3000 || img.height < 3000) { setCoverErr(`Cover trop petite (${img.width}×${img.height}). Minimum 3000×3000 px.`); return; }
+      if (img.width !== img.height) { setCoverErr(`Cover non carrée (${img.width}×${img.height}). Le format carré est requis.`); return; }
+      setCoverFile(file);
+    };
+    img.onerror = () => setCoverErr("Image illisible.");
+    img.src = URL.createObjectURL(file);
+  };
 
-  const handleSubmit = async () => {
-    if (!form.title) { setError("Le titre est obligatoire."); return; }
-    if (splitTotal !== 100) { setError("Les splits de royalties doivent totaliser 100%."); return; }
-    setLoading(true); setError("");
+  const validate = () => {
+    if (!form.title.trim()) return "Titre requis";
+    if (!form.primary_artist.trim()) return "Artiste principal requis";
+    if (!form.genre) return "Genre principal requis";
+    if (!form.release_date) return "Date de sortie requise";
+    const minDate = new Date(); minDate.setDate(minDate.getDate() + 8);
+    if (new Date(form.release_date) < minDate) return "Date de sortie : minimum dans 8 jours";
+    if (!audioFile) return "Fichier audio requis";
+    if (!coverFile) return "Pochette requise";
+    if (form.platforms.length === 0) return "Sélectionnez au moins une plateforme";
+    const totalSplit = form.splits.reduce((s, sp) => s + parseFloat(sp.percent || 0), 0);
+    if (Math.abs(totalSplit - 100) > 0.01) return `Splits royalties : le total doit faire 100% (actuellement ${totalSplit.toFixed(1)}%)`;
+    if (form.splits.some(s => !s.name.trim())) return "Tous les ayants droit doivent avoir un nom";
+    return null;
+  };
 
-    let audioPath = null;
-    let coverPath = null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    const v = validate();
+    if (v) { setError(v); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
 
-    if (audioFile) {
-      const res = await uploadFile("audio", audioFile, user.id, { maxSize: 200 * 1024 * 1024, allowedMimes: ["audio/"] });
-      if (res.error) { setError(res.error); setLoading(false); return; }
-      audioPath = res.url;
+    setSubmitting(true);
+    try {
+      // Upload sécurisé (path stocké, pas l'URL publique)
+      const audioRes = await uploadFile("audio", audioFile, user.id, {
+        maxSize: 200 * 1024 * 1024,
+        allowedMimes: ["audio/wav", "audio/x-wav", "audio/flac"],
+      });
+      if (audioRes.error) throw new Error("Audio : " + audioRes.error);
+
+      const coverRes = await uploadFile("covers", coverFile, user.id, {
+        maxSize: 10 * 1024 * 1024,
+        allowedMimes: ["image/"],
+      });
+      if (coverRes.error) throw new Error("Cover : " + coverRes.error);
+
+      const isrc = form.isrc || generateISRC();
+      const upc = form.upc || generateUPC();
+
+      const payload = {
+        user_id: user.id,
+        title: form.title,
+        release_type: form.release_type,
+        primary_artist: form.primary_artist,
+        featured_artists: form.featured_artists,
+        genre: form.genre,
+        secondary_genre: form.secondary_genre,
+        language: form.language,
+        release_date: form.release_date,
+        pre_order_date: form.pre_order_date || null,
+        explicit: form.explicit,
+        isrc,
+        upc,
+        songwriters: form.songwriters,
+        composers: form.composers,
+        producer: form.producer,
+        publisher: form.publisher,
+        label: form.label,
+        p_line: form.p_line,
+        c_line: form.c_line,
+        bpm: form.bpm ? parseInt(form.bpm) : null,
+        musical_key: form.musical_key,
+        territories: form.territories,
+        platforms: form.platforms,
+        splits: form.splits,
+        audio_path: audioRes.url,
+        cover_path: coverRes.url,
+        duration_seconds: Math.round(audioMeta.duration),
+        status: "received",
+        streams: 0,
+        revenue: 0,
+      };
+
+      const { error: dbErr } = await supabase.from("tracks").insert(payload);
+      if (dbErr) throw new Error("Base de données : " + dbErr.message);
+
+      // Notif email équipe
+      await sendEmail({
+        subject: `[Distribution] Nouveau titre - ${form.title} - ${form.primary_artist}`,
+        name: "Sterkte System",
+        email: CONTACT_EMAIL,
+        message: `Nouveau titre soumis :\n\nArtiste : ${form.primary_artist}\nTitre : ${form.title}\nType : ${form.release_type}\nGenre : ${form.genre}\nISRC : ${isrc}\nUPC : ${upc}\nSortie : ${form.release_date}\nPlateformes : ${form.platforms.length}\nDurée : ${Math.round(audioMeta.duration)}s\nSubmitted by user ID : ${user.id}\n\nÀ valider dans l'admin.`,
+      });
+
+      onSuccess?.();
+    } catch (err) {
+      setError(err.message);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    if (coverFile) {
-      const res = await uploadFile("covers", coverFile, user.id, { maxSize: 10 * 1024 * 1024, allowedMimes: ["image/"] });
-      if (res.error) { setError(res.error); setLoading(false); return; }
-      coverPath = res.url;
-    }
-
-    const { error: dbErr } = await supabase.from("tracks").insert({
-      user_id: user.id,
-      title: form.title,
-      genre: form.genre,
-      release_type: form.release_type,
-      release_date: form.release_date || null,
-      language: form.language,
-      explicit: form.explicit,
-      platforms: form.platforms,
-      isrc: form.isrc,
-      upc: form.upc,
-      splits: form.splits,
-      audio_path: audioPath,
-      cover_path: coverPath,
-      status: "pending",
-      streams: 0,
-      revenue: 0,
-    });
-
-    setLoading(false);
-    if (dbErr) { setError(dbErr.message); return; }
-    onSuccess();
+    setSubmitting(false);
   };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit} className="fm" style={{ maxWidth: "100%" }}>
       {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
 
-      <div className="timeline" style={{ marginBottom: 24 }}>
-        {["Infos", "Fichiers", "Plateformes", "Royalties"].map((label, i) => (
-          <div key={label} className={`timeline-step ${step > i + 1 ? "done" : step === i + 1 ? "current" : ""}`}>
-            <div className="timeline-dot">{step > i + 1 ? <Icon.Check size={12} color="#000" /> : i + 1}</div>
-            <div className="timeline-label">{label}</div>
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>1 · Identification du titre</h3>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Titre *</label><input className="fm-i" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
+        <div className="fm-g"><label className="fm-l">Type de release *</label><select className="fm-s" value={form.release_type} onChange={(e) => setForm({ ...form, release_type: e.target.value })}>{RELEASE_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Artiste principal *</label><input className="fm-i" value={form.primary_artist} onChange={(e) => setForm({ ...form, primary_artist: e.target.value })} required /></div>
+        <div className="fm-g"><label className="fm-l">Featuring</label><input className="fm-i" value={form.featured_artists} onChange={(e) => setForm({ ...form, featured_artists: e.target.value })} placeholder="Ex : Artist 1, Artist 2" /></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Genre principal *</label><select className="fm-s" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })} required><option value="">— Sélectionner —</option>{MUSIC_GENRES.map(g => <option key={g}>{g}</option>)}</select></div>
+        <div className="fm-g"><label className="fm-l">Genre secondaire</label><select className="fm-s" value={form.secondary_genre} onChange={(e) => setForm({ ...form, secondary_genre: e.target.value })}><option value="">— Aucun —</option>{MUSIC_GENRES.map(g => <option key={g}>{g}</option>)}</select></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Langue principale *</label><select className="fm-s" value={form.language} onChange={(e) => setForm({ ...form, language: e.target.value })}>{LYRICS_LANGUAGES.map(l => <option key={l}>{l}</option>)}</select></div>
+        <div className="fm-g"><label className="fm-l">Contenu explicite *</label><select className="fm-s" value={form.explicit} onChange={(e) => setForm({ ...form, explicit: e.target.value })}><option value="no">Non — Pas de langage explicite</option><option value="yes">Oui — Langage explicite</option><option value="cleaned">Version Clean (paroles censurées)</option></select></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Date de sortie *</label><input type="date" className="fm-i" value={form.release_date} onChange={(e) => setForm({ ...form, release_date: e.target.value })} min={new Date(Date.now() + 8 * 86400000).toISOString().split("T")[0]} required /><div className="fm-help">Minimum +8 jours (recommandé +14j pour pitching playlists)</div></div>
+        <div className="fm-g"><label className="fm-l">Date de pré-commande (optionnel)</label><input type="date" className="fm-i" value={form.pre_order_date} onChange={(e) => setForm({ ...form, pre_order_date: e.target.value })} /></div>
+      </div>
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>2 · Identifiants (ISRC / UPC)</h3>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">ISRC</label><input className="fm-i" value={form.isrc} onChange={(e) => setForm({ ...form, isrc: e.target.value })} placeholder="Auto-généré si vide" /><div className="fm-help">Format CC-XXX-YY-NNNNN. Si vous n'en avez pas, nous en générons un.</div></div>
+        <div className="fm-g"><label className="fm-l">UPC / EAN</label><input className="fm-i" value={form.upc} onChange={(e) => setForm({ ...form, upc: e.target.value })} placeholder="Auto-généré si vide" /><div className="fm-help">12 chiffres. Si vous n'en avez pas, nous en générons un.</div></div>
+      </div>
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>3 · Crédits</h3>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Songwriters / Auteurs</label><input className="fm-i" value={form.songwriters} onChange={(e) => setForm({ ...form, songwriters: e.target.value })} placeholder="Nom complet, séparés par virgules" /></div>
+        <div className="fm-g"><label className="fm-l">Composers / Compositeurs</label><input className="fm-i" value={form.composers} onChange={(e) => setForm({ ...form, composers: e.target.value })} placeholder="Nom complet, séparés par virgules" /></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Producer / Beatmaker</label><input className="fm-i" value={form.producer} onChange={(e) => setForm({ ...form, producer: e.target.value })} /></div>
+        <div className="fm-g"><label className="fm-l">Publisher / Éditeur</label><input className="fm-i" value={form.publisher} onChange={(e) => setForm({ ...form, publisher: e.target.value })} /></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">℗ P-line *</label><input className="fm-i" value={form.p_line} onChange={(e) => setForm({ ...form, p_line: e.target.value })} required /><div className="fm-help">Copyright master enregistrement</div></div>
+        <div className="fm-g"><label className="fm-l">© C-line *</label><input className="fm-i" value={form.c_line} onChange={(e) => setForm({ ...form, c_line: e.target.value })} required /><div className="fm-help">Copyright composition</div></div>
+      </div>
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>4 · Détails techniques (optionnel)</h3>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">BPM</label><input type="number" className="fm-i" value={form.bpm} onChange={(e) => setForm({ ...form, bpm: e.target.value })} placeholder="Ex : 120" /></div>
+        <div className="fm-g"><label className="fm-l">Tonalité (Key)</label><input className="fm-i" value={form.musical_key} onChange={(e) => setForm({ ...form, musical_key: e.target.value })} placeholder="Ex : C minor, F# major" /></div>
+      </div>
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>5 · Splits royalties (doit faire 100%)</h3>
+      <SplitsEditor splits={form.splits} onChange={(splits) => setForm({ ...form, splits })} />
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>6 · Plateformes de distribution</h3>
+      <div className="fm-row" style={{ marginBottom: 12 }}>
+        <button type="button" className="btn btn-o btn-sm" onClick={() => setForm({ ...form, platforms: DSP_PLATFORMS.map(p => p.id) })}>Tout sélectionner</button>
+        <button type="button" className="btn btn-o btn-sm" onClick={() => setForm({ ...form, platforms: [] })}>Tout désélectionner</button>
+      </div>
+      <div className="dsp-grid">
+        {DSP_PLATFORMS.map(p => (
+          <label key={p.id} className={`dsp-item ${form.platforms.includes(p.id) ? "selected" : ""}`}>
+            <input type="checkbox" checked={form.platforms.includes(p.id)} onChange={(e) => {
+              const next = e.target.checked ? [...form.platforms, p.id] : form.platforms.filter(x => x !== p.id);
+              setForm({ ...form, platforms: next });
+            }} />
+            <span>{p.name}</span>
+          </label>
+        ))}
+      </div>
+      <div className="fm-g">
+        <label className="fm-l" style={{ marginTop: 16 }}>Territoires de distribution</label>
+        <select className="fm-s" value={form.territories} onChange={(e) => setForm({ ...form, territories: e.target.value })}>
+          <option value="worldwide">Monde entier</option>
+          <option value="africa">Afrique uniquement</option>
+          <option value="europe">Europe uniquement</option>
+          <option value="custom">Personnalisé (à préciser dans message au support)</option>
+        </select>
+      </div>
+
+      <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, marginTop: 32, paddingBottom: 8, borderBottom: `1px solid ${C.border}` }}>7 · Fichiers</h3>
+      <div className="fm-row">
+        <div className="fm-g">
+          <label className="fm-l">Audio master (WAV/FLAC) *</label>
+          <label className={`upload ${audioFile ? "has-file" : ""}`}>
+            <Icon.Upload size={32} color={audioFile ? C.success : C.muted} />
+            <h4 style={{ marginTop: 12 }}>{audioFile ? `✓ ${audioFile.name}` : "Cliquez pour uploader"}</h4>
+            <p>{audioFile ? `${audioMeta?.sizeMB} MB · ${Math.round(audioMeta?.duration || 0)}s` : "WAV ou FLAC, 30s minimum, 200MB max"}</p>
+            <input type="file" accept="audio/wav,audio/x-wav,audio/flac,.wav,.flac" onChange={(e) => handleAudio(e.target.files[0])} style={{ display: "none" }} />
+          </label>
+          {audioErr && <div className="fm-err">{audioErr}</div>}
+        </div>
+        <div className="fm-g">
+          <label className="fm-l">Pochette (3000×3000 px carrée) *</label>
+          <label className={`upload ${coverFile ? "has-file" : ""}`}>
+            <Icon.Image size={32} color={coverFile ? C.success : C.muted} />
+            <h4 style={{ marginTop: 12 }}>{coverFile ? `✓ ${coverFile.name}` : "Cliquez pour uploader"}</h4>
+            <p>{coverFile ? `${(coverFile.size / 1024 / 1024).toFixed(1)} MB` : "JPG/PNG, carrée, 3000×3000 min, sRGB"}</p>
+            <input type="file" accept="image/jpeg,image/png" onChange={(e) => handleCover(e.target.files[0])} style={{ display: "none" }} />
+          </label>
+          {coverErr && <div className="fm-err">{coverErr}</div>}
+        </div>
+      </div>
+
+      <div style={{ marginTop: 32, padding: 20, background: "rgba(245,197,24,.05)", border: "1px solid rgba(245,197,24,.2)", borderRadius: 10 }}>
+        <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, margin: 0 }}>
+          <strong style={{ color: C.gold }}>Avant de soumettre :</strong> en cliquant sur "Soumettre pour distribution", vous certifiez détenir tous les droits sur ce titre (master + composition) ou avoir l'autorisation des ayants droit. Toute soumission frauduleuse entraînera la suspension immédiate du compte et un signalement aux DSP.
+        </p>
+      </div>
+
+      <button type="submit" className="btn btn-g btn-lg" style={{ marginTop: 20 }} disabled={submitting}>
+        {submitting ? "Envoi en cours..." : <><Icon.Send size={14} />Soumettre pour distribution</>}
+      </button>
+    </form>
+  );
+}
+
+function TracksTab({ tracks, loading, onRefresh, setToast }) {
+  const [selected, setSelected] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(null);
+
+  const handleDelete = async () => {
+    if (!deleteOpen) return;
+    if (deleteOpen.status !== "received" && deleteOpen.status !== "review") {
+      setToast({ msg: "Seuls les titres en cours de validation peuvent être supprimés.", type: "err" });
+      setDeleteOpen(null);
+      return;
+    }
+    const { error } = await supabase.from("tracks").delete().eq("id", deleteOpen.id);
+    if (error) { setToast({ msg: "Erreur : " + error.message, type: "err" }); }
+    else { setToast({ msg: "Titre supprimé", type: "ok" }); onRefresh(); }
+    setDeleteOpen(null);
+  };
+
+  if (loading) return <div className="loading-box">Chargement de vos titres...</div>;
+  if (tracks.length === 0) return (
+    <div style={{ padding: 60, textAlign: "center", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+      <Icon.Music size={48} color={C.muted} />
+      <h3 style={{ marginTop: 16, fontSize: 18, fontWeight: 700 }}>Aucun titre pour le moment</h3>
+      <p style={{ color: C.muted, marginTop: 8, fontSize: 14 }}>Cliquez sur l'onglet "Distribuer un titre" pour soumettre votre premier morceau.</p>
+    </div>
+  );
+
+  return (
+    <>
+      <div className="dash-tracks">
+        <div className="dash-tracks-h"><h3>Mes titres</h3></div>
+        {tracks.map((t, i) => {
+          const info = statusInfo(t.status);
+          return (
+            <div key={t.id} className="tr-row">
+              <div className="tr-num">{String(i + 1).padStart(2, "0")}</div>
+              <div className="tr-title">{t.title}<br /><span style={{ fontSize: 11, color: C.muted, fontWeight: 400 }}>{t.genre} · {t.isrc || "—"}</span></div>
+              <div className="tr-info">{(t.streams || 0).toLocaleString("fr-FR")} streams</div>
+              <div className="tr-info">${parseFloat(t.revenue || 0).toFixed(2)}</div>
+              <div className="tr-status"><div className="tr-dot" style={{ background: info.color }} />{info.label}</div>
+              <div className="tr-actions">
+                <button className="tr-act-btn" onClick={() => setSelected(t)} aria-label="Voir détails"><Icon.Eye size={14} /></button>
+                {(t.status === "received" || t.status === "review") && <button className="tr-act-btn danger" onClick={() => setDeleteOpen(t)} aria-label="Supprimer"><Icon.Trash size={14} /></button>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.title} maxWidth={640}>
+        {selected && (
+          <>
+            <TimelineStatus status={selected.status} />
+            {selected.status === "rejected" && selected.rejection_reason && (
+              <div style={{ marginBottom: 20, padding: 16, background: "rgba(230,57,70,.08)", border: "1px solid rgba(230,57,70,.3)", borderRadius: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: C.red, marginBottom: 6, textTransform: "uppercase", letterSpacing: 1 }}>Motif du refus</div>
+                <p style={{ fontSize: 14, color: C.white }}>{selected.rejection_reason}</p>
+              </div>
+            )}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 13 }}>
+              <div><strong style={{ color: C.muted }}>Artiste principal :</strong><br />{selected.primary_artist}</div>
+              {selected.featured_artists && <div><strong style={{ color: C.muted }}>Featuring :</strong><br />{selected.featured_artists}</div>}
+              <div><strong style={{ color: C.muted }}>Genre :</strong><br />{selected.genre}</div>
+              <div><strong style={{ color: C.muted }}>Langue :</strong><br />{selected.language}</div>
+              <div><strong style={{ color: C.muted }}>ISRC :</strong><br />{selected.isrc || "—"}</div>
+              <div><strong style={{ color: C.muted }}>UPC :</strong><br />{selected.upc || "—"}</div>
+              <div><strong style={{ color: C.muted }}>Date de sortie :</strong><br />{selected.release_date}</div>
+              <div><strong style={{ color: C.muted }}>Explicite :</strong><br />{selected.explicit === "yes" ? "Oui" : selected.explicit === "cleaned" ? "Version clean" : "Non"}</div>
+              <div><strong style={{ color: C.muted }}>Plateformes :</strong><br />{(selected.platforms || []).length} sélectionnées</div>
+              <div><strong style={{ color: C.muted }}>Durée :</strong><br />{selected.duration_seconds ? `${Math.round(selected.duration_seconds)}s` : "—"}</div>
+            </div>
+            {selected.splits && selected.splits.length > 0 && (
+              <div style={{ marginTop: 20 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Splits royalties</div>
+                {selected.splits.map((s, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontSize: 13, borderBottom: `1px solid ${C.border}` }}>
+                    <span>{s.name} <span style={{ color: C.muted }}>({s.role})</span></span>
+                    <span style={{ color: C.gold, fontWeight: 700 }}>{s.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </Modal>
+
+      <Modal open={!!deleteOpen} onClose={() => setDeleteOpen(null)} title="Supprimer ce titre ?">
+        <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Vous êtes sur le point de supprimer <strong style={{ color: C.white }}>{deleteOpen?.title}</strong>. Cette action est irréversible.</p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button className="btn btn-o" onClick={() => setDeleteOpen(null)}>Annuler</button>
+          <button className="btn btn-danger" onClick={handleDelete}>Supprimer</button>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
+function ProfileTab({ profile, user, onUpdate, setToast }) {
+  const [form, setForm] = useState({
+    full_name: profile?.full_name || "",
+    artist_name: profile?.artist_name || "",
+    whatsapp: profile?.whatsapp || "",
+    genre: profile?.genre || "",
+    bio: profile?.bio || "",
+    instagram: profile?.instagram || "",
+    spotify: profile?.spotify || "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    const { error } = await supabase.from("profiles").update(form).eq("id", user.id);
+    setSaving(false);
+    if (error) setToast({ msg: "Erreur : " + error.message, type: "err" });
+    else { setToast({ msg: "Profil mis à jour", type: "ok" }); onUpdate(); }
+  };
+
+  return (
+    <form onSubmit={handleSave} className="fm" style={{ maxWidth: 720 }}>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Nom complet</label><input className="fm-i" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
+        <div className="fm-g"><label className="fm-l">Nom d'artiste</label><input className="fm-i" value={form.artist_name} onChange={(e) => setForm({ ...form, artist_name: e.target.value })} /></div>
+      </div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Email (non modifiable)</label><input className="fm-i" value={user?.email || ""} disabled style={{ opacity: 0.6 }} /></div>
+        <div className="fm-g"><label className="fm-l">WhatsApp</label><input type="tel" className="fm-i" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} /></div>
+      </div>
+      <div className="fm-g"><label className="fm-l">Genre principal</label><select className="fm-s" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })}><option value="">— Sélectionner —</option>{MUSIC_GENRES.map(g => <option key={g}>{g}</option>)}</select></div>
+      <div className="fm-g"><label className="fm-l">Bio</label><textarea className="fm-t" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Présentation publique de votre carrière..." /></div>
+      <div className="fm-row">
+        <div className="fm-g"><label className="fm-l">Instagram</label><input type="url" className="fm-i" value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} placeholder="https://instagram.com/votrecompte" /></div>
+        <div className="fm-g"><label className="fm-l">Spotify Artist</label><input type="url" className="fm-i" value={form.spotify} onChange={(e) => setForm({ ...form, spotify: e.target.value })} placeholder="https://open.spotify.com/artist/..." /></div>
+      </div>
+      <button type="submit" className="btn btn-g" disabled={saving}>{saving ? "Enregistrement..." : "Enregistrer"}</button>
+    </form>
+  );
+}
+
+function AccountTab({ onExport, onDelete, onSignOut }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 720 }}>
+      <div style={{ padding: 24, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Exporter mes données</h3>
+        <p style={{ fontSize: 13, color: C.muted, marginBottom: 16, lineHeight: 1.6 }}>Conformément à l'article 20 du RGPD (droit à la portabilité), téléchargez l'ensemble de vos données au format JSON.</p>
+        <button className="btn btn-o" onClick={onExport}><Icon.Download size={14} />Télécharger mes données</button>
+      </div>
+
+      <div style={{ padding: 24, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Déconnexion</h3>
+        <p style={{ fontSize: 13, color: C.muted, marginBottom: 16, lineHeight: 1.6 }}>Vous déconnecter de cet appareil.</p>
+        <button className="btn btn-o" onClick={onSignOut}>Se déconnecter</button>
+      </div>
+
+      <div style={{ padding: 24, background: "rgba(230,57,70,.05)", border: `1px solid rgba(230,57,70,.2)`, borderRadius: 12 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: C.red }}>Zone dangereuse</h3>
+        <p style={{ fontSize: 13, color: C.muted, marginBottom: 16, lineHeight: 1.6 }}>La suppression de votre compte est irréversible. Toutes vos données personnelles seront effacées (article 17 du RGPD).</p>
+        <button className="btn btn-danger" onClick={onDelete}><Icon.Trash size={14} />Supprimer mon compte</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ADMIN — refonte complète ───
+const REJECTION_TEMPLATES = [
+  "Cover non conforme : doit être carrée 3000×3000 px minimum, profil sRGB, sans texte/URL.",
+  "Qualité audio insuffisante : exportez en WAV 44.1kHz/16-bit ou supérieur.",
+  "Métadonnées incomplètes : les champs obligatoires DDEX ne sont pas remplis.",
+  "Doute sur les droits : merci de fournir une preuve de propriété (contrat, autorisation).",
+  "Date de sortie trop proche : minimum 8 jours après soumission.",
+  "Splits royalties incohérents : le total ne fait pas 100%.",
+  "Contenu ne respectant pas les conditions des plateformes (langage, références non autorisées).",
+];
+
+function AdminPage() {
+  const { profile } = useAuth();
+  const [tab, setTab] = useState("tracks");
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => { document.title = "Admin - Sterkte Records"; }, []);
+
+  return (
+    <div className="pg">
+      <div className="pg-c">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 4 }}>Espace <span className="gold">Administration</span></h1>
+            <p style={{ color: C.muted, fontSize: 14 }}>Connecté en tant que {profile?.full_name || "admin"}</p>
           </div>
+        </div>
+
+        <div className="tabs">
+          <button className={`tab ${tab === "tracks" ? "ac" : ""}`} onClick={() => setTab("tracks")}>Distributions</button>
+          <button className={`tab ${tab === "stats" ? "ac" : ""}`} onClick={() => setTab("stats")}>Édition stats</button>
+          <button className={`tab ${tab === "bookings" ? "ac" : ""}`} onClick={() => setTab("bookings")}>Bookings</button>
+          <button className={`tab ${tab === "featurings" ? "ac" : ""}`} onClick={() => setTab("featurings")}>Featurings</button>
+          <button className={`tab ${tab === "studio" ? "ac" : ""}`} onClick={() => setTab("studio")}>Studio</button>
+          <button className={`tab ${tab === "contacts" ? "ac" : ""}`} onClick={() => setTab("contacts")}>Contacts</button>
+          <button className={`tab ${tab === "users" ? "ac" : ""}`} onClick={() => setTab("users")}>Utilisateurs</button>
+        </div>
+
+        {tab === "tracks" && <AdminTracks setToast={setToast} />}
+        {tab === "stats" && <AdminStats setToast={setToast} />}
+        {tab === "bookings" && <AdminGenericList table="booking_requests" titleField="event_type" subtitleField="artist_name" setToast={setToast} />}
+        {tab === "featurings" && <AdminGenericList table="featuring_requests" titleField="project_name" subtitleField="artist_name" setToast={setToast} />}
+        {tab === "studio" && <AdminGenericList table="studio_bookings" titleField="studio_type" subtitleField="booking_date" setToast={setToast} />}
+        {tab === "contacts" && <AdminGenericList table="contact_messages" titleField="subject" subtitleField="email" setToast={setToast} />}
+        {tab === "users" && <AdminUsers setToast={setToast} />}
+      </div>
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
+    </div>
+  );
+}
+
+function AdminTracks({ setToast }) {
+  const [tracks, setTracks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
+  const [selected, setSelected] = useState(null);
+  const [rejectFor, setRejectFor] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+
+  const load = async () => {
+    setLoading(true);
+    // Jointure avec profiles pour récupérer email
+    const { data } = await supabase.from("tracks").select(`*, profiles:user_id(email, full_name, artist_name, whatsapp)`).order("created_at", { ascending: false });
+    setTracks(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const filtered = filter === "all" ? tracks : tracks.filter(t => t.status === filter);
+
+  const updateStatus = async (track, status, reason = null) => {
+    const updates = { status, updated_at: new Date().toISOString() };
+    if (reason) updates.rejection_reason = reason;
+    const { error } = await supabase.from("tracks").update(updates).eq("id", track.id);
+    if (error) { setToast({ msg: "Erreur : " + error.message, type: "err" }); return; }
+
+    // Notif email à l'artiste — utilise bien profiles.email maintenant
+    const artistEmail = track.profiles?.email;
+    if (artistEmail) {
+      const subjects = {
+        review: `[Sterkte] Votre titre "${track.title}" est en cours de validation`,
+        approved: `[Sterkte] Votre titre "${track.title}" a été approuvé !`,
+        sent: `[Sterkte] Votre titre "${track.title}" est envoyé aux plateformes`,
+        live: `[Sterkte] Votre titre "${track.title}" est désormais LIVE !`,
+        rejected: `[Sterkte] Votre titre "${track.title}" nécessite des ajustements`,
+      };
+      const messages = {
+        approved: `Bonjour,\n\nVotre titre "${track.title}" vient d'être approuvé par notre équipe et sera prochainement envoyé aux plateformes.\n\nL'équipe Sterkte Records`,
+        sent: `Bonjour,\n\nVotre titre "${track.title}" est en cours d'envoi aux plateformes. Comptez 24-72h pour qu'il apparaisse en ligne.\n\nL'équipe Sterkte Records`,
+        live: `Bonjour,\n\nFélicitations ! Votre titre "${track.title}" est désormais disponible sur les plateformes sélectionnées.\n\nConsultez votre dashboard pour le suivi des streams.\n\nL'équipe Sterkte Records`,
+        rejected: `Bonjour,\n\nAprès examen, votre titre "${track.title}" nécessite des ajustements avant distribution.\n\nMotif : ${reason}\n\nMerci de corriger et de soumettre à nouveau. Pour toute question, contactez-nous à ${CONTACT_EMAIL}.\n\nL'équipe Sterkte Records`,
+      };
+      await sendEmail({
+        subject: subjects[status] || `[Sterkte] Mise à jour : ${track.title}`,
+        name: track.profiles?.artist_name || "Artiste",
+        email: artistEmail,
+        message: messages[status] || "Votre titre a été mis à jour.",
+      });
+    }
+
+    setToast({ msg: "Statut mis à jour", type: "ok" });
+    load();
+    setRejectFor(null); setRejectReason("");
+  };
+
+  return (
+    <>
+      <div className="tabs" style={{ marginBottom: 16, fontSize: 11 }}>
+        {["all", "received", "review", "approved", "sent", "live", "rejected"].map(s => (
+          <button key={s} className={`tab ${filter === s ? "ac" : ""}`} onClick={() => setFilter(s)} style={{ padding: "10px 16px" }}>
+            {s === "all" ? `Tous (${tracks.length})` : `${statusInfo(s).label} (${tracks.filter(t => t.status === s).length})`}
+          </button>
         ))}
       </div>
 
-      {step === 1 && (
-        <div>
-          <div className="fm-g"><label className="fm-l">Titre du morceau *</label><input className="fm-i" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} /></div>
-          <div className="fm-row fm-g">
-            <div><label className="fm-l">Genre</label><select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}><option value="">Sélectionner...</option>{MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select></div>
-            <div><label className="fm-l">Type</label><select className="fm-s" value={form.release_type} onChange={e => setForm(f => ({ ...f, release_type: e.target.value }))}>{RELEASE_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select></div>
-          </div>
-          <div className="fm-row fm-g">
-            <div><label className="fm-l">Date de sortie souhaitée</label><input className="fm-i" type="date" value={form.release_date} onChange={e => setForm(f => ({ ...f, release_date: e.target.value }))} /></div>
-            <div><label className="fm-l">Langue des paroles</label><select className="fm-s" value={form.language} onChange={e => setForm(f => ({ ...f, language: e.target.value }))}><option value="">Sélectionner...</option>{LYRICS_LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}</select></div>
-          </div>
-          <div className="fm-row fm-g">
-            <div><label className="fm-l">ISRC (auto-généré)</label><input className="fm-i" value={form.isrc} onChange={e => setForm(f => ({ ...f, isrc: e.target.value }))} /></div>
-            <div><label className="fm-l">UPC (auto-généré)</label><input className="fm-i" value={form.upc} onChange={e => setForm(f => ({ ...f, upc: e.target.value }))} /></div>
-          </div>
-          <label className="fm-cb fm-g"><input type="checkbox" checked={form.explicit} onChange={e => setForm(f => ({ ...f, explicit: e.target.checked }))} /><span>Contenu explicite (paroles)</span></label>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div>
-          <input ref={audioRef} type="file" accept="audio/*" style={{ display: "none" }} onChange={e => setAudioFile(e.target.files[0])} />
-          <div className={`upload ${audioFile ? "has-file" : ""}`} onClick={() => audioRef.current?.click()}>
-            <div className="upload-ico"><Icon.Upload size={32} color={audioFile ? C.success : C.muted} /></div>
-            <h4>{audioFile ? audioFile.name : "Fichier audio"}</h4>
-            <p>{audioFile ? `${(audioFile.size / 1024 / 1024).toFixed(1)} MB` : "WAV ou MP3 HD · Max 200 MB"}</p>
-          </div>
-          <input ref={coverRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => { setCoverFile(e.target.files[0]); setCoverPreview(URL.createObjectURL(e.target.files[0])); }} />
-          <div className={`upload ${coverFile ? "has-file" : ""}`} onClick={() => coverRef.current?.click()} style={{ display: "flex", alignItems: "center", gap: 20, padding: 24 }}>
-            {coverPreview ? <img src={coverPreview} alt="cover" style={{ width: 80, height: 80, borderRadius: 8, objectFit: "cover" }} /> : <div className="upload-ico"><Icon.Image size={32} color={C.muted} /></div>}
-            <div><h4>{coverFile ? coverFile.name : "Pochette (Cover Art)"}</h4><p>JPG ou PNG · 3000×3000px recommandé · Max 10 MB</p></div>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div>
-          <p style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>Sélectionnez les plateformes sur lesquelles distribuer votre musique :</p>
-          <div className="dsp-grid">
-            {DSP_PLATFORMS.map(p => (
-              <div key={p.id} className={`dsp-item ${form.platforms.includes(p.id) ? "selected" : ""}`} onClick={() => togglePlatform(p.id)}>
-                <input type="checkbox" checked={form.platforms.includes(p.id)} onChange={() => togglePlatform(p.id)} />
-                <div><div style={{ fontWeight: 600, fontSize: 12 }}>{p.name}</div><div style={{ fontSize: 10, color: C.muted }}>{p.category}</div></div>
+      <div className="dash-tracks">
+        {loading ? <div className="loading-box">Chargement...</div> : filtered.length === 0 ? <div className="loading-box">Aucun titre dans cette catégorie.</div> : filtered.map(t => {
+          const info = statusInfo(t.status);
+          return (
+            <div key={t.id} className="admin-row">
+              <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, color: C.muted }}>{new Date(t.created_at).toLocaleDateString("fr-FR")}</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{t.title}</div>
+                <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{t.primary_artist} · {t.genre}</div>
               </div>
-            ))}
-          </div>
-          <p style={{ fontSize: 12, color: C.muted }}>{form.platforms.length} plateforme(s) sélectionnée(s)</p>
-        </div>
-      )}
-
-      {step === 4 && (
-        <div>
-          <p style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>Définissez la répartition des royalties entre les ayants droit (total = 100%) :</p>
-          <div className="splits-box">
-            {form.splits.map((s, i) => (
-              <div key={i} className="split-row">
-                <input className="fm-i" placeholder="Nom" value={s.name} onChange={e => { const splits = [...form.splits]; splits[i].name = e.target.value; setForm(f => ({ ...f, splits })); }} />
-                <select className="fm-s" value={s.role} onChange={e => { const splits = [...form.splits]; splits[i].role = e.target.value; setForm(f => ({ ...f, splits })); }}>
-                  {["Artiste principal", "Featuring", "Auteur", "Compositeur", "Producteur", "Label"].map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-                <input className="fm-i" type="number" min="0" max="100" value={s.percent} onChange={e => { const splits = [...form.splits]; splits[i].percent = e.target.value; setForm(f => ({ ...f, splits })); }} />
-                {form.splits.length > 1 && <button className="tr-act-btn danger" onClick={() => setForm(f => ({ ...f, splits: f.splits.filter((_, j) => j !== i) }))}><Icon.Trash size={12} /></button>}
+              <div style={{ fontSize: 12, color: C.muted }}>
+                {t.profiles?.email || t.user_id}
               </div>
-            ))}
-            <div className={`split-total ${splitTotal === 100 ? "ok" : "err"}`}>
-              <button className="btn btn-o btn-sm" onClick={() => setForm(f => ({ ...f, splits: [...f.splits, { name: "", role: "Featuring", percent: 0 }] }))}><Icon.Plus size={12} />Ajouter</button>
-              <span>Total : {splitTotal}% {splitTotal === 100 ? "✓" : "(doit être 100%)"}</span>
+              <div style={{ fontSize: 12, color: C.muted }}>
+                ISRC: {t.isrc || "—"}
+              </div>
+              <div className={`admin-badge ${t.status}`}>{info.label}</div>
+              <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                <button className="admin-action view" onClick={() => setSelected(t)}>Voir</button>
+                {(t.status === "received" || t.status === "review") && (
+                  <>
+                    <button className="admin-action approve" onClick={() => updateStatus(t, "approved")}>Approuver</button>
+                    <button className="admin-action reject" onClick={() => setRejectFor(t)}>Refuser</button>
+                  </>
+                )}
+                {t.status === "approved" && <button className="admin-action approve" onClick={() => updateStatus(t, "sent")}>→ Envoyé</button>}
+                {t.status === "sent" && <button className="admin-action approve" onClick={() => updateStatus(t, "live")}>→ Live</button>}
+              </div>
             </div>
-          </div>
+          );
+        })}
+      </div>
+
+      {/* Modale détails track */}
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.title} maxWidth={720}>
+        {selected && <AdminTrackDetail track={selected} />}
+      </Modal>
+
+      {/* Modale refus avec template */}
+      <Modal open={!!rejectFor} onClose={() => { setRejectFor(null); setRejectReason(""); }} title="Refuser ce titre">
+        <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>L'artiste recevra cette raison par email.</p>
+        <div className="fm-g">
+          <label className="fm-l">Choisissez un template ou personnalisez</label>
+          <select className="fm-s" onChange={(e) => setRejectReason(e.target.value)} value="" aria-label="Template de refus">
+            <option value="">— Choisir un template —</option>
+            {REJECTION_TEMPLATES.map((t, i) => <option key={i} value={t}>{t.slice(0, 60)}...</option>)}
+          </select>
+        </div>
+        <div className="fm-g">
+          <label className="fm-l">Raison du refus *</label>
+          <textarea className="fm-t" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="Expliquez clairement à l'artiste ce qui doit être corrigé." />
+        </div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <button className="btn btn-o" onClick={() => { setRejectFor(null); setRejectReason(""); }}>Annuler</button>
+          <button className="btn btn-danger" disabled={rejectReason.trim().length < 20} onClick={() => updateStatus(rejectFor, "rejected", rejectReason)}>Confirmer le refus</button>
+        </div>
+      </Modal>
+    </>
+  );
+}
+
+function AdminTrackDetail({ track }) {
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [coverUrl, setCoverUrl] = useState(null);
+
+  useEffect(() => {
+    if (track.audio_path) getSignedUrl("audio", track.audio_path).then(setAudioUrl);
+    if (track.cover_path) getSignedUrl("covers", track.cover_path).then(setCoverUrl);
+  }, [track]);
+
+  return (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 20, marginBottom: 20 }}>
+        {coverUrl ? (
+          <img src={coverUrl} alt="Cover" style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: 8 }} />
+        ) : (
+          <div style={{ width: "100%", aspectRatio: "1/1", background: C.bgInput, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon.Image size={32} color={C.muted} /></div>
+        )}
+        <div style={{ fontSize: 13 }}>
+          <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Artiste :</strong> {track.primary_artist}</div>
+          {track.featured_artists && <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Featuring :</strong> {track.featured_artists}</div>}
+          <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Genre :</strong> {track.genre} {track.secondary_genre && `/ ${track.secondary_genre}`}</div>
+          <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Sortie :</strong> {track.release_date}</div>
+          <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Langue :</strong> {track.language}</div>
+          <div style={{ marginBottom: 12 }}><strong style={{ color: C.muted }}>Explicite :</strong> {track.explicit === "yes" ? "Oui" : track.explicit === "cleaned" ? "Clean" : "Non"}</div>
+        </div>
+      </div>
+
+      <AudioPlayer url={audioUrl} label={`Aperçu master (${Math.round(track.duration_seconds || 0)}s)`} />
+
+      <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 12 }}>
+        <div><strong style={{ color: C.muted }}>ISRC :</strong> {track.isrc || "—"}</div>
+        <div><strong style={{ color: C.muted }}>UPC :</strong> {track.upc || "—"}</div>
+        <div><strong style={{ color: C.muted }}>P-line :</strong> ℗ {track.p_line || "—"}</div>
+        <div><strong style={{ color: C.muted }}>C-line :</strong> © {track.c_line || "—"}</div>
+        <div><strong style={{ color: C.muted }}>Producer :</strong> {track.producer || "—"}</div>
+        <div><strong style={{ color: C.muted }}>Publisher :</strong> {track.publisher || "—"}</div>
+        <div><strong style={{ color: C.muted }}>Songwriters :</strong> {track.songwriters || "—"}</div>
+        <div><strong style={{ color: C.muted }}>BPM/Key :</strong> {track.bpm || "—"} {track.musical_key || ""}</div>
+      </div>
+
+      {track.splits && track.splits.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Splits royalties</div>
+          {track.splits.map((s, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontSize: 13, borderBottom: `1px solid ${C.border}` }}>
+              <span>{s.name} <span style={{ color: C.muted }}>({s.role})</span></span>
+              <span style={{ color: C.gold, fontWeight: 700 }}>{s.percent}%</span>
+            </div>
+          ))}
         </div>
       )}
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24 }}>
-        <button className="btn btn-o" onClick={() => step === 1 ? onClose() : setStep(s => s - 1)} disabled={loading}>{step === 1 ? "Annuler" : <><Icon.ArrowLeft size={14} />Précédent</>}</button>
-        {step < 4
-          ? <button className="btn btn-g" onClick={() => setStep(s => s + 1)}>Suivant<Icon.ArrowRight size={14} /></button>
-          : <button className="btn btn-r" onClick={handleSubmit} disabled={loading}>{loading ? "Envoi..." : <><Icon.Send size={14} />Soumettre</>}</button>
-        }
+      <div style={{ marginTop: 20 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Plateformes ({(track.platforms || []).length})</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {(track.platforms || []).map(p => {
+            const dsp = DSP_PLATFORMS.find(d => d.id === p);
+            return <span key={p} style={{ padding: "3px 10px", background: C.bgInput, border: `1px solid ${C.border}`, borderRadius: 12, fontSize: 11 }}>{dsp?.name || p}</span>;
+          })}
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── ADMIN PAGE ───
-function AdminPage() {
-  const { isAdmin, loading: authLoading } = useAuth();
-  const nav = useNavigate();
+function AdminStats({ setToast }) {
   const [tracks, setTracks] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState("tracks");
-  const [toast, setToast] = useState(null);
-  const showToast = (msg, type = "ok") => setToast({ msg, type });
-  const [selectedTrack, setSelectedTrack] = useState(null);
+  const [edits, setEdits] = useState({}); // { trackId: { streams, revenue } }
 
   useEffect(() => {
-    if (!authLoading && !isAdmin) nav("/", { replace: true });
-  }, [isAdmin, authLoading]);
-
-  useEffect(() => {
-    if (!isAdmin) return;
-    Promise.all([
-      supabase.from("tracks").select("*, profiles(artist_name, email)").order("created_at", { ascending: false }),
-      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-    ]).then(([t, u]) => {
-      setTracks(t.data || []);
-      setUsers(u.data || []);
-      setLoading(false);
+    supabase.from("tracks").select(`*, profiles:user_id(artist_name)`).eq("status", "live").order("created_at", { ascending: false }).then(({ data }) => {
+      setTracks(data || []); setLoading(false);
     });
-  }, [isAdmin]);
+  }, []);
 
-  const updateTrackStatus = async (id, status) => {
-    const { error } = await supabase.from("tracks").update({ status }).eq("id", id);
-    if (error) { showToast("Erreur : " + error.message, "err"); return; }
-    setTracks(ts => ts.map(t => t.id === id ? { ...t, status } : t));
-    showToast(`Statut mis à jour : ${status}`, "ok");
+  const save = async (trackId) => {
+    const e = edits[trackId];
+    if (!e) return;
+    const { error } = await supabase.from("tracks").update({
+      streams: parseInt(e.streams) || 0,
+      revenue: parseFloat(e.revenue) || 0,
+      updated_at: new Date().toISOString(),
+    }).eq("id", trackId);
+    if (error) setToast({ msg: "Erreur : " + error.message, type: "err" });
+    else { setToast({ msg: "Stats mises à jour", type: "ok" }); setEdits({ ...edits, [trackId]: undefined }); }
   };
 
-  if (authLoading || loading) return <div className="loading-box">Chargement admin...</div>;
-  if (!isAdmin) return null;
-
-  const stats = {
-    total: tracks.length,
-    pending: tracks.filter(t => t.status === "pending").length,
-    live: tracks.filter(t => t.status === "live").length,
-    users: users.length,
-  };
+  if (loading) return <div className="loading-box">Chargement...</div>;
+  if (tracks.length === 0) return <div className="loading-box">Aucun titre live à mettre à jour.</div>;
 
   return (
-    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
-      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
-      <div style={{ padding: "40px 60px", maxWidth: 1400, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-          <Icon.Shield size={24} color={C.gold} />
-          <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: -1 }}>Espace Admin</h1>
-        </div>
-
-        <div className="admin-grid" style={{ marginBottom: 32 }}>
-          {[
-            { l: "Total titres", v: stats.total, c: C.white },
-            { l: "En attente", v: stats.pending, c: C.gold },
-            { l: "Live", v: stats.live, c: C.success },
-            { l: "Utilisateurs", v: stats.users, c: C.blue },
-          ].map(({ l, v, c }) => (
-            <div key={l} className="dash-stat"><div className="dash-stat-l">{l}</div><div className="dash-stat-v" style={{ color: c }}>{v}</div></div>
-          ))}
-        </div>
-
-        <div className="tabs">
-          <button className={`tab ${tab === "tracks" ? "ac" : ""}`} onClick={() => setTab("tracks")}>Titres ({stats.total})</button>
-          <button className={`tab ${tab === "users" ? "ac" : ""}`} onClick={() => setTab("users")}>Utilisateurs ({stats.users})</button>
-        </div>
-
-        {tab === "tracks" && (
-          <div className="dash-tracks">
-            <div style={{ padding: "12px 24px", background: C.bgCard, borderBottom: `1px solid ${C.border}` }}>
-              <div className="admin-row" style={{ background: "transparent", fontFamily: "'Montserrat',sans-serif", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: 1, padding: 0 }}>
-                <span>Statut</span><span>Titre / Artiste</span><span>Genre</span><span>Plateformes</span><span>Date</span><span>Actions</span>
-              </div>
+    <div className="dash-tracks">
+      <div className="dash-tracks-h"><h3>Édition manuelle des stats (titres live uniquement)</h3></div>
+      {tracks.map(t => {
+        const e = edits[t.id] || { streams: t.streams || 0, revenue: t.revenue || 0 };
+        const dirty = edits[t.id] !== undefined;
+        return (
+          <div key={t.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 100px", gap: 16, padding: 16, borderBottom: `1px solid ${C.border}`, alignItems: "center" }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>{t.title}</div>
+              <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{t.primary_artist}</div>
             </div>
-            {tracks.map(t => (
-              <div key={t.id} className="admin-row">
-                <div><span className={`admin-badge ${t.status}`}>{t.status}</span></div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 13 }}>{t.title}</div>
-                  <div style={{ fontSize: 11, color: C.muted }}>{t.profiles?.artist_name || t.profiles?.email || "—"}</div>
-                </div>
-                <div style={{ fontSize: 12, color: C.muted }}>{t.genre || "—"}</div>
-                <div style={{ fontSize: 12, color: C.muted }}>{(t.platforms || []).length} plateformes</div>
-                <div style={{ fontSize: 11, color: C.muted }}>{t.created_at ? new Date(t.created_at).toLocaleDateString("fr-FR") : "—"}</div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  <button className="admin-action view" onClick={() => setSelectedTrack(t)}>Voir</button>
-                  {t.status !== "live" && <button className="admin-action approve" onClick={() => updateTrackStatus(t.id, "live")}>Approuver</button>}
-                  {t.status !== "rejected" && <button className="admin-action reject" onClick={() => updateTrackStatus(t.id, "rejected")}>Rejeter</button>}
-                </div>
-              </div>
-            ))}
+            <input type="number" className="fm-i" value={e.streams} onChange={(ev) => setEdits({ ...edits, [t.id]: { ...e, streams: ev.target.value } })} placeholder="Streams" />
+            <input type="number" step="0.01" className="fm-i" value={e.revenue} onChange={(ev) => setEdits({ ...edits, [t.id]: { ...e, revenue: ev.target.value } })} placeholder="Revenu $" />
+            <button className="btn btn-g btn-sm" onClick={() => save(t.id)} disabled={!dirty}>Enregistrer</button>
           </div>
-        )}
+        );
+      })}
+    </div>
+  );
+}
 
-        {tab === "users" && (
-          <div className="dash-tracks">
-            {users.map((u, i) => (
-              <div key={u.id} className="admin-reg-row">
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${C.red}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 14 }}>
-                  {(u.artist_name || u.email || "?")[0].toUpperCase()}
-                </div>
-                <div><div style={{ fontWeight: 700, fontSize: 13 }}>{u.artist_name || "—"}</div><div style={{ fontSize: 11, color: C.muted }}>{u.email}</div></div>
-                <div style={{ fontSize: 12, color: C.muted }}>{u.genre || "—"}</div>
-                <div style={{ fontSize: 12 }}>{u.is_admin ? <span style={{ color: C.gold }}>Admin</span> : <span style={{ color: C.muted }}>Artiste</span>}</div>
-                <div style={{ fontSize: 11, color: C.muted }}>{u.created_at ? new Date(u.created_at).toLocaleDateString("fr-FR") : "—"}</div>
-              </div>
-            ))}
+function AdminGenericList({ table, titleField, subtitleField, setToast }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    supabase.from(table).select("*").order("created_at", { ascending: false }).then(({ data, error }) => {
+      if (!error) setItems(data || []);
+      setLoading(false);
+    });
+  }, [table]);
+
+  const remove = async (id) => {
+    const { error } = await supabase.from(table).delete().eq("id", id);
+    if (error) setToast({ msg: "Erreur : " + error.message, type: "err" });
+    else { setToast({ msg: "Supprimé", type: "ok" }); setItems(items.filter(i => i.id !== id)); }
+  };
+
+  if (loading) return <div className="loading-box">Chargement...</div>;
+  if (items.length === 0) return <div className="loading-box">Aucune entrée.</div>;
+
+  return (
+    <>
+      <div className="dash-tracks">
+        {items.map(item => (
+          <div key={item.id} className="admin-reg-row">
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: "'Montserrat',sans-serif" }}>{new Date(item.created_at).toLocaleDateString("fr-FR")}</div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>{item.name || item.email}</div>
+              <div style={{ fontSize: 12, color: C.muted }}>{item.email}</div>
+            </div>
+            <div style={{ fontSize: 13 }}>{item[titleField] || "—"}</div>
+            <div style={{ fontSize: 13, color: C.muted }}>{item[subtitleField] || "—"}</div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button className="admin-action view" onClick={() => setSelected(item)}>Voir</button>
+              <a href={`mailto:${item.email}`} className="admin-action approve">Répondre</a>
+              <button className="admin-action reject" onClick={() => remove(item.id)}>Suppr</button>
+            </div>
           </div>
-        )}
+        ))}
       </div>
-
-      <Modal open={!!selectedTrack} onClose={() => setSelectedTrack(null)} title="Détails du titre" maxWidth={560}>
-        {selectedTrack && (
-          <div>
-            {[
-              { l: "Titre", v: selectedTrack.title },
-              { l: "Genre", v: selectedTrack.genre },
-              { l: "Type", v: selectedTrack.release_type },
-              { l: "Date de sortie", v: selectedTrack.release_date },
-              { l: "Langue", v: selectedTrack.language },
-              { l: "Explicite", v: selectedTrack.explicit ? "Oui" : "Non" },
-              { l: "ISRC", v: selectedTrack.isrc },
-              { l: "UPC", v: selectedTrack.upc },
-              { l: "Plateformes", v: (selectedTrack.platforms || []).join(", ") },
-            ].map(({ l, v }) => v ? (
-              <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
-                <span style={{ color: C.muted }}>{l}</span>
-                <span style={{ maxWidth: "60%", textAlign: "right" }}>{v}</span>
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.[titleField] || "Détail"} maxWidth={560}>
+        {selected && (
+          <div style={{ fontSize: 13 }}>
+            {Object.entries(selected).filter(([k]) => !["id", "user_id", "created_at"].includes(k)).map(([k, v]) => (
+              <div key={k} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: `1px solid ${C.border}` }}>
+                <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{k.replace(/_/g, " ")}</div>
+                <div style={{ color: C.white, whiteSpace: "pre-wrap" }}>{v || "—"}</div>
               </div>
-            ) : null)}
-            {selectedTrack.splits?.length > 0 && (
-              <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 11, color: C.muted, fontFamily: "'Montserrat',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Splits royalties</div>
-                {selectedTrack.splits.map((s, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0", borderBottom: `1px solid ${C.border}` }}>
-                    <span>{s.name} <span style={{ color: C.muted }}>({s.role})</span></span>
-                    <span style={{ color: C.gold }}>{s.percent}%</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {selectedTrack.audio_path && (
-              <div style={{ marginTop: 16 }}>
-                <AudioPlayerFromPath path={selectedTrack.audio_path} />
-              </div>
-            )}
+            ))}
           </div>
         )}
       </Modal>
+    </>
+  );
+}
+
+function AdminUsers({ setToast }) {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from("profiles").select("*").order("created_at", { ascending: false }).then(({ data }) => {
+      setUsers(data || []); setLoading(false);
+    });
+  }, []);
+
+  const toggleAdmin = async (u) => {
+    const { error } = await supabase.from("profiles").update({ is_admin: !u.is_admin }).eq("id", u.id);
+    if (error) setToast({ msg: "Erreur : " + error.message, type: "err" });
+    else { setToast({ msg: "Statut admin mis à jour", type: "ok" }); setUsers(users.map(x => x.id === u.id ? { ...x, is_admin: !u.is_admin } : x)); }
+  };
+
+  if (loading) return <div className="loading-box">Chargement...</div>;
+
+  return (
+    <div className="dash-tracks">
+      {users.map(u => (
+        <div key={u.id} className="admin-reg-row">
+          <div style={{ fontSize: 11, color: C.muted }}>{new Date(u.created_at).toLocaleDateString("fr-FR")}</div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>{u.full_name || "—"} {u.is_admin && <span style={{ marginLeft: 8, padding: "2px 8px", background: C.gold, color: "#000", borderRadius: 4, fontSize: 10, fontWeight: 800 }}>ADMIN</span>}</div>
+            <div style={{ fontSize: 12, color: C.muted }}>{u.email}</div>
+          </div>
+          <div style={{ fontSize: 13 }}>{u.artist_name || "—"}</div>
+          <div style={{ fontSize: 13, color: C.muted }}>{u.genre || "—"}</div>
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+            <button className="admin-action view" onClick={() => toggleAdmin(u)}>{u.is_admin ? "Retirer admin" : "Promouvoir admin"}</button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-// Lecteur audio depuis path Supabase Storage
-function AudioPlayerFromPath({ path }) {
-  const [url, setUrl] = useState(null);
-  useEffect(() => {
-    getSignedUrl("audio", path).then(setUrl);
-  }, [path]);
-  return <AudioPlayer url={url} label="Aperçu audio" />;
-}
-
-// ─── LEGAL PAGES ───
+// ─── PAGES LÉGALES ───
 function CGUPage() {
   useSEO("/cgu");
   return (
     <div className="legal">
       <h1>Conditions Générales d'Utilisation</h1>
-      <p style={{ color: C.muted, fontSize: 12 }}>Dernière mise à jour : janvier 2025</p>
+      <p style={{ fontStyle: "italic", color: C.muted }}>Dernière mise à jour : {new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
+
       <h2>1. Objet</h2>
-      <p>Les présentes CGU régissent l'utilisation du site sterkterecords.com et des services proposés par Sterkte Records SARL.</p>
-      <h2>2. Services</h2>
-      <p>Sterkte Records propose des services de distribution musicale digitale, d'enregistrement studio, de booking et de management artistique. L'accès à l'espace artiste nécessite la création d'un compte.</p>
-      <h2>3. Droits et obligations</h2>
-      <p>En soumettant un titre pour distribution, l'artiste certifie détenir l'intégralité des droits sur l'œuvre. Sterkte Records se réserve le droit de refuser tout contenu contraire aux lois en vigueur.</p>
-      <h2>4. Propriété intellectuelle</h2>
-      <p>Les artistes conservent la propriété de leurs œuvres. Sterkte Records dispose d'une licence non-exclusive de distribution pour la durée du contrat.</p>
-      <h2>5. Résiliation</h2>
-      <p>Chaque partie peut résilier le contrat avec un préavis de 30 jours. Les œuvres déjà distribuées pourront prendre jusqu'à 60 jours pour être retirées des plateformes.</p>
-      <h2>6. Contact</h2>
+      <p>Les présentes Conditions Générales d'Utilisation (ci-après "CGU") régissent l'utilisation de la plateforme Sterkte Records, exploitée par Sterkte Records SARL (ci-après "Sterkte Records", "nous", "notre") et accessible à l'adresse {SITE_URL}. Toute personne (ci-après "l'Artiste" ou "l'Utilisateur") créant un compte sur la plateforme accepte sans réserve les présentes CGU.</p>
+
+      <h2>2. Services proposés</h2>
+      <p>Sterkte Records propose les services suivants : distribution musicale digitale sur des plateformes tierces (Spotify, Apple Music, Deezer, etc.), enregistrement studio, booking d'artistes, featurings, consulting artistique. L'usage de la plateforme web est gratuit ; certains services (distribution, booking, studio) peuvent faire l'objet de conditions tarifaires distinctes.</p>
+
+      <h2>3. Création de compte</h2>
+      <p>L'inscription nécessite la fourniture d'un email valide, d'un mot de passe sécurisé (minimum 8 caractères) et de l'acceptation des présentes CGU et de la Politique de confidentialité. L'Utilisateur s'engage à fournir des informations exactes et à les maintenir à jour. Tout compte fictif, multiple ou usurpé sera supprimé sans préavis.</p>
+
+      <h2>4. Distribution musicale</h2>
+      <h3>4.1. Garanties de l'Artiste</h3>
+      <p>En soumettant un titre à la distribution, l'Artiste certifie :</p>
+      <ul>
+        <li>Détenir l'intégralité des droits sur le master et la composition (ou disposer des autorisations écrites des ayants droit) ;</li>
+        <li>Avoir obtenu l'accord de tous les contributeurs cités dans les splits royalties ;</li>
+        <li>Que le contenu ne viole aucun droit d'auteur, droit voisin ou droit à l'image de tiers ;</li>
+        <li>Que le contenu respecte les conditions des plateformes tierces (Spotify, Apple Music, etc.) et la législation applicable.</li>
+      </ul>
+
+      <h3>4.2. Validation et refus</h3>
+      <p>Sterkte Records se réserve le droit de refuser ou retirer un titre en cas de non-conformité, de doute sur les droits, ou de signalement par une plateforme. L'Artiste sera notifié par email du motif du refus.</p>
+
+      <h3>4.3. Royalties et splits</h3>
+      <p>Les revenus issus des plateformes sont reversés selon les splits déclarés par l'Artiste lors de la soumission. Sterkte Records prélève une commission de distribution (taux précisé dans le contrat de distribution signé séparément). Les paiements sont effectués trimestriellement à partir de 10 USD cumulés.</p>
+
+      <h2>5. Propriété intellectuelle</h2>
+      <p>L'Artiste reste propriétaire de ses œuvres. Sterkte Records dispose d'une licence non exclusive, mondiale, pour la durée du contrat de distribution, aux fins de distribution sur les plateformes tierces. Aucun transfert de propriété n'a lieu.</p>
+
+      <h2>6. Obligations de l'Utilisateur</h2>
+      <p>L'Utilisateur s'engage à ne pas : (a) téléverser de contenu illégal, diffamatoire, raciste, à caractère pédopornographique ou incitant à la violence ; (b) tenter de pirater, perturber ou contourner la sécurité de la plateforme ; (c) usurper l'identité d'un tiers ; (d) utiliser la plateforme à des fins commerciales non autorisées.</p>
+
+      <h2>7. Suspension et résiliation</h2>
+      <p>Sterkte Records peut suspendre ou supprimer un compte en cas de violation des CGU. L'Utilisateur peut supprimer son compte à tout moment depuis son espace personnel (article 17 RGPD).</p>
+
+      <h2>8. Responsabilité</h2>
+      <p>Sterkte Records met tout en œuvre pour assurer la disponibilité de la plateforme mais ne saurait être tenue responsable d'interruptions de service liées aux plateformes tierces ou à des cas de force majeure. La responsabilité de Sterkte Records est limitée au montant des sommes effectivement perçues de l'Utilisateur sur les 12 derniers mois.</p>
+
+      <h2>9. Loi applicable</h2>
+      <p>Les présentes CGU sont régies par le droit congolais (RDC). Tout litige sera porté devant les tribunaux compétents de Lubumbashi, sauf disposition d'ordre public contraire.</p>
+
+      <h2>10. Contact</h2>
       <p>Pour toute question : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
     </div>
   );
@@ -2552,83 +3364,208 @@ function PrivacyPage() {
   return (
     <div className="legal">
       <h1>Politique de confidentialité</h1>
-      <p style={{ color: C.muted, fontSize: 12 }}>Dernière mise à jour : janvier 2025</p>
-      <h2>1. Données collectées</h2>
-      <p>Nous collectons : nom, email, nom d'artiste, numéro WhatsApp, genre musical, fichiers audio et pochettes soumis pour distribution.</p>
-      <h2>2. Utilisation des données</h2>
-      <p>Vos données sont utilisées exclusivement pour la gestion de votre compte, la distribution de votre musique et la communication liée à nos services.</p>
-      <h2>3. Stockage et sécurité</h2>
-      <p>Vos données sont hébergées sur Supabase (infrastructure sécurisée, conforme RGPD). Nous n'utilisons pas de cookies publicitaires.</p>
-      <h2>4. Vos droits</h2>
-      <p>Conformément au RGPD, vous disposez des droits d'accès, de rectification, de suppression et de portabilité de vos données. Contact : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
-      <h2>5. Partage des données</h2>
-      <p>Nous ne vendons jamais vos données. Elles peuvent être partagées avec nos partenaires de distribution (DSP) dans la stricte limite nécessaire à la distribution de votre musique.</p>
+      <p style={{ fontStyle: "italic", color: C.muted }}>Dernière mise à jour : {new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</p>
+
+      <h2>1. Responsable du traitement</h2>
+      <p>Sterkte Records SARL, basée à Lubumbashi (RDC), est responsable du traitement de vos données personnelles. Contact : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+
+      <h2>2. Données collectées</h2>
+      <ul>
+        <li><strong>Données d'inscription</strong> : nom, prénom, nom d'artiste, email, téléphone, genre musical.</li>
+        <li><strong>Données de distribution</strong> : titres, métadonnées DDEX, fichiers audio, pochettes, splits royalties, statistiques.</li>
+        <li><strong>Données techniques</strong> : adresse IP, navigateur, logs de connexion (durée 12 mois).</li>
+      </ul>
+
+      <h2>3. Finalités</h2>
+      <p>Vos données sont utilisées pour : (a) la création et gestion de votre compte ; (b) la distribution de votre musique sur les plateformes tierces ; (c) le calcul et le versement de vos royalties ; (d) la communication relative à votre compte ; (e) le respect de nos obligations légales (comptabilité, fiscalité).</p>
+
+      <h2>4. Bases légales</h2>
+      <p>Le traitement repose sur : votre consentement (newsletter), l'exécution du contrat (compte, distribution), nos obligations légales (comptabilité), notre intérêt légitime (sécurité, prévention des fraudes).</p>
+
+      <h2>5. Durée de conservation</h2>
+      <ul>
+        <li>Compte actif : durée de la relation contractuelle.</li>
+        <li>Données comptables : 10 ans après la fin du contrat.</li>
+        <li>Logs de connexion : 12 mois.</li>
+      </ul>
+
+      <h2>6. Destinataires</h2>
+      <p>Vos données sont communiquées à : (a) Supabase (hébergement) ; (b) plateformes de distribution musicale (Spotify, Apple Music, etc.) — uniquement les données nécessaires (métadonnées DDEX, fichiers) ; (c) prestataires de paiement ; (d) autorités sur réquisition légale.</p>
+
+      <h2>7. Transferts hors UE</h2>
+      <p>Certaines plateformes (notamment américaines) impliquent des transferts hors UE, encadrés par les clauses contractuelles types de la Commission européenne.</p>
+
+      <h2>8. Vos droits (RGPD)</h2>
+      <p>Vous disposez des droits suivants :</p>
+      <ul>
+        <li><strong>Accès</strong> : connaître les données que nous détenons sur vous.</li>
+        <li><strong>Rectification</strong> : corriger une donnée inexacte.</li>
+        <li><strong>Effacement</strong> (article 17) : supprimer votre compte depuis votre dashboard.</li>
+        <li><strong>Portabilité</strong> (article 20) : exporter vos données au format JSON depuis votre dashboard.</li>
+        <li><strong>Opposition</strong> : refuser certains traitements (newsletter, statistiques).</li>
+        <li><strong>Limitation</strong> : geler temporairement le traitement de vos données.</li>
+      </ul>
+      <p>Pour exercer ces droits, contactez <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Vous pouvez également déposer une réclamation auprès de la CNIL (France) ou de l'autorité de protection des données compétente.</p>
+
+      <h2>9. Cookies</h2>
+      <p>La plateforme utilise un nombre minimal de cookies, strictement nécessaires au fonctionnement (session d'authentification). Aucun cookie publicitaire n'est déposé.</p>
+
+      <h2>10. Sécurité</h2>
+      <p>Vos données sont stockées sur Supabase avec chiffrement au repos et en transit (TLS 1.3). Les fichiers audio (masters non sortis) sont protégés par des URLs signées à expiration courte. Les mots de passe sont hashés (bcrypt).</p>
+
+      <h2>11. Modifications</h2>
+      <p>La présente politique peut être mise à jour. Les modifications substantielles vous seront notifiées par email.</p>
     </div>
   );
 }
 
-function LegalPage() {
+function MentionsLegalesPage() {
   useSEO("/mentions-legales");
   return (
     <div className="legal">
       <h1>Mentions légales</h1>
+
       <h2>Éditeur</h2>
-      <p>Sterkte Records SARL<br />Lubumbashi, Haut-Katanga, République Démocratique du Congo</p>
-      <h2>Contact</h2>
-      <p>Email : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><br />WhatsApp : {WHATSAPP_NUMBER}</p>
+      <p>
+        Sterkte Records SARL<br />
+        Siège social : Lubumbashi, Haut-Katanga, République Démocratique du Congo<br />
+        Email : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><br />
+        Téléphone : {WHATSAPP_NUMBER}
+      </p>
+
+      <h2>Directeur de la publication</h2>
+      <p>Le Directeur de la publication est le représentant légal de Sterkte Records SARL.</p>
+
       <h2>Hébergement</h2>
-      <p>Site hébergé par Vercel Inc. (San Francisco, USA). Base de données hébergée par Supabase.</p>
+      <p>
+        Vercel Inc.<br />
+        440 N Barranca Ave #4133<br />
+        Covina, CA 91723, USA<br />
+        <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com</a>
+      </p>
+
+      <h2>Base de données</h2>
+      <p>Supabase Inc., 970 Toa Payoh North #07-04, Singapore. <a href="https://supabase.com" target="_blank" rel="noopener noreferrer">supabase.com</a></p>
+
       <h2>Propriété intellectuelle</h2>
-      <p>L'ensemble du contenu de ce site (textes, visuels, code) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p>
+      <p>L'ensemble des contenus de ce site (textes, images, code source) sont la propriété de Sterkte Records SARL ou de ses partenaires. Toute reproduction non autorisée est interdite.</p>
+
+      <h2>Crédits</h2>
+      <p>Conception et développement : Mwezi Partners pour Sterkte Records.</p>
     </div>
   );
 }
 
-// ─── NOT FOUND ───
+// ─── 404 PAGE ───
 function NotFoundPage() {
+  useEffect(() => { document.title = "404 - Page introuvable"; }, []);
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20 }}>
-      <h1 style={{ fontSize: 80, fontWeight: 900, color: C.border }}>404</h1>
-      <p style={{ color: C.muted }}>Page introuvable</p>
-      <Link to="/" className="btn btn-g"><Icon.ArrowLeft size={14} />Accueil</Link>
+    <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+      <div style={{ textAlign: "center", padding: 40 }}>
+        <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(72px, 15vw, 160px)", fontWeight: 900, lineHeight: 1, background: `linear-gradient(135deg, ${C.gold}, ${C.red})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: 16 }}>404</div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>Page introuvable</h1>
+        <p style={{ color: C.muted, fontSize: 14, marginBottom: 32, maxWidth: 400, margin: "0 auto 32px" }}>La page que vous cherchez n'existe pas ou a été déplacée.</p>
+        <Link to="/" className="btn btn-g btn-lg"><Icon.ArrowLeft size={14} />Retour à l'accueil</Link>
+      </div>
     </div>
   );
+}
+
+// ─── PROTECTED ROUTES ───
+function ProtectedRoute({ children, requireEmailVerified = true }) {
+  const { user, loading, isEmailConfirmed } = useAuth();
+  const loc = useLocation();
+  if (loading) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
+  if (!user) return <Navigate to="/connexion" state={{ from: loc.pathname }} replace />;
+  if (requireEmailVerified && !isEmailConfirmed) {
+    return (
+      <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+        <div style={{ maxWidth: 480, padding: 40, textAlign: "center", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16 }}>
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(245,197,24,.1)", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+            <Icon.Mail size={28} color={C.gold} />
+          </div>
+          <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>Email non vérifié</h2>
+          <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>Vous devez vérifier votre adresse email avant d'accéder au dashboard. Consultez votre boîte de réception (et vos spams) pour le lien de confirmation.</p>
+          <Link to="/connexion" className="btn btn-o">Retour à la connexion</Link>
+        </div>
+      </div>
+    );
+  }
+  return children;
+}
+
+function AdminProtectedRoute({ children }) {
+  const { user, loading, isAdmin, isEmailConfirmed } = useAuth();
+  if (loading) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
+  if (!user || !isEmailConfirmed) return <Navigate to="/connexion" replace />;
+  if (!isAdmin) return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
+// ─── ERROR BOUNDARY ───
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error("ErrorBoundary caught:", error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+          <div style={{ textAlign: "center", padding: 40, maxWidth: 500 }}>
+            <Icon.AlertCircle size={48} color={C.red} />
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginTop: 16, marginBottom: 12 }}>Une erreur est survenue</h1>
+            <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Nous avons été notifiés. Vous pouvez recharger la page ou retourner à l'accueil.</p>
+            <button onClick={() => window.location.href = "/"} className="btn btn-g">Retour à l'accueil</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 // ─── APP ROOT ───
-function App() {
-  const [toast, setToast] = useState(null);
 
+function ConfigBanner() {
+  if (supabaseConfigured) return null;
   return (
-    <AuthProvider>
-      <div className="app">
-        <style>{css}</style>
-        <Navbar />
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/a-propos" element={<AboutPage />} />
-          <Route path="/artistes" element={<ArtistsPage />} />
-          <Route path="/artiste/:slug" element={<ArtistDetailPage />} />
-          <Route path="/distribution-musique" element={<DistributionPage />} />
-          <Route path="/studio-enregistrement" element={<StudioPage />} />
-          <Route path="/booking-artistes" element={<BookingPage />} />
-          <Route path="/featurings" element={<FeaturingsPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/connexion" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/cgu" element={<CGUPage />} />
-          <Route path="/confidentialite" element={<PrivacyPage />} />
-          <Route path="/mentions-legales" element={<LegalPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-        <Footer />
-        {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
-      </div>
-    </AuthProvider>
+    <div className="error-banner">
+      ⚠️ Configuration Supabase manquante — VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY doivent être ajoutées dans Vercel.
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <style>{css}</style>
+        <ConfigBanner />
+        <ScrollToTop />
+        <div className="app">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/a-propos" element={<AboutPage />} />
+            <Route path="/artistes" element={<ArtistsPage />} />
+            <Route path="/artiste/:slug" element={<ArtistDetailPage />} />
+            <Route path="/distribution-musique" element={<DistributionPage />} />
+            <Route path="/studio-enregistrement" element={<StudioPage />} />
+            <Route path="/booking-artistes" element={<BookingPage />} />
+            <Route path="/featurings" element={<FeaturingPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/connexion" element={<LoginPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminProtectedRoute><AdminPage /></AdminProtectedRoute>} />
+            <Route path="/cgu" element={<CGUPage />} />
+            <Route path="/confidentialite" element={<PrivacyPage />} />
+            <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+          <Footer />
+        </div>
+      </AuthProvider>
+    </ErrorBoundary>
+  );
+}
