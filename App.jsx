@@ -1653,5 +1653,981 @@ function ArtistDetailPage() {
         </div>
       </div>
     </div>
+    // ─── DISTRIBUTION PAGE ───
+function DistributionPage() {
+  useSEO("/distribution-musique");
+  useScrollReveal();
+  return (
+    <div className="pg">
+      <PageBanner tag="Distribution" title={<>Votre musique sur <span className="gold">150+ plateformes</span></>} subtitle="Spotify, Apple Music, Deezer, Boomplay et bien plus. Distribution rapide, transparente et sans frais cachés." accent={C.blue} />
+      <div className="pg-c">
+        <div className="sr-reveal">
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Comment ça <span className="gold">fonctionne</span></h3>
+          <div className="steps">
+            {[
+              { n: "01", title: "Créez votre compte artiste", desc: "Inscription gratuite en 2 minutes. Renseignez votre profil et vos informations de paiement." },
+              { n: "02", title: "Soumettez votre titre", desc: "Uploadez votre fichier audio (WAV ou MP3 HD), votre cover art et vos métadonnées." },
+              { n: "03", title: "Validation par notre équipe", desc: "Notre équipe vérifie la qualité audio et les droits sous 24-48h." },
+              { n: "04", title: "Distribution mondiale", desc: "Votre musique est envoyée sur toutes les plateformes sélectionnées." },
+              { n: "05", title: "Suivi & revenus", desc: "Accédez à vos statistiques en temps réel et recevez vos royalties mensuellement." },
+            ].map((s) => (
+              <div key={s.n} className="step">
+                <div className="step-n">{s.n}</div>
+                <div className="step-c"><h4>{s.title}</h4><p>{s.desc}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="sr-reveal" style={{ marginTop: 60 }}>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Plateformes <span className="gold">disponibles</span></h3>
+          <div className="dsp-grid">
+            {DSP_PLATFORMS.map((p) => (
+              <div key={p.id} className="dsp-item" style={{ cursor: "default" }}>
+                <Icon.Music size={14} color={C.gold} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: C.muted }}>{p.category}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="sr-reveal" style={{ marginTop: 60 }}>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Nos <span className="gold">offres</span></h3>
+          <div className="pricing">
+            {[
+              { name: "Starter", price: "Gratuit", sub: "pour les membres", features: ["1 single / an", "Spotify + Apple Music + Deezer", "Rapport trimestriel", "Support email"], featured: false },
+              { name: "Pro", price: "$9", sub: "/ mois", features: ["Singles & EPs illimités", "150+ plateformes", "Rapport mensuel détaillé", "Support prioritaire", "ISRC & UPC inclus"], featured: true },
+              { name: "Label", price: "Sur devis", sub: "", features: ["Artistes illimités", "Distribution accélérée", "Manager dédié", "Négociation DSP", "Rapports personnalisés"], featured: false },
+            ].map((p) => (
+              <div key={p.name} className={`price-card ${p.featured ? "ft" : ""}`}>
+                <h4>{p.name}</h4>
+                <div className="price-val">{p.price}<span> {p.sub}</span></div>
+                <ul>{p.features.map((f) => <li key={f}><div className="chk"><Icon.Check size={10} color={C.gold} /></div>{f}</li>)}</ul>
+                <Link to="/connexion" className={`btn ${p.featured ? "btn-g" : "btn-o"} btn-lg`} style={{ width: "100%", justifyContent: "center", marginTop: 20 }}>Commencer</Link>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 48 }}>
+          <Link to="/connexion" className="btn btn-r btn-lg"><Icon.Rocket size={16} />Distribuer ma musique</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── STUDIO PAGE ───
+function StudioPage() {
+  useSEO("/studio-enregistrement");
+  useScrollReveal();
+  return (
+    <div className="pg">
+      <PageBanner tag="Studio" title={<>Studio d'enregistrement <span className="gold">professionnel</span></>} subtitle="Enregistrement, mixage et mastering de haute qualité à Lubumbashi. Studio mobile disponible pour vos événements." accent={C.gold} />
+      <div className="pg-c">
+        <div className="feats sr-reveal">
+          {[
+            { Ico: Icon.Mic, title: "Enregistrement HD", desc: "Prise de son de qualité professionnelle avec équipement haut de gamme." },
+            { Ico: Icon.Headphones, title: "Mixage & Mastering", desc: "Ingénieurs du son expérimentés pour un rendu radio-ready." },
+            { Ico: Icon.Map, title: "Studio Mobile", desc: "On vient à vous : studio mobile disponible à Lubumbashi et au Maroc." },
+            { Ico: Icon.Film, title: "Clip vidéo", desc: "Production de clips musicaux professionnels en partenariat avec nos réalisateurs." },
+          ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}
+        </div>
+
+        <div className="sr-reveal" style={{ marginTop: 60 }}>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Réserver une <span className="gold">session</span></h3>
+          <p style={{ color: C.muted, marginBottom: 32, lineHeight: 1.7 }}>
+            Pour réserver une session studio, contactez-nous via WhatsApp ou par email. Nous vous répondons sous 24h avec les disponibilités et les tarifs adaptés à votre projet.
+          </p>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <button className="btn btn-g btn-lg" onClick={() => sendWhatsApp("Bonjour, je souhaite réserver une session studio.")}><Icon.Whatsapp size={16} />Réserver via WhatsApp</button>
+            <a href={`mailto:${CONTACT_EMAIL}?subject=Réservation Studio`} className="btn btn-o btn-lg"><Icon.Mail size={16} />Réserver par email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── BOOKING PAGE ───
+function BookingPage() {
+  useSEO("/booking-artistes");
+  useScrollReveal();
+  const [form, setForm] = useState({ name: "", email: "", phone: "", event: "", date: "", artist: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name || !isValidEmail(form.email) || !form.event) { setError("Veuillez remplir tous les champs obligatoires."); return; }
+    setLoading(true); setError("");
+    const ok = await sendEmail({ ...form, subject: `Demande de booking – ${form.artist || "Artiste"} – ${form.event}` });
+    setLoading(false);
+    if (ok) { setSent(true); }
+    else { setError("Erreur d'envoi. Contactez-nous directement par WhatsApp."); }
+  };
+
+  return (
+    <div className="pg">
+      <PageBanner tag="Booking" title={<>Réservez nos <span className="gold">artistes</span></>} subtitle="Concerts, festivals, événements corporate, mariages et soirées privées. Nous gérons tout pour vous." accent={C.red} />
+      <div className="pg-c">
+        {sent ? (
+          <div style={{ maxWidth: 500, margin: "0 auto", textAlign: "center", padding: "60px 0" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>Demande envoyée !</h3>
+            <p style={{ color: C.muted }}>Notre équipe vous contactera sous 48h pour confirmer les détails.</p>
+          </div>
+        ) : (
+          <div className="fm sr-reveal">
+            {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
+            <div className="fm-row fm-g">
+              <div><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
+              <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+            </div>
+            <div className="fm-row fm-g">
+              <div><label className="fm-l">Téléphone / WhatsApp</label><input className="fm-i" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
+              <div><label className="fm-l">Date de l'événement</label><input className="fm-i" type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} /></div>
+            </div>
+            <div className="fm-g"><label className="fm-l">Type d'événement *</label><input className="fm-i" placeholder="Concert, festival, mariage, corporate..." value={form.event} onChange={e => setForm(f => ({ ...f, event: e.target.value }))} /></div>
+            <div className="fm-g"><label className="fm-l">Artiste souhaité</label><input className="fm-i" placeholder="Nom de l'artiste ou 'À définir'" value={form.artist} onChange={e => setForm(f => ({ ...f, artist: e.target.value }))} /></div>
+            <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Décrivez votre événement, le lieu, le public attendu..." /></div>
+            <button className="btn btn-r btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Send size={16} />{loading ? "Envoi..." : "Envoyer la demande"}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── FEATURINGS PAGE ───
+function FeaturingsPage() {
+  useSEO("/featurings");
+  useScrollReveal();
+  const [form, setForm] = useState({ name: "", email: "", artist: "", genre: "", message: "", link: "" });
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!form.name || !isValidEmail(form.email) || !form.artist) { setError("Veuillez remplir les champs obligatoires."); return; }
+    setLoading(true); setError("");
+    const ok = await sendEmail({ ...form, subject: `Demande de featuring – ${form.artist}` });
+    setLoading(false);
+    if (ok) setSent(true);
+    else setError("Erreur. Contactez-nous par WhatsApp.");
+  };
+
+  return (
+    <div className="pg">
+      <PageBanner tag="Featurings" title={<>Collaborez avec nos <span className="gold">artistes</span></>} subtitle="Proposez un featuring avec les artistes du roster Sterkte Records. Réponse garantie sous 7 jours ouvrés." accent={C.gold} />
+      <div className="pg-c">
+        {sent ? (
+          <div style={{ textAlign: "center", padding: "60px 0" }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🤝</div>
+            <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>Demande reçue !</h3>
+            <p style={{ color: C.muted }}>Nous vous répondrons sous 7 jours ouvrés.</p>
+          </div>
+        ) : (
+          <div className="fm sr-reveal">
+            {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
+            <div className="fm-row fm-g">
+              <div><label className="fm-l">Votre nom *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
+              <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+            </div>
+            <div className="fm-g"><label className="fm-l">Nom d'artiste *</label><input className="fm-i" value={form.artist} onChange={e => setForm(f => ({ ...f, artist: e.target.value }))} /></div>
+            <div className="fm-g">
+              <label className="fm-l">Genre musical</label>
+              <select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}>
+                <option value="">Sélectionner...</option>
+                {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div className="fm-g"><label className="fm-l">Lien démo / portfolio</label><input className="fm-i" placeholder="SoundCloud, YouTube, Spotify..." value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} /></div>
+            <div className="fm-g"><label className="fm-l">Message</label><textarea className="fm-t" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Décrivez votre projet, l'artiste souhaité, le type de collaboration..." /></div>
+            <button className="btn btn-g btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Handshake size={16} />{loading ? "Envoi..." : "Envoyer la demande"}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── SERVICES PAGE ───
+function ServicesPage() {
+  useSEO("/services");
+  useScrollReveal();
+  return (
+    <div className="pg">
+      <PageBanner tag="Services" title={<>Consulting & <span className="gold">Management</span></>} subtitle="Stratégie de lancement, gestion de carrière et coaching artistique pour atteindre vos objectifs." accent={C.blue} />
+      <div className="pg-c">
+        <div className="feats sr-reveal">
+          {[
+            { Ico: Icon.Rocket, title: "Stratégie de lancement", desc: "Plan complet pour votre sortie : timing, plateformes, communication, presse." },
+            { Ico: Icon.BarChart, title: "Analyse de données", desc: "Comprenez vos audiences et optimisez vos sorties grâce aux données de streaming." },
+            { Ico: Icon.Globe, title: "Développement international", desc: "Ouverture de marchés en Europe, en Afrique et au Moyen-Orient." },
+            { Ico: Icon.Users, title: "Management artistique", desc: "Représentation complète : négociations, contrats, relations avec les labels et DSP." },
+            { Ico: Icon.Crown, title: "Coaching artistique", desc: "Travail sur l'image, le discours, la cohérence artistique et la présence scénique." },
+            { Ico: Icon.Layers, title: "Relations presse", desc: "Communiqués, interviews, playlisting et placement éditorial sur les plateformes." },
+          ].map((f) => <div key={f.title} className="feat"><div className="feat-ico"><f.Ico size={22} /></div><h4>{f.title}</h4><p>{f.desc}</p></div>)}
+        </div>
+        <div style={{ textAlign: "center", marginTop: 60 }}>
+          <p style={{ color: C.muted, marginBottom: 24 }}>Tous nos services sont proposés sur devis selon votre projet et vos objectifs.</p>
+          <Link to="/contact" className="btn btn-g btn-lg"><Icon.Mail size={16} />Demander un devis</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── CONTACT PAGE ───
+function ContactPage() {
+  useSEO("/contact");
+  useScrollReveal();
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!form.name || !isValidEmail(form.email) || !form.message) { setError("Veuillez remplir tous les champs."); return; }
+    setLoading(true); setError("");
+    const ok = await sendEmail({ ...form, subject: form.subject || "Contact – Sterkte Records" });
+    setLoading(false);
+    if (ok) setSent(true);
+    else setError("Erreur d'envoi. Essayez WhatsApp.");
+  };
+
+  return (
+    <div className="pg">
+      <PageBanner tag="Contact" title="Parlons de votre projet" subtitle="Notre équipe vous répond sous 72h. Pour les urgences, utilisez WhatsApp." accent={C.red} />
+      <div className="pg-c" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
+        <div className="sr-reveal-left">
+          <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 24 }}>Informations de <span className="gold">contact</span></h3>
+          {[
+            { Ico: Icon.Mail, label: "Email", val: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+            { Ico: Icon.Whatsapp, label: "WhatsApp", val: WHATSAPP_NUMBER, href: `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}` },
+            { Ico: Icon.MapPin, label: "Adresse", val: "Lubumbashi, Haut-Katanga, RDC", href: null },
+          ].map(({ Ico, label, val, href }) => (
+            <div key={label} style={{ display: "flex", gap: 16, marginBottom: 24 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 8, background: "rgba(245,197,24,.08)", display: "flex", alignItems: "center", justifyContent: "center", color: C.gold, flexShrink: 0 }}><Ico size={20} /></div>
+              <div>
+                <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'Montserrat',sans-serif", fontWeight: 600, marginBottom: 4 }}>{label}</div>
+                {href ? <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.white, fontSize: 14 }}>{val}</a> : <div style={{ color: C.white, fontSize: 14 }}>{val}</div>}
+              </div>
+            </div>
+          ))}
+          <button className="btn btn-g btn-lg" style={{ marginTop: 16 }} onClick={() => sendWhatsApp("Bonjour Sterkte Records, je souhaite vous contacter pour...")}>
+            <Icon.Whatsapp size={16} />Ouvrir WhatsApp
+          </button>
+        </div>
+
+        <div className="sr-reveal-right">
+          {sent ? (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>✉️</div>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>Message envoyé !</h3>
+              <p style={{ color: C.muted }}>Nous vous répondrons sous 72h.</p>
+            </div>
+          ) : (
+            <>
+              {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
+              <div className="fm-row fm-g">
+                <div><label className="fm-l">Nom *</label><input className="fm-i" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
+                <div><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+              </div>
+              <div className="fm-g"><label className="fm-l">Sujet</label><input className="fm-i" value={form.subject} onChange={e => setForm(f => ({ ...f, subject: e.target.value }))} /></div>
+              <div className="fm-g"><label className="fm-l">Message *</label><textarea className="fm-t" style={{ minHeight: 140 }} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} /></div>
+              <button className="btn btn-r btn-lg" onClick={handleSubmit} disabled={loading}><Icon.Send size={16} />{loading ? "Envoi..." : "Envoyer"}</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── LOGIN PAGE ───
+function LoginPage() {
+  useSEO("/connexion");
+  const { signIn, signUp, resetPassword, user } = useAuth();
+  const nav = useNavigate();
+  const [tab, setTab] = useState("login");
+  const [form, setForm] = useState({ email: "", password: "", full_name: "", artist_name: "", genre: "", whatsapp: "", cgu: false });
+  const [showPwd, setShowPwd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const loc = useLocation();
+
+  useEffect(() => {
+    if (user) nav("/dashboard", { replace: true });
+    const params = new URLSearchParams(loc.search);
+    if (params.get("confirmed") === "1") setSuccess("Email confirmé ! Vous pouvez vous connecter.");
+    if (params.get("reset") === "1") setSuccess("Mot de passe réinitialisé. Connectez-vous.");
+  }, [user, loc]);
+
+  const pwdStr = passwordStrength(form.password);
+  const pwdColors = ["", "f1", "f2", "f3", "f4"];
+
+  const handleLogin = async () => {
+    if (!form.email || !form.password) { setError("Email et mot de passe requis."); return; }
+    setLoading(true); setError("");
+    const { error: e } = await signIn(form.email, form.password);
+    setLoading(false);
+    if (e) setError(e.message === "Invalid login credentials" ? "Email ou mot de passe incorrect." : e.message);
+    else nav("/dashboard");
+  };
+
+  const handleRegister = async () => {
+    if (!form.email || !form.password || !form.full_name || !form.artist_name) { setError("Tous les champs obligatoires doivent être remplis."); return; }
+    if (!isValidEmail(form.email)) { setError("Email invalide."); return; }
+    if (form.password.length < 8) { setError("Mot de passe trop court (8 caractères minimum)."); return; }
+    if (!form.cgu) { setError("Vous devez accepter les CGU."); return; }
+    setLoading(true); setError("");
+    const { error: e } = await signUp(form.email, form.password, { full_name: form.full_name, artist_name: form.artist_name, genre: form.genre, whatsapp: form.whatsapp });
+    setLoading(false);
+    if (e) setError(e.message);
+    else setSuccess("Compte créé ! Vérifiez votre email pour confirmer votre inscription.");
+  };
+
+  const handleReset = async () => {
+    if (!form.email) { setError("Entrez votre email."); return; }
+    setLoading(true); setError("");
+    const { error: e } = await resetPassword(form.email);
+    setLoading(false);
+    if (e) setError(e.message);
+    else setSuccess("Email de réinitialisation envoyé !");
+  };
+
+  return (
+    <div className="login-pg">
+      <div className="login-card">
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <Link to="/"><span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 22 }}><span style={{ color: C.white }}>Sterkte </span><span style={{ color: C.red }}>Records</span></span></Link>
+        </div>
+        <div className="tabs" style={{ marginBottom: 24 }}>
+          <button className={`tab ${tab === "login" ? "ac" : ""}`} onClick={() => { setTab("login"); setError(""); setSuccess(""); }}>Connexion</button>
+          <button className={`tab ${tab === "register" ? "ac" : ""}`} onClick={() => { setTab("register"); setError(""); setSuccess(""); }}>Inscription</button>
+          <button className={`tab ${tab === "reset" ? "ac" : ""}`} onClick={() => { setTab("reset"); setError(""); setSuccess(""); }}>Mot de passe</button>
+        </div>
+
+        {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
+        {success && <div style={{ padding: "10px 14px", background: "rgba(76,175,80,.08)", border: "1px solid rgba(76,175,80,.25)", borderRadius: 6, fontSize: 12, color: C.success, marginBottom: 16 }}>{success}</div>}
+
+        {tab === "login" && (
+          <>
+            <div className="fm-g"><label className="fm-l">Email</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} onKeyDown={e => e.key === "Enter" && handleLogin()} /></div>
+            <div className="fm-g" style={{ position: "relative" }}>
+              <label className="fm-l">Mot de passe</label>
+              <input className="fm-i fm-i-pwd" type={showPwd ? "text" : "password"} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} onKeyDown={e => e.key === "Enter" && handleLogin()} />
+              <button className="fm-eye" onClick={() => setShowPwd(v => !v)}>{showPwd ? <Icon.EyeOff size={16} /> : <Icon.Eye size={16} />}</button>
+            </div>
+            <button className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleLogin} disabled={loading}>{loading ? "Connexion..." : "Se connecter"}</button>
+          </>
+        )}
+
+        {tab === "register" && (
+          <>
+            <div className="fm-row fm-g">
+              <div><label className="fm-l">Nom complet *</label><input className="fm-i" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} /></div>
+              <div><label className="fm-l">Nom d'artiste *</label><input className="fm-i" value={form.artist_name} onChange={e => setForm(f => ({ ...f, artist_name: e.target.value }))} /></div>
+            </div>
+            <div className="fm-g"><label className="fm-l">Email *</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+            <div className="fm-g" style={{ position: "relative" }}>
+              <label className="fm-l">Mot de passe * (8 car. min.)</label>
+              <input className="fm-i fm-i-pwd" type={showPwd ? "text" : "password"} value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+              <button className="fm-eye" onClick={() => setShowPwd(v => !v)}>{showPwd ? <Icon.EyeOff size={16} /> : <Icon.Eye size={16} />}</button>
+              {form.password && <div className="pwd-strength">{[1,2,3,4].map(i => <div key={i} className={`pwd-bar ${pwdStr >= i ? pwdColors[pwdStr] : ""}`} />)}</div>}
+            </div>
+            <div className="fm-g">
+              <label className="fm-l">Genre musical</label>
+              <select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}>
+                <option value="">Sélectionner...</option>
+                {MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+            <div className="fm-g"><label className="fm-l">WhatsApp (format +XXX...)</label><input className="fm-i" placeholder="+243..." value={form.whatsapp} onChange={e => setForm(f => ({ ...f, whatsapp: e.target.value }))} /></div>
+            <label className="fm-cb fm-g">
+              <input type="checkbox" checked={form.cgu} onChange={e => setForm(f => ({ ...f, cgu: e.target.checked }))} />
+              <span>J'accepte les <Link to="/cgu" style={{ color: C.blue }}>CGU</Link> et la <Link to="/confidentialite" style={{ color: C.blue }}>politique de confidentialité</Link></span>
+            </label>
+            <button className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleRegister} disabled={loading}>{loading ? "Création..." : "Créer mon compte"}</button>
+          </>
+        )}
+
+        {tab === "reset" && (
+          <>
+            <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>Entrez votre email pour recevoir un lien de réinitialisation.</p>
+            <div className="fm-g"><label className="fm-l">Email</label><input className="fm-i" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
+            <button className="btn btn-o btn-lg" style={{ width: "100%", justifyContent: "center" }} onClick={handleReset} disabled={loading}>{loading ? "Envoi..." : "Envoyer le lien"}</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── DASHBOARD PAGE ───
+function DashboardPage() {
+  const { user, profile, signOut, loading: authLoading, isEmailConfirmed } = useAuth();
+  const { tracks, stats, loading: tracksLoading, refetch } = useTracks();
+  const nav = useNavigate();
+  const [tab, setTab] = useState("overview");
+  const [showUpload, setShowUpload] = useState(false);
+  const [toast, setToast] = useState(null);
+  const showToast = (msg, type = "ok") => setToast({ msg, type });
+
+  useEffect(() => { if (!authLoading && !user) nav("/connexion", { replace: true }); }, [user, authLoading]);
+  if (authLoading) return <div className="loading-box">Chargement...</div>;
+  if (!user) return null;
+
+  const statusColors = { live: C.success, pending: C.gold, review: C.blue, rejected: C.red, draft: C.muted };
+  const statusLabels = { live: "Live", pending: "En attente", review: "En révision", rejected: "Rejeté", draft: "Brouillon" };
+
+  return (
+    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
+      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+      <div style={{ padding: "40px 60px", maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+          <div>
+            <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: -1 }}>Dashboard</h1>
+            <p style={{ color: C.muted, fontSize: 14, marginTop: 4 }}>Bienvenue, <span style={{ color: C.white }}>{profile?.artist_name || profile?.full_name || user.email}</span></p>
+          </div>
+          <button className="btn btn-r" onClick={() => setShowUpload(true)}><Icon.Plus size={14} />Nouvelle sortie</button>
+        </div>
+
+        {!isEmailConfirmed && (
+          <div style={{ padding: "12px 16px", background: "rgba(245,197,24,.08)", border: "1px solid rgba(245,197,24,.3)", borderRadius: 8, marginBottom: 24, fontSize: 13, color: C.gold, display: "flex", alignItems: "center", gap: 8 }}>
+            <Icon.AlertCircle size={16} />Confirmez votre email pour accéder à toutes les fonctionnalités.
+          </div>
+        )}
+
+        <div className="tabs">
+          {["overview", "tracks", "profile"].map(t => <button key={t} className={`tab ${tab === t ? "ac" : ""}`} onClick={() => setTab(t)}>{t === "overview" ? "Vue d'ensemble" : t === "tracks" ? "Mes titres" : "Profil"}</button>)}
+        </div>
+
+        {tab === "overview" && (
+          <>
+            <div className="dash-grid">
+              <div className="dash-stat"><div className="dash-stat-l">Streams totaux</div><div className="dash-stat-v" style={{ color: C.gold }}>{stats.totalStreams.toLocaleString()}</div><div className="dash-stat-note">Tous titres confondus</div></div>
+              <div className="dash-stat"><div className="dash-stat-l">Revenus estimés</div><div className="dash-stat-v" style={{ color: C.success }}>${stats.totalRevenue}</div><div className="dash-stat-note">Prochain versement fin du mois</div></div>
+              <div className="dash-stat"><div className="dash-stat-l">Titres distribués</div><div className="dash-stat-v">{stats.count}</div></div>
+              <div className="dash-stat"><div className="dash-stat-l">Plateformes actives</div><div className="dash-stat-v" style={{ color: C.blue }}>{stats.livePlatforms}</div></div>
+            </div>
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <button className="btn btn-g" onClick={() => setShowUpload(true)}><Icon.Plus size={14} />Distribuer un titre</button>
+              <button className="btn btn-o" onClick={() => sendWhatsApp(`Bonjour, je suis ${profile?.artist_name || user.email} et j'ai une question sur mon compte.`)}><Icon.Whatsapp size={14} />Contacter l'équipe</button>
+            </div>
+          </>
+        )}
+
+        {tab === "tracks" && (
+          <div className="dash-tracks">
+            <div className="dash-tracks-h">
+              <h3>Mes titres</h3>
+              <button className="btn btn-r btn-sm" onClick={() => setShowUpload(true)}><Icon.Plus size={12} />Ajouter</button>
+            </div>
+            {tracksLoading ? <div className="loading-box">Chargement...</div> : tracks.length === 0 ? (
+              <div style={{ padding: "60px 24px", textAlign: "center", color: C.muted }}>
+                <Icon.Music size={40} color={C.border} />
+                <p style={{ marginTop: 16 }}>Aucun titre distribué pour le moment.</p>
+                <button className="btn btn-g" style={{ marginTop: 16 }} onClick={() => setShowUpload(true)}>Distribuer mon premier titre</button>
+              </div>
+            ) : (
+              <>
+                <div className="tr-row" style={{ background: C.bgCard, fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>
+                  <span>#</span><span>Titre</span><span>Genre</span><span>Streams</span><span>Statut</span><span>Actions</span>
+                </div>
+                {tracks.map((t, i) => (
+                  <div key={t.id} className="tr-row">
+                    <span className="tr-num">{i + 1}</span>
+                    <div><div className="tr-title">{t.title}</div><div className="tr-info" style={{ fontSize: 11 }}>{t.release_date || ""}</div></div>
+                    <span className="tr-info">{t.genre || "—"}</span>
+                    <span className="tr-info">{(t.streams || 0).toLocaleString()}</span>
+                    <div className="tr-status"><div className="tr-dot" style={{ background: statusColors[t.status] || C.muted }} />{statusLabels[t.status] || t.status}</div>
+                    <div className="tr-actions">
+                      <button className="tr-act-btn" title="Voir détails" onClick={() => showToast(`Détails de "${t.title}"`, "ok")}><Icon.Eye size={12} /></button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === "profile" && (
+          <div style={{ maxWidth: 500 }}>
+            <div style={{ padding: 24, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12 }}>
+              <div style={{ width: 60, height: 60, borderRadius: "50%", background: `linear-gradient(135deg, ${C.red}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat',sans-serif", fontWeight: 900, fontSize: 24, marginBottom: 16 }}>
+                {(profile?.artist_name || user.email)[0].toUpperCase()}
+              </div>
+              <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{profile?.artist_name || "—"}</h3>
+              <p style={{ color: C.muted, fontSize: 13, marginBottom: 16 }}>{profile?.full_name}</p>
+              {[
+                { l: "Email", v: user.email },
+                { l: "Genre", v: profile?.genre || "Non renseigné" },
+                { l: "WhatsApp", v: profile?.whatsapp || "Non renseigné" },
+                { l: "Membre depuis", v: user.created_at ? new Date(user.created_at).toLocaleDateString("fr-FR") : "—" },
+              ].map(({ l, v }) => (
+                <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
+                  <span style={{ color: C.muted }}>{l}</span>
+                  <span>{v}</span>
+                </div>
+              ))}
+              <button className="btn btn-o btn-sm" style={{ marginTop: 20 }} onClick={signOut}>Déconnexion</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Modal open={showUpload} onClose={() => setShowUpload(false)} title="Soumettre un nouveau titre" maxWidth={600}>
+        <UploadTrackForm onSuccess={() => { setShowUpload(false); refetch(); showToast("Titre soumis avec succès ! Notre équipe va le valider.", "ok"); }} onClose={() => setShowUpload(false)} />
+      </Modal>
+    </div>
+  );
+}
+
+// ─── UPLOAD TRACK FORM ───
+function UploadTrackForm({ onSuccess, onClose }) {
+  const { user } = useAuth();
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({
+    title: "", genre: "", release_type: "single", release_date: "",
+    language: "", explicit: false, platforms: ["spotify", "apple_music", "deezer", "youtube_music", "tidal", "boomplay"],
+    isrc: generateISRC(), upc: generateUPC(),
+    splits: [{ name: "", role: "Artiste principal", percent: 100 }],
+  });
+  const [audioFile, setAudioFile] = useState(null);
+  const [coverFile, setCoverFile] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const audioRef = useRef(null);
+  const coverRef = useRef(null);
+
+  const togglePlatform = (id) => {
+    setForm(f => ({ ...f, platforms: f.platforms.includes(id) ? f.platforms.filter(p => p !== id) : [...f.platforms, id] }));
+  };
+
+  const splitTotal = form.splits.reduce((s, r) => s + Number(r.percent || 0), 0);
+
+  const handleSubmit = async () => {
+    if (!form.title) { setError("Le titre est obligatoire."); return; }
+    if (splitTotal !== 100) { setError("Les splits de royalties doivent totaliser 100%."); return; }
+    setLoading(true); setError("");
+
+    let audioPath = null;
+    let coverPath = null;
+
+    if (audioFile) {
+      const res = await uploadFile("audio", audioFile, user.id, { maxSize: 200 * 1024 * 1024, allowedMimes: ["audio/"] });
+      if (res.error) { setError(res.error); setLoading(false); return; }
+      audioPath = res.url;
+    }
+
+    if (coverFile) {
+      const res = await uploadFile("covers", coverFile, user.id, { maxSize: 10 * 1024 * 1024, allowedMimes: ["image/"] });
+      if (res.error) { setError(res.error); setLoading(false); return; }
+      coverPath = res.url;
+    }
+
+    const { error: dbErr } = await supabase.from("tracks").insert({
+      user_id: user.id,
+      title: form.title,
+      genre: form.genre,
+      release_type: form.release_type,
+      release_date: form.release_date || null,
+      language: form.language,
+      explicit: form.explicit,
+      platforms: form.platforms,
+      isrc: form.isrc,
+      upc: form.upc,
+      splits: form.splits,
+      audio_path: audioPath,
+      cover_path: coverPath,
+      status: "pending",
+      streams: 0,
+      revenue: 0,
+    });
+
+    setLoading(false);
+    if (dbErr) { setError(dbErr.message); return; }
+    onSuccess();
+  };
+
+  return (
+    <div>
+      {error && <div className="fm-err" style={{ marginBottom: 16 }}>{error}</div>}
+
+      <div className="timeline" style={{ marginBottom: 24 }}>
+        {["Infos", "Fichiers", "Plateformes", "Royalties"].map((label, i) => (
+          <div key={label} className={`timeline-step ${step > i + 1 ? "done" : step === i + 1 ? "current" : ""}`}>
+            <div className="timeline-dot">{step > i + 1 ? <Icon.Check size={12} color="#000" /> : i + 1}</div>
+            <div className="timeline-label">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {step === 1 && (
+        <div>
+          <div className="fm-g"><label className="fm-l">Titre du morceau *</label><input className="fm-i" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} /></div>
+          <div className="fm-row fm-g">
+            <div><label className="fm-l">Genre</label><select className="fm-s" value={form.genre} onChange={e => setForm(f => ({ ...f, genre: e.target.value }))}><option value="">Sélectionner...</option>{MUSIC_GENRES.map(g => <option key={g} value={g}>{g}</option>)}</select></div>
+            <div><label className="fm-l">Type</label><select className="fm-s" value={form.release_type} onChange={e => setForm(f => ({ ...f, release_type: e.target.value }))}>{RELEASE_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select></div>
+          </div>
+          <div className="fm-row fm-g">
+            <div><label className="fm-l">Date de sortie souhaitée</label><input className="fm-i" type="date" value={form.release_date} onChange={e => setForm(f => ({ ...f, release_date: e.target.value }))} /></div>
+            <div><label className="fm-l">Langue des paroles</label><select className="fm-s" value={form.language} onChange={e => setForm(f => ({ ...f, language: e.target.value }))}><option value="">Sélectionner...</option>{LYRICS_LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}</select></div>
+          </div>
+          <div className="fm-row fm-g">
+            <div><label className="fm-l">ISRC (auto-généré)</label><input className="fm-i" value={form.isrc} onChange={e => setForm(f => ({ ...f, isrc: e.target.value }))} /></div>
+            <div><label className="fm-l">UPC (auto-généré)</label><input className="fm-i" value={form.upc} onChange={e => setForm(f => ({ ...f, upc: e.target.value }))} /></div>
+          </div>
+          <label className="fm-cb fm-g"><input type="checkbox" checked={form.explicit} onChange={e => setForm(f => ({ ...f, explicit: e.target.checked }))} /><span>Contenu explicite (paroles)</span></label>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div>
+          <input ref={audioRef} type="file" accept="audio/*" style={{ display: "none" }} onChange={e => setAudioFile(e.target.files[0])} />
+          <div className={`upload ${audioFile ? "has-file" : ""}`} onClick={() => audioRef.current?.click()}>
+            <div className="upload-ico"><Icon.Upload size={32} color={audioFile ? C.success : C.muted} /></div>
+            <h4>{audioFile ? audioFile.name : "Fichier audio"}</h4>
+            <p>{audioFile ? `${(audioFile.size / 1024 / 1024).toFixed(1)} MB` : "WAV ou MP3 HD · Max 200 MB"}</p>
+          </div>
+          <input ref={coverRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => { setCoverFile(e.target.files[0]); setCoverPreview(URL.createObjectURL(e.target.files[0])); }} />
+          <div className={`upload ${coverFile ? "has-file" : ""}`} onClick={() => coverRef.current?.click()} style={{ display: "flex", alignItems: "center", gap: 20, padding: 24 }}>
+            {coverPreview ? <img src={coverPreview} alt="cover" style={{ width: 80, height: 80, borderRadius: 8, objectFit: "cover" }} /> : <div className="upload-ico"><Icon.Image size={32} color={C.muted} /></div>}
+            <div><h4>{coverFile ? coverFile.name : "Pochette (Cover Art)"}</h4><p>JPG ou PNG · 3000×3000px recommandé · Max 10 MB</p></div>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div>
+          <p style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>Sélectionnez les plateformes sur lesquelles distribuer votre musique :</p>
+          <div className="dsp-grid">
+            {DSP_PLATFORMS.map(p => (
+              <div key={p.id} className={`dsp-item ${form.platforms.includes(p.id) ? "selected" : ""}`} onClick={() => togglePlatform(p.id)}>
+                <input type="checkbox" checked={form.platforms.includes(p.id)} onChange={() => togglePlatform(p.id)} />
+                <div><div style={{ fontWeight: 600, fontSize: 12 }}>{p.name}</div><div style={{ fontSize: 10, color: C.muted }}>{p.category}</div></div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: C.muted }}>{form.platforms.length} plateforme(s) sélectionnée(s)</p>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div>
+          <p style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>Définissez la répartition des royalties entre les ayants droit (total = 100%) :</p>
+          <div className="splits-box">
+            {form.splits.map((s, i) => (
+              <div key={i} className="split-row">
+                <input className="fm-i" placeholder="Nom" value={s.name} onChange={e => { const splits = [...form.splits]; splits[i].name = e.target.value; setForm(f => ({ ...f, splits })); }} />
+                <select className="fm-s" value={s.role} onChange={e => { const splits = [...form.splits]; splits[i].role = e.target.value; setForm(f => ({ ...f, splits })); }}>
+                  {["Artiste principal", "Featuring", "Auteur", "Compositeur", "Producteur", "Label"].map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+                <input className="fm-i" type="number" min="0" max="100" value={s.percent} onChange={e => { const splits = [...form.splits]; splits[i].percent = e.target.value; setForm(f => ({ ...f, splits })); }} />
+                {form.splits.length > 1 && <button className="tr-act-btn danger" onClick={() => setForm(f => ({ ...f, splits: f.splits.filter((_, j) => j !== i) }))}><Icon.Trash size={12} /></button>}
+              </div>
+            ))}
+            <div className={`split-total ${splitTotal === 100 ? "ok" : "err"}`}>
+              <button className="btn btn-o btn-sm" onClick={() => setForm(f => ({ ...f, splits: [...f.splits, { name: "", role: "Featuring", percent: 0 }] }))}><Icon.Plus size={12} />Ajouter</button>
+              <span>Total : {splitTotal}% {splitTotal === 100 ? "✓" : "(doit être 100%)"}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24 }}>
+        <button className="btn btn-o" onClick={() => step === 1 ? onClose() : setStep(s => s - 1)} disabled={loading}>{step === 1 ? "Annuler" : <><Icon.ArrowLeft size={14} />Précédent</>}</button>
+        {step < 4
+          ? <button className="btn btn-g" onClick={() => setStep(s => s + 1)}>Suivant<Icon.ArrowRight size={14} /></button>
+          : <button className="btn btn-r" onClick={handleSubmit} disabled={loading}>{loading ? "Envoi..." : <><Icon.Send size={14} />Soumettre</>}</button>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ─── ADMIN PAGE ───
+function AdminPage() {
+  const { isAdmin, loading: authLoading } = useAuth();
+  const nav = useNavigate();
+  const [tracks, setTracks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("tracks");
+  const [toast, setToast] = useState(null);
+  const showToast = (msg, type = "ok") => setToast({ msg, type });
+  const [selectedTrack, setSelectedTrack] = useState(null);
+
+  useEffect(() => {
+    if (!authLoading && !isAdmin) nav("/", { replace: true });
+  }, [isAdmin, authLoading]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    Promise.all([
+      supabase.from("tracks").select("*, profiles(artist_name, email)").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+    ]).then(([t, u]) => {
+      setTracks(t.data || []);
+      setUsers(u.data || []);
+      setLoading(false);
+    });
+  }, [isAdmin]);
+
+  const updateTrackStatus = async (id, status) => {
+    const { error } = await supabase.from("tracks").update({ status }).eq("id", id);
+    if (error) { showToast("Erreur : " + error.message, "err"); return; }
+    setTracks(ts => ts.map(t => t.id === id ? { ...t, status } : t));
+    showToast(`Statut mis à jour : ${status}`, "ok");
+  };
+
+  if (authLoading || loading) return <div className="loading-box">Chargement admin...</div>;
+  if (!isAdmin) return null;
+
+  const stats = {
+    total: tracks.length,
+    pending: tracks.filter(t => t.status === "pending").length,
+    live: tracks.filter(t => t.status === "live").length,
+    users: users.length,
+  };
+
+  return (
+    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
+      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+      <div style={{ padding: "40px 60px", maxWidth: 1400, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
+          <Icon.Shield size={24} color={C.gold} />
+          <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: -1 }}>Espace Admin</h1>
+        </div>
+
+        <div className="admin-grid" style={{ marginBottom: 32 }}>
+          {[
+            { l: "Total titres", v: stats.total, c: C.white },
+            { l: "En attente", v: stats.pending, c: C.gold },
+            { l: "Live", v: stats.live, c: C.success },
+            { l: "Utilisateurs", v: stats.users, c: C.blue },
+          ].map(({ l, v, c }) => (
+            <div key={l} className="dash-stat"><div className="dash-stat-l">{l}</div><div className="dash-stat-v" style={{ color: c }}>{v}</div></div>
+          ))}
+        </div>
+
+        <div className="tabs">
+          <button className={`tab ${tab === "tracks" ? "ac" : ""}`} onClick={() => setTab("tracks")}>Titres ({stats.total})</button>
+          <button className={`tab ${tab === "users" ? "ac" : ""}`} onClick={() => setTab("users")}>Utilisateurs ({stats.users})</button>
+        </div>
+
+        {tab === "tracks" && (
+          <div className="dash-tracks">
+            <div style={{ padding: "12px 24px", background: C.bgCard, borderBottom: `1px solid ${C.border}` }}>
+              <div className="admin-row" style={{ background: "transparent", fontFamily: "'Montserrat',sans-serif", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: 1, padding: 0 }}>
+                <span>Statut</span><span>Titre / Artiste</span><span>Genre</span><span>Plateformes</span><span>Date</span><span>Actions</span>
+              </div>
+            </div>
+            {tracks.map(t => (
+              <div key={t.id} className="admin-row">
+                <div><span className={`admin-badge ${t.status}`}>{t.status}</span></div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>{t.title}</div>
+                  <div style={{ fontSize: 11, color: C.muted }}>{t.profiles?.artist_name || t.profiles?.email || "—"}</div>
+                </div>
+                <div style={{ fontSize: 12, color: C.muted }}>{t.genre || "—"}</div>
+                <div style={{ fontSize: 12, color: C.muted }}>{(t.platforms || []).length} plateformes</div>
+                <div style={{ fontSize: 11, color: C.muted }}>{t.created_at ? new Date(t.created_at).toLocaleDateString("fr-FR") : "—"}</div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button className="admin-action view" onClick={() => setSelectedTrack(t)}>Voir</button>
+                  {t.status !== "live" && <button className="admin-action approve" onClick={() => updateTrackStatus(t.id, "live")}>Approuver</button>}
+                  {t.status !== "rejected" && <button className="admin-action reject" onClick={() => updateTrackStatus(t.id, "rejected")}>Rejeter</button>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab === "users" && (
+          <div className="dash-tracks">
+            {users.map((u, i) => (
+              <div key={u.id} className="admin-reg-row">
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${C.red}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 14 }}>
+                  {(u.artist_name || u.email || "?")[0].toUpperCase()}
+                </div>
+                <div><div style={{ fontWeight: 700, fontSize: 13 }}>{u.artist_name || "—"}</div><div style={{ fontSize: 11, color: C.muted }}>{u.email}</div></div>
+                <div style={{ fontSize: 12, color: C.muted }}>{u.genre || "—"}</div>
+                <div style={{ fontSize: 12 }}>{u.is_admin ? <span style={{ color: C.gold }}>Admin</span> : <span style={{ color: C.muted }}>Artiste</span>}</div>
+                <div style={{ fontSize: 11, color: C.muted }}>{u.created_at ? new Date(u.created_at).toLocaleDateString("fr-FR") : "—"}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <Modal open={!!selectedTrack} onClose={() => setSelectedTrack(null)} title="Détails du titre" maxWidth={560}>
+        {selectedTrack && (
+          <div>
+            {[
+              { l: "Titre", v: selectedTrack.title },
+              { l: "Genre", v: selectedTrack.genre },
+              { l: "Type", v: selectedTrack.release_type },
+              { l: "Date de sortie", v: selectedTrack.release_date },
+              { l: "Langue", v: selectedTrack.language },
+              { l: "Explicite", v: selectedTrack.explicit ? "Oui" : "Non" },
+              { l: "ISRC", v: selectedTrack.isrc },
+              { l: "UPC", v: selectedTrack.upc },
+              { l: "Plateformes", v: (selectedTrack.platforms || []).join(", ") },
+            ].map(({ l, v }) => v ? (
+              <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: `1px solid ${C.border}`, fontSize: 13 }}>
+                <span style={{ color: C.muted }}>{l}</span>
+                <span style={{ maxWidth: "60%", textAlign: "right" }}>{v}</span>
+              </div>
+            ) : null)}
+            {selectedTrack.splits?.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ fontSize: 11, color: C.muted, fontFamily: "'Montserrat',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Splits royalties</div>
+                {selectedTrack.splits.map((s, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0", borderBottom: `1px solid ${C.border}` }}>
+                    <span>{s.name} <span style={{ color: C.muted }}>({s.role})</span></span>
+                    <span style={{ color: C.gold }}>{s.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {selectedTrack.audio_path && (
+              <div style={{ marginTop: 16 }}>
+                <AudioPlayerFromPath path={selectedTrack.audio_path} />
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+}
+
+// Lecteur audio depuis path Supabase Storage
+function AudioPlayerFromPath({ path }) {
+  const [url, setUrl] = useState(null);
+  useEffect(() => {
+    getSignedUrl("audio", path).then(setUrl);
+  }, [path]);
+  return <AudioPlayer url={url} label="Aperçu audio" />;
+}
+
+// ─── LEGAL PAGES ───
+function CGUPage() {
+  useSEO("/cgu");
+  return (
+    <div className="legal">
+      <h1>Conditions Générales d'Utilisation</h1>
+      <p style={{ color: C.muted, fontSize: 12 }}>Dernière mise à jour : janvier 2025</p>
+      <h2>1. Objet</h2>
+      <p>Les présentes CGU régissent l'utilisation du site sterkterecords.com et des services proposés par Sterkte Records SARL.</p>
+      <h2>2. Services</h2>
+      <p>Sterkte Records propose des services de distribution musicale digitale, d'enregistrement studio, de booking et de management artistique. L'accès à l'espace artiste nécessite la création d'un compte.</p>
+      <h2>3. Droits et obligations</h2>
+      <p>En soumettant un titre pour distribution, l'artiste certifie détenir l'intégralité des droits sur l'œuvre. Sterkte Records se réserve le droit de refuser tout contenu contraire aux lois en vigueur.</p>
+      <h2>4. Propriété intellectuelle</h2>
+      <p>Les artistes conservent la propriété de leurs œuvres. Sterkte Records dispose d'une licence non-exclusive de distribution pour la durée du contrat.</p>
+      <h2>5. Résiliation</h2>
+      <p>Chaque partie peut résilier le contrat avec un préavis de 30 jours. Les œuvres déjà distribuées pourront prendre jusqu'à 60 jours pour être retirées des plateformes.</p>
+      <h2>6. Contact</h2>
+      <p>Pour toute question : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+    </div>
+  );
+}
+
+function PrivacyPage() {
+  useSEO("/confidentialite");
+  return (
+    <div className="legal">
+      <h1>Politique de confidentialité</h1>
+      <p style={{ color: C.muted, fontSize: 12 }}>Dernière mise à jour : janvier 2025</p>
+      <h2>1. Données collectées</h2>
+      <p>Nous collectons : nom, email, nom d'artiste, numéro WhatsApp, genre musical, fichiers audio et pochettes soumis pour distribution.</p>
+      <h2>2. Utilisation des données</h2>
+      <p>Vos données sont utilisées exclusivement pour la gestion de votre compte, la distribution de votre musique et la communication liée à nos services.</p>
+      <h2>3. Stockage et sécurité</h2>
+      <p>Vos données sont hébergées sur Supabase (infrastructure sécurisée, conforme RGPD). Nous n'utilisons pas de cookies publicitaires.</p>
+      <h2>4. Vos droits</h2>
+      <p>Conformément au RGPD, vous disposez des droits d'accès, de rectification, de suppression et de portabilité de vos données. Contact : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+      <h2>5. Partage des données</h2>
+      <p>Nous ne vendons jamais vos données. Elles peuvent être partagées avec nos partenaires de distribution (DSP) dans la stricte limite nécessaire à la distribution de votre musique.</p>
+    </div>
+  );
+}
+
+function LegalPage() {
+  useSEO("/mentions-legales");
+  return (
+    <div className="legal">
+      <h1>Mentions légales</h1>
+      <h2>Éditeur</h2>
+      <p>Sterkte Records SARL<br />Lubumbashi, Haut-Katanga, République Démocratique du Congo</p>
+      <h2>Contact</h2>
+      <p>Email : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><br />WhatsApp : {WHATSAPP_NUMBER}</p>
+      <h2>Hébergement</h2>
+      <p>Site hébergé par Vercel Inc. (San Francisco, USA). Base de données hébergée par Supabase.</p>
+      <h2>Propriété intellectuelle</h2>
+      <p>L'ensemble du contenu de ce site (textes, visuels, code) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p>
+    </div>
+  );
+}
+
+// ─── NOT FOUND ───
+function NotFoundPage() {
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20 }}>
+      <h1 style={{ fontSize: 80, fontWeight: 900, color: C.border }}>404</h1>
+      <p style={{ color: C.muted }}>Page introuvable</p>
+      <Link to="/" className="btn btn-g"><Icon.ArrowLeft size={14} />Accueil</Link>
+    </div>
+  );
+}
+
+// ─── APP ROOT ───
+function App() {
+  const [toast, setToast] = useState(null);
+
+  return (
+    <AuthProvider>
+      <div className="app">
+        <style>{css}</style>
+        <Navbar />
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/a-propos" element={<AboutPage />} />
+          <Route path="/artistes" element={<ArtistsPage />} />
+          <Route path="/artiste/:slug" element={<ArtistDetailPage />} />
+          <Route path="/distribution-musique" element={<DistributionPage />} />
+          <Route path="/studio-enregistrement" element={<StudioPage />} />
+          <Route path="/booking-artistes" element={<BookingPage />} />
+          <Route path="/featurings" element={<FeaturingsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/connexion" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/cgu" element={<CGUPage />} />
+          <Route path="/confidentialite" element={<PrivacyPage />} />
+          <Route path="/mentions-legales" element={<LegalPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+        <Footer />
+        {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+      </div>
+    </AuthProvider>
+  );
+}
+
+export default App;
   );
 }
