@@ -357,16 +357,16 @@ const MOCK_ARTISTS_DETAIL = {
   "dj-minho": {
     bio: "DJ Minho était l'une des figures les plus emblématiques de la scène musicale de Lubumbashi. Reconnu pour son énergie incomparable sur les platines et sa capacité à transcender les foules, il a marqué de son empreinte indélébile la scène musicale congolaise et africaine.",
     bio2: "Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le 1er août 2025. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.",
+    role: "DJ · PRODUCER · BEATMAKER",
     genre: "DJ / Afrobeat",
     origin: "Lubumbashi, RDC",
     since: "2021",
     streams: "50K+",
+    auditeurs: "12K",
+    sorties: "8",
     plateformes: "150+",
-    singles: [
-      { title: "Breakfast (feat. Hbeatz)", year: "2024", streams: "180K" },
-      { title: "Ama vibe", year: "2023", streams: "145K" },
-      { title: "Best of DJ Minho Vol.1", year: "2022", streams: "120K" },
-    ],
+    spotifyArtistId: "",
+    youtubeVideoId: "",
     socials: { instagram: "https://instagram.com", spotify: "https://open.spotify.com" },
     tribute: true,
     tributeDate: DJ_MINHO.deathDateFr,
@@ -374,17 +374,17 @@ const MOCK_ARTISTS_DETAIL = {
   default: {
     bio: "Artiste emblématique du roster Sterkte Records, il incarne la fusion entre les sonorités africaines authentiques et les productions modernes. Depuis ses débuts, il s'est imposé comme une voix incontournable de la scène musicale de Lubumbashi, portant haut les couleurs d'une Afrique créative et résolument tournée vers le monde.",
     bio2: "Avec plusieurs projets à son actif, il continue d'inspirer une nouvelle génération d'artistes en démontrant que l'excellence africaine peut résonner sur toutes les plateformes mondiales.",
+    role: "CHANTEUR · AUTEUR-COMPOSITEUR-INTERPRÈTE",
     genre: "Afrobeat / R&B",
     origin: "Lubumbashi, RDC",
     since: "2021",
     streams: "850K+",
+    auditeurs: "320K",
+    sorties: "12",
     plateformes: "150+",
-    singles: [
-      { title: "Kinshasa Nights", year: "2024", streams: "320K" },
-      { title: "Lumière", year: "2023", streams: "180K" },
-      { title: "Mama Africa", year: "2023", streams: "210K" },
-      { title: "Voyage", year: "2022", streams: "140K" },
-    ],
+    // Pour activer les embeds, remplace par les vrais IDs (ex: spotifyArtistId: "06HL4z0CvFAxyc27GXpf02")
+    spotifyArtistId: "06HL4z0CvFAxyc27GXpf02",
+    youtubeVideoId: "dQw4w9WgXcQ",
     socials: { instagram: "https://instagram.com", twitter: "https://twitter.com", youtube: "https://youtube.com", spotify: "https://open.spotify.com" },
   },
 };
@@ -1137,6 +1137,63 @@ footer.ft{background:rgba(10,10,15,.95);border-top:1px solid var(--border);paddi
 .ap-sidebar-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;font-weight:600;margin-bottom:6px}
 .ap-sidebar-value{font-size:15px;font-weight:600;margin-bottom:16px}
 
+/* ── ARTIST DETAIL PAGE v5 — "NAS Prod style" ── */
+.ap2{padding-top:72px;background:var(--bg)}
+.ap2-hero{position:relative;min-height:90vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.ap2-hero-bg{position:absolute;inset:0;z-index:0}
+.ap2-hero-bg-gradient{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,rgba(230,57,70,.35) 0%,rgba(245,140,40,.18) 25%,transparent 60%),linear-gradient(180deg,#0A0A0F 0%,#1a0a08 35%,#2a1409 60%,#0A0A0F 100%)}
+.ap2-hero-bg-rays{position:absolute;inset:0;background:conic-gradient(from 220deg at 70% 40%,transparent 0deg,rgba(245,197,24,.1) 30deg,rgba(230,57,70,.15) 60deg,transparent 90deg,transparent 270deg,rgba(230,57,70,.1) 290deg,rgba(245,197,24,.08) 330deg,transparent 360deg);mix-blend-mode:screen;opacity:.6}
+.ap2-hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,transparent 0%,rgba(10,10,15,.5) 70%);pointer-events:none}
+.ap2-hero-c{position:relative;z-index:1;flex:1;display:grid;grid-template-columns:1fr 1fr;align-items:end;padding:60px 80px 80px;max-width:1600px;margin:0 auto;width:100%;gap:40px}
+.ap2-hero-text{z-index:2}
+.ap2-tribute-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);border-radius:14px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.ap2-hero-name{font-family:'Montserrat',sans-serif;font-size:clamp(56px,9vw,140px);font-weight:900;line-height:.92;letter-spacing:-3px;text-transform:uppercase;color:#fff;margin-bottom:14px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
+.ap2-hero-role{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
+.ap2-tribute-dates{font-family:'Montserrat',sans-serif;font-size:12px;color:rgba(245,197,24,.8);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;font-weight:600}
+.ap2-book-btn{display:inline-block;padding:16px 38px;background:var(--gold);color:#000;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;border:none;border-radius:0;text-decoration:none;transition:all .25s;box-shadow:0 8px 30px rgba(245,197,24,.3)}
+.ap2-book-btn:hover{background:#FFD449;transform:translateY(-2px);box-shadow:0 12px 40px rgba(245,197,24,.45)}
+.ap2-hero-img-wrap{position:relative;height:100%;min-height:520px;display:flex;align-items:flex-end;justify-content:center}
+.ap2-hero-img{max-height:90vh;max-width:100%;width:auto;height:auto;object-fit:contain;object-position:bottom center;filter:drop-shadow(0 20px 60px rgba(0,0,0,.6))}
+.ap2-gold-bar{position:relative;z-index:2;background:var(--gold);min-height:90px;display:flex;align-items:center;justify-content:space-between;padding:0 80px}
+.ap2-stats-card{background:#fff;display:flex;gap:0;padding:22px 36px;box-shadow:0 6px 30px rgba(0,0,0,.15);transform:translateY(-30%);align-self:flex-start}
+.ap2-stat{padding:0 24px;border-right:1px solid rgba(0,0,0,.1);min-width:90px}
+.ap2-stat:last-child{border-right:none}
+.ap2-stat-v{font-family:'Montserrat',sans-serif;font-size:30px;font-weight:900;color:var(--gold);line-height:1}
+.ap2-stat-l{font-family:'Raleway',sans-serif;font-size:12px;color:#333;font-weight:500;margin-top:4px}
+.ap2-next-link{display:inline-flex;align-items:center;gap:10px;background:transparent;border:none;color:#fff;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:10px 0}
+.ap2-next-link:hover{transform:translateX(4px);transition:transform .2s}
+
+.ap2-three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;padding:80px 80px 60px;max-width:1600px;margin:0 auto;width:100%}
+.ap2-col{display:flex;flex-direction:column}
+.ap2-col-tag{font-family:'Raleway',sans-serif;font-size:13px;font-style:italic;color:var(--gold);margin-bottom:6px}
+.ap2-col-title{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;letter-spacing:-1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:24px;line-height:1}
+.ap2-embed-empty{padding:40px 24px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.ap2-embed-empty p{font-size:13px;color:var(--muted);line-height:1.6}
+
+.ap2-bio{padding:40px 80px 100px;max-width:1200px;margin:0 auto}
+.ap2-bio-inner{position:relative}
+.ap2-bio-title{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;letter-spacing:-1px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:32px;line-height:1}
+.ap2-bio-text{font-size:15px;color:var(--muted);line-height:1.95;margin-bottom:20px;text-align:justify}
+.ap2-socials-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+.ap2-social{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:13px;text-decoration:none;transition:all .2s}
+.ap2-social:hover{border-color:var(--gold);transform:translateY(-1px)}
+.ap2-cta-bottom{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+
+@media(max-width:900px){
+  .ap2-hero-c{grid-template-columns:1fr;padding:40px 24px;gap:24px}
+  .ap2-hero-img-wrap{min-height:auto;order:-1;height:280px}
+  .ap2-hero-img{max-height:280px}
+  .ap2-gold-bar{flex-direction:column;align-items:stretch;padding:24px;gap:16px}
+  .ap2-stats-card{transform:none;align-self:center;padding:16px 12px;justify-content:space-between;width:100%}
+  .ap2-stat{padding:0 8px;min-width:0;flex:1;text-align:center}
+  .ap2-stat-v{font-size:22px}
+  .ap2-stat-l{font-size:10px}
+  .ap2-next-link{justify-content:center;color:#000}
+  .ap2-three-col{grid-template-columns:1fr;padding:40px 24px;gap:32px}
+  .ap2-col-title,.ap2-bio-title{font-size:28px}
+  .ap2-bio{padding:20px 24px 60px}
+}
+
 /* ── ABOUT PAGE v3 ── */
 .about-values{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin:48px 0}
 .about-val{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
@@ -1670,7 +1727,7 @@ function ArtistsPage() {
   );
 }
 
-// ─── ARTIST DETAIL PAGE — version v3 visuelle restaurée avec MOCK ───
+// ─── ARTIST DETAIL PAGE — version "NAS Prod style" : hero immersif + embeds ───
 function ArtistDetailPage() {
   const { slug } = useParams();
   const location = useLocation();
@@ -1678,15 +1735,21 @@ function ArtistDetailPage() {
   const { artists } = useArtists();
 
   const artistFromState = location.state?.artist;
-  const artistFromList = artists.find((a) => {
-    const s = (a.slug || a.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-    return s === slug;
-  });
+  const slugify = (s) => (s || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  const artistFromList = artists.find((a) => slugify(a.slug || a.name) === slug);
   const isMinhoSlug = slug === "dj-minho";
   const minhoFromList = artists.find(a => a.name && a.name.toLowerCase().includes("minho"));
   const artist = artistFromState || artistFromList || (isMinhoSlug ? (minhoFromList || { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: null, tribute: true }) : null);
 
   const detail = MOCK_ARTISTS_DETAIL[slug] || MOCK_ARTISTS_DETAIL.default;
+
+  // Artiste suivant pour le lien en bas de hero (NAS Prod style "VITAA SLIMANE →")
+  const nextArtist = (() => {
+    if (!artists.length || !artist) return null;
+    const idx = artists.findIndex(a => slugify(a.slug || a.name) === slug);
+    if (idx === -1) return artists[0];
+    return artists[(idx + 1) % artists.length];
+  })();
 
   if (!artist && artists.length > 0) {
     return (
@@ -1699,61 +1762,136 @@ function ArtistDetailPage() {
 
   if (!artist) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
 
-  const socials = detail.socials;
+  const socials = detail.socials || {};
   const imgSrc = artist.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&size=800&background=1A1A25&color=F5C518&bold=true&font-size=0.33`;
   const isTribute = detail.tribute || isMinhoSlug;
 
   return (
-    <div className="ap">
-      {/* HERO */}
-      <div className="ap-hero" style={isTribute ? { background: "linear-gradient(135deg, #0A0A0F, #12121A)" } : {}}>
-        <div className="ap-hero-bg">
-          <img src={imgSrc} alt={artist.name} className="ap-hero-img" style={isTribute ? { filter: "brightness(.25) saturate(.4) sepia(.3)" } : {}} />
-          <div className="ap-hero-overlay" />
-          {isTribute && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 50% 50%, rgba(245,197,24,0.04), transparent 60%)", zIndex: 1 }} />}
+    <div className="ap2">
+      {/* HERO IMMERSIF — fond ambiance + photo artiste à droite */}
+      <section className="ap2-hero">
+        <div className="ap2-hero-bg" aria-hidden="true">
+          <div className="ap2-hero-bg-gradient" />
+          <div className="ap2-hero-bg-rays" />
         </div>
-        <div className="ap-hero-c">
-          <button className="ap-back-btn" onClick={() => nav("/artistes")}>
-            <Icon.ArrowLeft size={14} />
-            Retour aux artistes
-          </button>
+        <div className="ap2-hero-c">
+          <div className="ap2-hero-text">
+            {isTribute && (
+              <div className="ap2-tribute-pill">
+                <Icon.Heart size={11} color={C.gold} />
+                <span>En mémoire</span>
+              </div>
+            )}
+            <h1 className="ap2-hero-name">{artist.name}</h1>
+            <div className="ap2-hero-role">{detail.role || (artist.tags || []).join(" · ")}</div>
+            {isTribute && <div className="ap2-tribute-dates">Décédé le {detail.tributeDate || DJ_MINHO.deathDateFr}</div>}
+            <Link to="/booking-artistes" className="ap2-book-btn">
+              {isTribute ? "EN MÉMOIRE" : "BOOK NOW"}
+            </Link>
+          </div>
+          <div className="ap2-hero-img-wrap" aria-hidden="true">
+            <img src={imgSrc} alt={artist.name} className="ap2-hero-img" />
+          </div>
+        </div>
 
-          {isTribute && (
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(245,197,24,0.08)", border: "1px solid rgba(245,197,24,0.2)", borderRadius: 20, padding: "6px 16px", marginBottom: 16 }}>
-              <Icon.Heart size={12} color={C.gold} />
-              <span style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2, textTransform: "uppercase" }}>Hommage · En mémoire</span>
+        {/* Bandeau doré : stats + lien artiste suivant */}
+        <div className="ap2-gold-bar">
+          <div className="ap2-stats-card">
+            <div className="ap2-stat">
+              <div className="ap2-stat-v">{detail.auditeurs || detail.streams || "—"}</div>
+              <div className="ap2-stat-l">Auditeurs</div>
+            </div>
+            <div className="ap2-stat">
+              <div className="ap2-stat-v">{detail.sorties || "—"}</div>
+              <div className="ap2-stat-l">Sorties</div>
+            </div>
+            <div className="ap2-stat">
+              <div className="ap2-stat-v">{detail.since || "—"}</div>
+              <div className="ap2-stat-l">Avec Sterkte</div>
+            </div>
+          </div>
+          {nextArtist && nextArtist.name !== artist.name && (
+            <button className="ap2-next-link" onClick={() => nav(`/artiste/${slugify(nextArtist.slug || nextArtist.name)}`, { state: { artist: nextArtist } })}>
+              <span>{nextArtist.name.toUpperCase()}</span>
+              <Icon.ArrowRight size={16} />
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* SECTION 3 COLONNES — Booking / Spotify / YouTube */}
+      <section className="ap2-three-col">
+        <div className="ap2-col">
+          <div className="ap2-col-tag">Pour vos évènements</div>
+          <h2 className="ap2-col-title">RÉSERVER<br/>L'ARTISTE</h2>
+          <p style={{ color: C.muted, fontSize: 13, lineHeight: 1.7, marginBottom: 24 }}>
+            {isTribute
+              ? "DJ Minho ne se produit plus. Vous pouvez explorer les artistes du roster Sterkte Records pour vos évènements."
+              : `Réservez ${artist.name} pour votre concert, festival ou évènement privé. Notre équipe répond sous 48h.`}
+          </p>
+          {!isTribute ? (
+            <Link to="/booking-artistes" className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }}>
+              <Icon.Calendar size={14} />Booker cet artiste
+            </Link>
+          ) : (
+            <Link to="/artistes" className="btn btn-o btn-lg" style={{ width: "100%", justifyContent: "center" }}>
+              <Icon.Music size={14} />Voir le roster
+            </Link>
+          )}
+        </div>
+
+        <div className="ap2-col">
+          <div className="ap2-col-tag">À découvrir sur</div>
+          <h2 className="ap2-col-title">SPOTIFY</h2>
+          {detail.spotifyArtistId ? (
+            <iframe
+              title={`Spotify - ${artist.name}`}
+              src={`https://open.spotify.com/embed/artist/${detail.spotifyArtistId}?utm_source=generator&theme=0`}
+              width="100%"
+              height="352"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              style={{ borderRadius: 12 }}
+            />
+          ) : (
+            <div className="ap2-embed-empty">
+              <Icon.Spotify size={40} color={C.success} />
+              <p>Embed Spotify à venir.<br/>Liez le compte de l'artiste depuis l'admin.</p>
+              {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="btn btn-o btn-sm" style={{ marginTop: 12 }}>Ouvrir Spotify ↗</a>}
             </div>
           )}
-
-          <div className="ap-genre-tag"><Icon.Music size={12} />{detail.genre}</div>
-          <h1 className="ap-hero-name" style={isTribute ? { color: "rgba(255,255,255,0.85)" } : {}}>{artist.name}</h1>
-
-          {isTribute && <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 13, color: "rgba(245,197,24,0.7)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 20 }}>Décédé le {detail.tributeDate || DJ_MINHO.deathDateFr}</div>}
-
-          <div className="ap-hero-socials">
-            {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Instagram"><Icon.Instagram size={16} /></a>}
-            {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Twitter"><Icon.Twitter size={16} /></a>}
-            {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="YouTube"><Icon.Youtube size={16} /></a>}
-            {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Spotify"><Icon.Spotify size={16} /></a>}
-          </div>
-          <div className="ap-hero-acts">
-            {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="btn btn-g btn-lg"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>}
-            {!isTribute && <Link to="/booking-artistes" className="btn btn-o btn-lg"><Icon.Calendar size={14} />Réserver cet artiste</Link>}
-          </div>
         </div>
-      </div>
 
-      {/* STATS BAR */}
-      <div className="ap-stats-bar" style={isTribute ? { background: "rgba(18,18,26,0.95)", borderColor: "rgba(245,197,24,0.1)" } : {}}>
-        {[{ v: detail.streams, l: "Streams totaux" }, { v: detail.plateformes, l: "Plateformes" }, { v: detail.singles.length + "+", l: "Sorties" }, { v: detail.since, l: "Avec Sterkte" }].map((s) => (
-          <div key={s.l} className="ap-stat"><div className="ap-stat-v">{s.v}</div><div className="ap-stat-l">{s.l}</div></div>
-        ))}
-      </div>
+        <div className="ap2-col">
+          <div className="ap2-col-tag">À découvrir sur</div>
+          <h2 className="ap2-col-title">YOUTUBE</h2>
+          {detail.youtubeVideoId ? (
+            <iframe
+              title={`YouTube - ${artist.name}`}
+              src={`https://www.youtube.com/embed/${detail.youtubeVideoId}?rel=0`}
+              width="100%"
+              height="200"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              loading="lazy"
+              style={{ borderRadius: 12 }}
+            />
+          ) : (
+            <div className="ap2-embed-empty">
+              <Icon.Youtube size={40} color={C.red} />
+              <p>Embed YouTube à venir.<br/>Liez la chaîne depuis l'admin.</p>
+              {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" className="btn btn-o btn-sm" style={{ marginTop: 12 }}>Ouvrir YouTube ↗</a>}
+            </div>
+          )}
+        </div>
+      </section>
 
-      {/* BODY */}
-      <div className="ap-body">
-        {isTribute && (
-          <div style={{ background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.12)", borderRadius: 12, padding: 28, marginBottom: 40, display: "flex", alignItems: "flex-start", gap: 16 }}>
+      {/* MESSAGE TRIBUTE */}
+      {isTribute && (
+        <section style={{ padding: "0 60px 40px" }}>
+          <div style={{ background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.12)", borderRadius: 12, padding: 28, display: "flex", alignItems: "flex-start", gap: 16, maxWidth: 1200, margin: "0 auto" }}>
             <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(245,197,24,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Icon.Heart size={18} color={C.gold} />
             </div>
@@ -1762,63 +1900,40 @@ function ArtistDetailPage() {
               <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, textAlign: "justify" }}>Toute l'équipe de Sterkte Records s'incline avec profond respect devant la mémoire de DJ Minho, artiste exceptionnel et ami précieux, qui nous a quittés le {DJ_MINHO.deathDateFr}. Son talent, son énergie et sa générosité resteront à jamais gravés dans nos cœurs et dans la musique qu'il nous a laissée.</p>
             </div>
           </div>
-        )}
-        <div className="ap-grid">
-          <div>
-            <div className="ap-bio-title">Biographie</div>
-            <p className="ap-bio-text">{detail.bio}</p>
-            <p className="ap-bio-text">{detail.bio2}</p>
-            <div style={{ marginTop: 48 }}>
-              <div className="ap-disco-title">Discographie</div>
-              {detail.singles.map((s, i) => (
-                <div key={s.title + i} className="ap-track">
-                  <div className="ap-track-num">{i + 1}</div>
-                  <div className="ap-track-play"><Icon.Play size={12} color="currentColor" /></div>
-                  <div className="ap-track-info">
-                    <div className="ap-track-title">{s.title}</div>
-                    <div className="ap-track-meta">{artist.name} · {s.year}</div>
-                  </div>
-                  <div className="ap-track-streams">{s.streams} streams</div>
-                </div>
-              ))}
+        </section>
+      )}
+
+      {/* BIO PLEINE LARGEUR */}
+      <section className="ap2-bio">
+        <div className="ap2-bio-inner">
+          <div className="ap2-col-tag">À PROPOS</div>
+          <h2 className="ap2-bio-title">PARCOURS</h2>
+          <p className="ap2-bio-text">{detail.bio}</p>
+          <p className="ap2-bio-text">{detail.bio2}</p>
+
+          {/* Liens sociaux pleine largeur */}
+          {Object.keys(socials).length > 0 && (
+            <div className="ap2-socials-row">
+              {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="ap2-social"><Icon.Spotify size={18} color={C.success} /><span>Spotify</span></a>}
+              {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" className="ap2-social"><Icon.Youtube size={18} color={C.red} /><span>YouTube</span></a>}
+              {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="ap2-social"><Icon.Instagram size={18} color="#E4405F" /><span>Instagram</span></a>}
+              {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" className="ap2-social"><Icon.Twitter size={18} color="#1DA1F2" /><span>Twitter</span></a>}
+              {socials.facebook && <a href={socials.facebook} target="_blank" rel="noopener noreferrer" className="ap2-social"><Icon.Facebook size={18} color="#1877F2" /><span>Facebook</span></a>}
             </div>
-          </div>
-          <div>
-            <div className="ap-sidebar-card">
-              <div className="ap-sidebar-label">Genre</div>
-              <div className="ap-sidebar-value">{detail.genre}</div>
-              <div className="ap-sidebar-label">Origine</div>
-              <div className="ap-sidebar-value">{detail.origin}</div>
-              <div className="ap-sidebar-label">Avec Sterkte Records depuis</div>
-              <div className="ap-sidebar-value">{detail.since}</div>
+          )}
+
+          {/* CTA bottom */}
+          {!isTribute && (
+            <div className="ap2-cta-bottom">
+              <Link to="/booking-artistes" className="btn btn-r btn-lg"><Icon.Calendar size={14} />Booker cet artiste</Link>
+              <Link to="/featurings" className="btn btn-o btn-lg"><Icon.Headphones size={14} />Demander un featuring</Link>
             </div>
-            <div className="ap-sidebar-card">
-              <div className="ap-bio-title" style={{ marginBottom: 16 }}>Tags</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {(artist.tags || [detail.genre]).map((t) => (
-                  <span key={t} style={{ background: "rgba(245,197,24,0.08)", border: "1px solid rgba(245,197,24,0.2)", color: C.gold, fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", padding: "4px 12px", borderRadius: 20 }}>{t}</span>
-                ))}
-              </div>
-            </div>
-            {!isTribute && (
-              <div className="ap-sidebar-card">
-                <div className="ap-bio-title" style={{ marginBottom: 16 }}>Réseaux sociaux</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Instagram size={16} color="currentColor" />Instagram</a>}
-                  {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Twitter size={16} color="currentColor" />Twitter / X</a>}
-                  {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Youtube size={16} color="currentColor" />YouTube</a>}
-                  {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Spotify size={16} color="currentColor" />Spotify</a>}
-                </div>
-              </div>
-            )}
-            {!isTribute && <Link to="/featurings" className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }}><Icon.Headphones size={16} />Demander un featuring</Link>}
-          </div>
+          )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
-
 
 // ─── DISTRIBUTION PAGE ───
 function DistributionPage() {
