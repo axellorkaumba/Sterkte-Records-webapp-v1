@@ -352,6 +352,43 @@ const Icon = {
   ),
 };
 
+// ─── MOCK ARTISTS DETAIL — données enrichies pour ArtistDetailPage (modifiables après) ───
+const MOCK_ARTISTS_DETAIL = {
+  "dj-minho": {
+    bio: "DJ Minho était l'une des figures les plus emblématiques de la scène musicale de Lubumbashi. Reconnu pour son énergie incomparable sur les platines et sa capacité à transcender les foules, il a marqué de son empreinte indélébile la scène musicale congolaise et africaine.",
+    bio2: "Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le 1er août 2025. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.",
+    genre: "DJ / Afrobeat",
+    origin: "Lubumbashi, RDC",
+    since: "2021",
+    streams: "50K+",
+    plateformes: "150+",
+    singles: [
+      { title: "Breakfast (feat. Hbeatz)", year: "2024", streams: "180K" },
+      { title: "Ama vibe", year: "2023", streams: "145K" },
+      { title: "Best of DJ Minho Vol.1", year: "2022", streams: "120K" },
+    ],
+    socials: { instagram: "https://instagram.com", spotify: "https://open.spotify.com" },
+    tribute: true,
+    tributeDate: DJ_MINHO.deathDateFr,
+  },
+  default: {
+    bio: "Artiste emblématique du roster Sterkte Records, il incarne la fusion entre les sonorités africaines authentiques et les productions modernes. Depuis ses débuts, il s'est imposé comme une voix incontournable de la scène musicale de Lubumbashi, portant haut les couleurs d'une Afrique créative et résolument tournée vers le monde.",
+    bio2: "Avec plusieurs projets à son actif, il continue d'inspirer une nouvelle génération d'artistes en démontrant que l'excellence africaine peut résonner sur toutes les plateformes mondiales.",
+    genre: "Afrobeat / R&B",
+    origin: "Lubumbashi, RDC",
+    since: "2021",
+    streams: "850K+",
+    plateformes: "150+",
+    singles: [
+      { title: "Kinshasa Nights", year: "2024", streams: "320K" },
+      { title: "Lumière", year: "2023", streams: "180K" },
+      { title: "Mama Africa", year: "2023", streams: "210K" },
+      { title: "Voyage", year: "2022", streams: "140K" },
+    ],
+    socials: { instagram: "https://instagram.com", twitter: "https://twitter.com", youtube: "https://youtube.com", spotify: "https://open.spotify.com" },
+  },
+};
+
 const SERVICES_LIST = [
   { Icon: Icon.Music, title: "Distribution Digitale", desc: "Votre musique sur Spotify, Apple Music, Deezer et 150+ plateformes en quelques jours.", link: "/distribution-musique" },
   { Icon: Icon.Mic, title: "Studio d'Enregistrement", desc: "Studio professionnel à Lubumbashi + studios mobiles à Lubumbashi et au Maroc. Enregistrement, mixage et mastering.", link: "/studio-enregistrement" },
@@ -396,7 +433,6 @@ function AuthProvider({ children }) {
       password,
       options: {
         data: { full_name: meta.full_name, artist_name: meta.artist_name },
-        emailRedirectTo: `${SITE_URL}/connexion?confirmed=1`,
       },
     });
     if (!error && data.user) {
@@ -443,7 +479,10 @@ function AuthProvider({ children }) {
 
   // Vérification admin via colonne DB (et non liste d'emails hardcodée)
   const isAdmin = profile?.is_admin === true;
-  const isEmailConfirmed = user?.email_confirmed_at != null;
+  // ⚠️ Vérification email DÉSACTIVÉE côté front en attendant un vrai SMTP (Resend/Brevo).
+  // Pour réactiver : remplacer `true` par `user?.email_confirmed_at != null`
+  // ET réactiver "Confirm email" dans Supabase Dashboard → Authentication → Providers → Email.
+  const isEmailConfirmed = true;
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, resetPassword, deleteAccount, fetchProfile, isAdmin, isEmailConfirmed }}>
@@ -1075,6 +1114,50 @@ footer.ft{background:rgba(10,10,15,.95);border-top:1px solid var(--border);paddi
 .wave-div{margin:0 -60px;line-height:0}
 .wave-div svg{width:100%;height:60px;fill:rgba(18,18,26,.6)}
 
+/* ── ARTIST DETAIL v3 ── */
+.ap-genre-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.25);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:20px}
+.ap-hero-name{font-family:'Montserrat',sans-serif;font-size:clamp(52px,8vw,110px);font-weight:900;line-height:.95;letter-spacing:-4px;text-transform:uppercase;margin-bottom:24px}
+.ap-hero-socials{display:flex;gap:12px;margin-bottom:32px}
+.ap-social-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .3s;cursor:pointer}
+.ap-social-btn:hover{background:rgba(245,197,24,.15);border-color:var(--gold);color:var(--gold)}
+.ap-hero-acts{display:flex;gap:12px;flex-wrap:wrap}
+.ap-bio-title{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;font-family:'Montserrat',sans-serif}
+.ap-bio-text{font-size:15px;color:var(--muted);line-height:1.85;margin-bottom:20px;text-align:justify}
+.ap-disco-title{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;font-family:'Montserrat',sans-serif}
+.ap-track{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid rgba(42,42,53,.5);transition:background .2s;cursor:pointer}
+.ap-track:hover{padding-left:8px;border-bottom-color:var(--gold)}
+.ap-track-num{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--muted);font-weight:600;width:20px;text-align:center}
+.ap-track-play{width:32px;height:32px;border-radius:50%;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;transition:all .3s}
+.ap-track:hover .ap-track-play{background:var(--gold);color:#000}
+.ap-track-info{flex:1}
+.ap-track-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.ap-track-meta{font-size:12px;color:var(--muted)}
+.ap-track-streams{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--muted);font-weight:600}
+.ap-sidebar-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px}
+.ap-sidebar-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;font-weight:600;margin-bottom:6px}
+.ap-sidebar-value{font-size:15px;font-weight:600;margin-bottom:16px}
+
+/* ── ABOUT PAGE v3 ── */
+.about-values{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin:48px 0}
+.about-val{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
+.about-val::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),transparent)}
+.about-val:hover{border-color:rgba(245,197,24,.3);transform:translateY(-2px)}
+.about-val-ico{width:48px;height:48px;border-radius:10px;background:rgba(245,197,24,.08);display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:16px}
+.about-val h4{font-size:15px;font-weight:700;margin-bottom:8px}
+.about-val p{font-size:13px;color:var(--muted);line-height:1.6}
+.about-timeline{position:relative;padding-left:32px;border-left:2px solid var(--border);margin:24px 0 64px}
+.about-tl-item{position:relative;margin-bottom:40px}
+.about-tl-dot{position:absolute;left:-40px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--gold);border:2px solid var(--bg)}
+.about-tl-year{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:6px}
+.about-tl-item h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.about-tl-item p{font-size:13px;color:var(--muted);line-height:1.6;text-align:justify}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin-top:24px}
+.team{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px;text-align:center}
+.team-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--gold));margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:24px;color:#000}
+.team h4{font-size:16px;font-weight:700;margin-bottom:4px}
+.team .role{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-family:'Montserrat',sans-serif;font-weight:600;margin-bottom:12px;display:block}
+.team p{font-size:13px;color:var(--muted);line-height:1.7;text-align:justify}
+
 /* About stats */
 .about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .about-stat{padding:32px;text-align:center;border-right:1px solid var(--border)}
@@ -1369,42 +1452,111 @@ function HomePage() {
 function AboutPage() {
   useSEO("/a-propos");
   useScrollReveal();
+  const team = [
+    { i: "AK", name: "Axel l'or Kaumba", role: "Fondateur & Distribution digitale", desc: "Visionnaire et entrepreneur passionné, Axel a fondé Sterkte Records avec la conviction profonde que la musique africaine mérite une scène mondiale. Expert en marketing digital, il orchestre les stratégies de distribution et guide chaque artiste vers la réussite internationale." },
+    { i: "AA", name: "Abigail Angelani", role: "Directrice Marketing & Communication", desc: "Maîtresse des récits qui résonnent, Abigail construit l'image du label et de ses artistes sur tous les canaux digitaux. Ses campagnes créatives ont permis à plusieurs artistes de percer au-delà des frontières africaines, touchant des audiences en Europe, en Amérique et au Moyen-Orient." },
+    { i: "DN", name: "Diadème Ngandu", role: "Manager Artistique", desc: "Coach, stratège et confident des artistes, Diadème est le pilier humain du label. Son approche sur-mesure permet à chaque talent de s'épanouir artistiquement tout en construisant une carrière durable et cohérente. Il coordonne les projets de bout en bout, de la création à la diffusion." },
+  ];
   return (
     <div className="pg">
-      <PageBanner tag="À propos" title="Notre histoire, notre mission" subtitle="Fondé en 2021 à Lubumbashi, Sterkte Records est né d'une volonté simple : offrir aux artistes africains une structure professionnelle, transparente et exigeante." accent={C.gold} />
+      <PageBanner
+        tag="À propos"
+        title="Qui sommes-nous ?"
+        subtitle="Sterkte Records est né en 2021 de la passion pour la musique authentique et de la volonté d'accompagner les artistes africains vers le monde entier. Depuis notre création à Lubumbashi, nous avons grandi pour devenir un acteur incontournable de la distribution musicale indépendante en Afrique centrale et dans la diaspora, avec une présence croissante au Maroc et en Europe."
+        accent={C.gold}
+      />
       <div className="pg-c">
-        <div className="sr-reveal" style={{ marginBottom: 48 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>Notre <span className="gold">vision</span></h3>
-          <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginBottom: 16 }}>
-            Sterkte Records est un label musical indépendant fondé le 7 juillet 2021 à Lubumbashi, dans la province du Haut-Katanga (RDC). Notre mission est de bâtir des carrières d'artistes africains à l'échelle internationale, en combinant la rigueur d'un label établi avec la flexibilité d'une structure indépendante.
+
+        {/* Qui sommes-nous — texte enrichi */}
+        <div style={{ marginBottom: 60 }} className="sr-reveal">
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, marginBottom: 16, textAlign: "justify" }}>
+            Sterkte Records est un label musical indépendant fondé à Lubumbashi, en République Démocratique du Congo. Notre mission est simple mais ambitieuse : donner aux artistes africains les outils, les ressources et le réseau nécessaires pour exister sur la scène mondiale, sans sacrifier leur authenticité artistique.
           </p>
-          <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15 }}>
-            Nous accompagnons nos artistes sur l'ensemble de la chaîne de valeur : production, distribution digitale sur 150+ plateformes, booking, communication, management et stratégie de carrière. Notre ancrage africain et notre réseau international (France, Maroc, Belgique) nous permettent d'ouvrir des marchés à nos artistes là où d'autres labels s'arrêtent aux frontières.
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, marginBottom: 16, textAlign: "justify" }}>
+            Nous croyons que la richesse musicale du Congo, de l'Afrique centrale et du continent tout entier mérite d'être entendue partout. C'est pourquoi nous proposons une distribution sur plus de 150 plateformes digitales mondiales, un accompagnement personnalisé, un studio professionnel, des services de booking et de management, et bien plus encore.
+          </p>
+          <p style={{ color: C.muted, lineHeight: 1.9, fontSize: 15, textAlign: "justify" }}>
+            Notre équipe pluridisciplinaire combine expertise musicale, maîtrise du marketing digital et passion pour les artistes. Nous ne sommes pas seulement un intermédiaire : nous sommes des partenaires de carrière engagés dans votre réussite à long terme.
           </p>
         </div>
 
+        {/* Stats */}
         <div className="about-stats sr-reveal">
-          <div className="about-stat"><div className="about-stat-v">2021</div><div className="about-stat-l">Année de fondation</div></div>
-          <div className="about-stat"><div className="about-stat-v">5+</div><div className="about-stat-l">Artistes signés</div></div>
-          <div className="about-stat"><div className="about-stat-v">150+</div><div className="about-stat-l">Plateformes</div></div>
-          <div className="about-stat"><div className="about-stat-v">3</div><div className="about-stat-l">Pays d'opération</div></div>
+          {[{ v: "2021", l: "Année de création" }, { v: "150+", l: "Plateformes" }, { v: "1M+", l: "Streams générés" }, { v: "+30", l: "Pays atteints" }].map((s) => (
+            <div key={s.l} className="about-stat"><div className="about-stat-v">{s.v}</div><div className="about-stat-l">{s.l}</div></div>
+          ))}
         </div>
 
-        <div className="sr-reveal" style={{ marginTop: 60 }}>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>Nos <span className="gold">valeurs</span></h3>
-          <div className="feats">
-            {[
-              { Ico: Icon.Diamond, title: "Transparence", desc: "Contrats clairs, royalties détaillées, communication ouverte. Pas de frais cachés." },
-              { Ico: Icon.Award, title: "Excellence", desc: "Chaque sortie est traitée avec le même niveau d'exigence qu'un label international." },
-              { Ico: Icon.Users, title: "Communauté", desc: "Nos artistes ne sont pas des numéros : un interlocuteur dédié, une vision commune." },
-              { Ico: Icon.Globe, title: "Ouverture", desc: "Africain par essence, international par ambition. La musique africaine mérite le monde." },
-            ].map((v) => <div key={v.title} className="feat"><div className="feat-ico"><v.Ico size={22} /></div><h4>{v.title}</h4><p>{v.desc}</p></div>)}
+        {/* Vision & Mission */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, marginTop: 60, marginBottom: 60 }} className="sr-reveal">
+          <div>
+            <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre vision</h3>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, textAlign: "justify" }}>Créer un pont solide entre la créativité débordante des artistes africains et un public mondial avide de sons nouveaux. Nous croyons que la musique de Lubumbashi, de Kinshasa, de tout le continent, a le potentiel de toucher des millions d'âmes à travers le monde.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16, textAlign: "justify" }}>Notre ambition : faire de Sterkte Records la référence incontournable pour tout artiste africain souhaitant bâtir une carrière internationale durable, éthique et profitable.</p>
+          </div>
+          <div>
+            <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 16, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre mission</h3>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, textAlign: "justify" }}>Accompagner chaque artiste signé chez nous avec des outils professionnels, une équipe dédiée et une distribution sur plus de 150 plateformes mondiales. Nous gérons l'aspect technique, administratif et stratégique pour que l'artiste se concentre sur l'essentiel : créer.</p>
+            <p style={{ color: C.muted, lineHeight: 1.85, fontSize: 15, marginTop: 16, textAlign: "justify" }}>Transparence, excellence et passion sont nos trois piliers. Chaque décision que nous prenons sert d'abord les intérêts de l'artiste.</p>
+          </div>
+        </div>
+
+        {/* Valeurs */}
+        <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Nos valeurs fondamentales</h3>
+        <div className="about-values sr-reveal">
+          {[
+            { Ico: Icon.Diamond, title: "Intégrité", desc: "Honnêteté totale sur les chiffres, les contrats et les décisions. Pas de zones grises." },
+            { Ico: Icon.Award, title: "Excellence", desc: "Production de qualité internationale, quel que soit le budget ou le niveau de l'artiste." },
+            { Ico: Icon.Globe, title: "Ouverture", desc: "Tous les genres, toutes les cultures africaines. Notre roster est un reflet de la diversité du continent." },
+            { Ico: Icon.Rocket, title: "Innovation", desc: "Toujours à la pointe des nouvelles technologies musicales, des plateformes émergentes et des tendances mondiales." },
+          ].map((v) => (
+            <div key={v.title} className="about-val">
+              <div className="about-val-ico"><v.Ico size={22} /></div>
+              <h4>{v.title}</h4>
+              <p>{v.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Timeline */}
+        <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 24, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>Notre histoire</h3>
+        <div className="about-timeline sr-reveal">
+          {[
+            { year: "2021", title: "Naissance de Sterkte Records", desc: "Fondation du label à Lubumbashi par Axel l'or Kaumba. Signature des premiers artistes en distribution : Mr. Freez, Feyme, et démarrage de collaborations externes. Une aventure musicale commence, portée par une vision claire : propulser la musique congolaise sur les scènes mondiales." },
+            { year: "2022", title: "Premiers pas et chiffres", desc: "Lancement officiel sur Spotify, Apple Music, Deezer et les grandes plateformes. Les premières sorties franchissent rapidement les 50 000 streams. Le label pose ses bases solides et commence à construire sa crédibilité dans l'écosystème de la musique indépendante africaine." },
+            { year: "2023", title: "Expansion du roster", desc: "Accueil de KBG Gad pour le gospel, intégration de beatmakers talentueux et élargissement de l'équipe créative. Le catalogue s'enrichit de nouvelles sonorités et genres. Le réseau s'étend à Kinshasa, Brazzaville et Abidjan." },
+            { year: "2024", title: "Cap sur le demi-million de streams", desc: "Objectif ambitieux : atteindre les 500K streams cumulés. Lancement du studio mobile à Lubumbashi, puis à Agadir au Maroc, et dans d'autres villes. Cette innovation permet d'enregistrer les artistes là où ils se trouvent, sans contrainte géographique." },
+            { year: "2025", title: "Rayonnement international", desc: "Présence établie sur plus de 20 pays. Partenariats avec des labels étrangers dont Lghorfa Music et Arteast Music au Maroc, ainsi que d'autres structures en Europe et en Afrique. Sterkte Records s'impose comme un pont entre l'Afrique et le monde, avec une empreinte digitale toujours plus forte." },
+          ].map((item) => (
+            <div key={item.year} className="about-tl-item">
+              <div className="about-tl-dot" />
+              <div className="about-tl-year">{item.year}</div>
+              <h4>{item.title}</h4>
+              <p>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Équipe */}
+        <h3 style={{ color: C.gold, fontSize: 13, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8, fontWeight: 700, fontFamily: "'Montserrat',sans-serif" }}>L'équipe dirigeante</h3>
+        <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Des professionnels passionnés au service de votre talent.</p>
+        <div className="team-grid sr-reveal">{team.map((m) => <div key={m.name} className="team"><div className="team-av">{m.i}</div><h4>{m.name}</h4><span className="role">{m.role}</span><p>{m.desc}</p></div>)}</div>
+
+        {/* CTA */}
+        <div style={{ marginTop: 64, padding: "48px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 16, textAlign: "center" }}>
+          <div className="sec-tag">Vous êtes artiste ?</div>
+          <h3 style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1, margin: "12px 0 16px" }}>Rejoignez l'aventure <span className="gold">Sterkte Records</span></h3>
+          <p style={{ color: C.muted, fontSize: 15, marginBottom: 28, maxWidth: 500, margin: "0 auto 28px" }}>Quel que soit votre style, votre niveau ou vos objectifs, nous avons les outils et l'équipe pour vous propulser.</p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link to="/connexion" className="btn btn-g btn-lg"><Icon.User size={16} />Créer mon espace artiste</Link>
+            <Link to="/contact" className="btn btn-o btn-lg"><Icon.Mail size={16} />Nous contacter</Link>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ─── ARTISTS PAGE ───
 function ArtistsPage() {
@@ -1518,27 +1670,25 @@ function ArtistsPage() {
   );
 }
 
-// ─── ARTIST DETAIL PAGE — utilise les VRAIES données de la DB (plus de MOCK) ───
+// ─── ARTIST DETAIL PAGE — version v3 visuelle restaurée avec MOCK ───
 function ArtistDetailPage() {
   const { slug } = useParams();
   const location = useLocation();
   const nav = useNavigate();
-  const { artists, loading } = useArtists();
+  const { artists } = useArtists();
 
   const artistFromState = location.state?.artist;
   const artistFromList = artists.find((a) => {
     const s = (a.slug || a.name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     return s === slug;
   });
-
-  const isMinho = slug === "dj-minho";
+  const isMinhoSlug = slug === "dj-minho";
   const minhoFromList = artists.find(a => a.name && a.name.toLowerCase().includes("minho"));
+  const artist = artistFromState || artistFromList || (isMinhoSlug ? (minhoFromList || { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: null, tribute: true }) : null);
 
-  const artist = artistFromState || artistFromList || (isMinho ? (minhoFromList || { id: "minho-tribute", name: "DJ Minho", tags: ["DJ"], image_url: null, tribute: true }) : null);
+  const detail = MOCK_ARTISTS_DETAIL[slug] || MOCK_ARTISTS_DETAIL.default;
 
-  if (loading) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
-
-  if (!artist) {
+  if (!artist && artists.length > 0) {
     return (
       <div className="pg" style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 20, minHeight: "80vh" }}>
         <h2 style={{ color: C.muted }}>Artiste introuvable</h2>
@@ -1547,33 +1697,20 @@ function ArtistDetailPage() {
     );
   }
 
-  const isTribute = artist.tribute || isMinho;
+  if (!artist) return <div className="pg"><div className="loading-box">Chargement...</div></div>;
+
+  const socials = detail.socials;
   const imgSrc = artist.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&size=800&background=1A1A25&color=F5C518&bold=true&font-size=0.33`;
-
-  // Données réelles de l'artiste — tirées de la DB. Si non renseignées, on n'invente RIEN.
-  const bio = artist.bio || (isTribute
-    ? "DJ Minho était l'une des figures les plus emblématiques de la scène musicale de Lubumbashi. Reconnu pour son énergie incomparable sur les platines et sa capacité à transcender les foules, il a marqué de son empreinte indélébile la scène musicale congolaise et africaine."
-    : null);
-  const bio2 = artist.bio2 || (isTribute
-    ? `Artiste passionné, créatif et toujours à l'avant-garde des tendances, DJ Minho nous a quittés le ${DJ_MINHO.deathDateFr}. Son héritage musical continue d'inspirer une nouvelle génération de DJs et de mélomanes. Sterkte Records garde précieusement sa mémoire.`
-    : null);
-
-  const socials = artist.socials || {};
-  const singles = artist.singles || [];
-  const stats = {
-    streams: artist.total_streams,
-    plateformes: artist.total_platforms,
-    origin: artist.origin || (isTribute ? "Lubumbashi, RDC" : null),
-    since: artist.since || "2021",
-    genre: (artist.tags || []).join(" / ") || artist.genre,
-  };
+  const isTribute = detail.tribute || isMinhoSlug;
 
   return (
     <div className="ap">
+      {/* HERO */}
       <div className="ap-hero" style={isTribute ? { background: "linear-gradient(135deg, #0A0A0F, #12121A)" } : {}}>
         <div className="ap-hero-bg">
           <img src={imgSrc} alt={artist.name} className="ap-hero-img" style={isTribute ? { filter: "brightness(.25) saturate(.4) sepia(.3)" } : {}} />
           <div className="ap-hero-overlay" />
+          {isTribute && <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 50% 50%, rgba(245,197,24,0.04), transparent 60%)", zIndex: 1 }} />}
         </div>
         <div className="ap-hero-c">
           <button className="ap-back-btn" onClick={() => nav("/artistes")}>
@@ -1588,77 +1725,100 @@ function ArtistDetailPage() {
             </div>
           )}
 
-          <h1 style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(36px, 6vw, 72px)", fontWeight: 900, letterSpacing: -3, marginBottom: 16, color: C.white }}>{artist.name}</h1>
-          {stats.genre && <div style={{ display: "inline-block", padding: "6px 14px", background: "rgba(245,197,24,0.1)", border: "1px solid rgba(245,197,24,0.3)", borderRadius: 6, color: C.gold, fontFamily: "'Montserrat',sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>{stats.genre}</div>}
+          <div className="ap-genre-tag"><Icon.Music size={12} />{detail.genre}</div>
+          <h1 className="ap-hero-name" style={isTribute ? { color: "rgba(255,255,255,0.85)" } : {}}>{artist.name}</h1>
+
+          {isTribute && <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 13, color: "rgba(245,197,24,0.7)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 20 }}>Décédé le {detail.tributeDate || DJ_MINHO.deathDateFr}</div>}
+
+          <div className="ap-hero-socials">
+            {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Instagram"><Icon.Instagram size={16} /></a>}
+            {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Twitter"><Icon.Twitter size={16} /></a>}
+            {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="YouTube"><Icon.Youtube size={16} /></a>}
+            {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="ap-social-btn" aria-label="Spotify"><Icon.Spotify size={16} /></a>}
+          </div>
+          <div className="ap-hero-acts">
+            {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" className="btn btn-g btn-lg"><Icon.Play size={14} color="#000" />Écouter sur Spotify</a>}
+            {!isTribute && <Link to="/booking-artistes" className="btn btn-o btn-lg"><Icon.Calendar size={14} />Réserver cet artiste</Link>}
+          </div>
         </div>
       </div>
 
-      {(stats.streams || stats.plateformes || stats.origin || stats.since) && (
-        <div className="ap-stats-bar">
-          {stats.streams && <div className="ap-stat"><div className="ap-stat-l">Streams cumulés</div><div className="ap-stat-v">{stats.streams}</div></div>}
-          {stats.plateformes && <div className="ap-stat"><div className="ap-stat-l">Plateformes</div><div className="ap-stat-v">{stats.plateformes}</div></div>}
-          {stats.origin && <div className="ap-stat"><div className="ap-stat-l">Origine</div><div className="ap-stat-v" style={{ fontSize: 16, color: C.white }}>{stats.origin}</div></div>}
-          {stats.since && <div className="ap-stat"><div className="ap-stat-l">Chez Sterkte depuis</div><div className="ap-stat-v" style={{ fontSize: 16, color: C.white }}>{stats.since}</div></div>}
-        </div>
-      )}
+      {/* STATS BAR */}
+      <div className="ap-stats-bar" style={isTribute ? { background: "rgba(18,18,26,0.95)", borderColor: "rgba(245,197,24,0.1)" } : {}}>
+        {[{ v: detail.streams, l: "Streams totaux" }, { v: detail.plateformes, l: "Plateformes" }, { v: detail.singles.length + "+", l: "Sorties" }, { v: detail.since, l: "Avec Sterkte" }].map((s) => (
+          <div key={s.l} className="ap-stat"><div className="ap-stat-v">{s.v}</div><div className="ap-stat-l">{s.l}</div></div>
+        ))}
+      </div>
 
+      {/* BODY */}
       <div className="ap-body">
+        {isTribute && (
+          <div style={{ background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.12)", borderRadius: 12, padding: 28, marginBottom: 40, display: "flex", alignItems: "flex-start", gap: 16 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(245,197,24,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Icon.Heart size={18} color={C.gold} />
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 12, fontWeight: 700, color: C.gold, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Message de Sterkte Records</div>
+              <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8, textAlign: "justify" }}>Toute l'équipe de Sterkte Records s'incline avec profond respect devant la mémoire de DJ Minho, artiste exceptionnel et ami précieux, qui nous a quittés le {DJ_MINHO.deathDateFr}. Son talent, son énergie et sa générosité resteront à jamais gravés dans nos cœurs et dans la musique qu'il nous a laissée.</p>
+            </div>
+          </div>
+        )}
         <div className="ap-grid">
           <div>
-            {bio && <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.85, marginBottom: 16 }}>{bio}</p>}
-            {bio2 && <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.85 }}>{bio2}</p>}
-            {!bio && !bio2 && <p style={{ color: C.muted, fontStyle: "italic" }}>Biographie à venir.</p>}
-
-            {isTribute && (
-              <div style={{ marginTop: 32, padding: 24, background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.15)", borderRadius: 12 }}>
-                <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.8 }}>
-                  Toute l'équipe de Sterkte Records s'incline avec profond respect devant la mémoire de DJ Minho, artiste exceptionnel et ami précieux, qui nous a quittés le {DJ_MINHO.deathDateFr}. Son talent, son énergie et sa générosité resteront à jamais gravés dans nos cœurs et dans la musique qu'il nous a laissée.
-                </p>
-              </div>
-            )}
-
-            {singles.length > 0 && (
-              <div style={{ marginTop: 40 }}>
-                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 16 }}>Singles</h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {singles.map((s, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 10 }}>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: 14 }}>{s.title}</div>
-                        <div style={{ fontSize: 12, color: C.muted }}>{s.year}</div>
-                      </div>
-                      {s.streams && <div style={{ fontSize: 13, color: C.gold, fontFamily: "'Montserrat',sans-serif", fontWeight: 700 }}>{s.streams}</div>}
-                    </div>
-                  ))}
+            <div className="ap-bio-title">Biographie</div>
+            <p className="ap-bio-text">{detail.bio}</p>
+            <p className="ap-bio-text">{detail.bio2}</p>
+            <div style={{ marginTop: 48 }}>
+              <div className="ap-disco-title">Discographie</div>
+              {detail.singles.map((s, i) => (
+                <div key={s.title + i} className="ap-track">
+                  <div className="ap-track-num">{i + 1}</div>
+                  <div className="ap-track-play"><Icon.Play size={12} color="currentColor" /></div>
+                  <div className="ap-track-info">
+                    <div className="ap-track-title">{s.title}</div>
+                    <div className="ap-track-meta">{artist.name} · {s.year}</div>
+                  </div>
+                  <div className="ap-track-streams">{s.streams} streams</div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-
           <div>
-            {Object.keys(socials).length > 0 && (
-              <div style={{ background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 16 }}>
-                <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, textTransform: "uppercase", letterSpacing: 1, color: C.muted }}>Suivre l'artiste</h4>
+            <div className="ap-sidebar-card">
+              <div className="ap-sidebar-label">Genre</div>
+              <div className="ap-sidebar-value">{detail.genre}</div>
+              <div className="ap-sidebar-label">Origine</div>
+              <div className="ap-sidebar-value">{detail.origin}</div>
+              <div className="ap-sidebar-label">Avec Sterkte Records depuis</div>
+              <div className="ap-sidebar-value">{detail.since}</div>
+            </div>
+            <div className="ap-sidebar-card">
+              <div className="ap-bio-title" style={{ marginBottom: 16 }}>Tags</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {(artist.tags || [detail.genre]).map((t) => (
+                  <span key={t} style={{ background: "rgba(245,197,24,0.08)", border: "1px solid rgba(245,197,24,0.2)", color: C.gold, fontFamily: "'Montserrat',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", padding: "4px 12px", borderRadius: 20 }}>{t}</span>
+                ))}
+              </div>
+            </div>
+            {!isTribute && (
+              <div className="ap-sidebar-card">
+                <div className="ap-bio-title" style={{ marginBottom: 16 }}>Réseaux sociaux</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: C.bgInput, borderRadius: 8, color: C.white, fontSize: 13 }}><Icon.Spotify size={18} color={C.success} />Spotify</a>}
-                  {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: C.bgInput, borderRadius: 8, color: C.white, fontSize: 13 }}><Icon.Instagram size={18} color="#E4405F" />Instagram</a>}
-                  {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: C.bgInput, borderRadius: 8, color: C.white, fontSize: 13 }}><Icon.Youtube size={18} color="#FF0000" />YouTube</a>}
-                  {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: C.bgInput, borderRadius: 8, color: C.white, fontSize: 13 }}><Icon.Twitter size={18} color="#1DA1F2" />Twitter</a>}
-                  {socials.facebook && <a href={socials.facebook} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: C.bgInput, borderRadius: 8, color: C.white, fontSize: 13 }}><Icon.Facebook size={18} color="#1877F2" />Facebook</a>}
+                  {socials.instagram && <a href={socials.instagram} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Instagram size={16} color="currentColor" />Instagram</a>}
+                  {socials.twitter && <a href={socials.twitter} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Twitter size={16} color="currentColor" />Twitter / X</a>}
+                  {socials.youtube && <a href={socials.youtube} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Youtube size={16} color="currentColor" />YouTube</a>}
+                  {socials.spotify && <a href={socials.spotify} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, color: C.muted, fontSize: 13 }}><Icon.Spotify size={16} color="currentColor" />Spotify</a>}
                 </div>
               </div>
             )}
-            {!isTribute && (
-              <Link to="/featurings" className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center" }}>
-                <Icon.Handshake size={16} />Demander un featuring
-              </Link>
-            )}
+            {!isTribute && <Link to="/featurings" className="btn btn-r btn-lg" style={{ width: "100%", justifyContent: "center" }}><Icon.Headphones size={16} />Demander un featuring</Link>}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ─── DISTRIBUTION PAGE ───
 function DistributionPage() {
@@ -2108,13 +2268,13 @@ function LoginPage() {
     const { data, error } = await signIn(signin.email, signin.password);
     setLoading(false);
     if (error) {
-      if (error.message.includes("Email not confirmed")) setErr("Email non vérifié. Cliquez sur le lien dans le mail reçu lors de votre inscription.");
+      // Email not confirmed = compte créé mais Supabase a "Confirm email" activé.
+      // Solution recommandée : désactiver "Confirm email" dans Supabase Dashboard.
+      if (error.message.includes("Email not confirmed")) {
+        setErr("Votre compte est en attente de confirmation côté serveur. Contactez l'admin du site (un correctif est en cours).");
+      }
       else if (error.message.includes("Invalid login")) setErr("Email ou mot de passe incorrect.");
       else setErr(error.message);
-      return;
-    }
-    if (data?.user && !data.user.email_confirmed_at) {
-      setMode("confirm-pending");
       return;
     }
     nav("/dashboard");
@@ -2154,7 +2314,15 @@ function LoginPage() {
     // Notif équipe (clic utilisateur — à remplacer par webhook serveur en prod)
     sendWhatsApp(`🎵 *Nouvelle inscription Sterkte Records*\n\n👤 ${signup.fullName} (${signup.artistName})\n📧 ${signup.email}\n📞 ${signup.whatsapp}\n🎼 ${signup.genre}`);
 
-    setMode("confirm-pending");
+    // Connexion automatique si Supabase ne demande pas de confirmation email
+    if (data?.session) {
+      nav("/dashboard");
+      return;
+    }
+    // Sinon, on bascule en mode connexion avec un message clair
+    setMode("signin");
+    setMsg("Compte créé ! Connectez-vous avec votre email et mot de passe.");
+    setSignin({ email: signup.email, password: "" });
   };
 
   const handleReset = async (e) => {
@@ -2211,6 +2379,7 @@ function LoginPage() {
                   {showPwd ? <Icon.EyeOff /> : <Icon.Eye />}
                 </button>
               </div>
+              {msg && <div style={{ padding: 12, background: "rgba(76,175,80,.08)", border: `1px solid rgba(76,175,80,.3)`, borderRadius: 8, fontSize: 13, color: C.success, marginBottom: 12 }}>{msg}</div>}
               {err && <div className="fm-err" style={{ marginBottom: 12 }}>{err}</div>}
               <button type="submit" className="btn btn-g btn-lg" style={{ width: "100%", justifyContent: "center", marginBottom: 12 }} disabled={loading}>{loading ? "Connexion..." : "Se connecter"}</button>
               <div style={{ textAlign: "center", marginBottom: 16 }}>
@@ -3125,6 +3294,30 @@ function AdminTrackDetail({ track }) {
       </div>
 
       <AudioPlayer url={audioUrl} label={`Aperçu master (${Math.round(track.duration_seconds || 0)}s)`} />
+
+      {/* Téléchargement direct des fichiers source */}
+      <div style={{ marginTop: 16, padding: 16, background: "rgba(245,197,24,0.04)", border: "1px solid rgba(245,197,24,0.15)", borderRadius: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>📥 Télécharger les fichiers</div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {audioUrl ? (
+            <a href={audioUrl} download={`${track.primary_artist} - ${track.title}.${(track.audio_path || "").split(".").pop() || "wav"}`} className="btn btn-g btn-sm" target="_blank" rel="noopener noreferrer">
+              <Icon.Download size={14} />Audio master ({(track.audio_path || "").split(".").pop()?.toUpperCase() || "WAV"})
+            </a>
+          ) : track.audio_path ? (
+            <span style={{ fontSize: 12, color: C.muted }}>Audio en cours de chargement...</span>
+          ) : (
+            <span style={{ fontSize: 12, color: C.muted }}>Pas d'audio uploadé</span>
+          )}
+          {coverUrl ? (
+            <a href={coverUrl} download={`${track.primary_artist} - ${track.title} - cover.${(track.cover_path || "").split(".").pop() || "jpg"}`} className="btn btn-o btn-sm" target="_blank" rel="noopener noreferrer">
+              <Icon.Download size={14} />Pochette
+            </a>
+          ) : track.cover_path ? (
+            <span style={{ fontSize: 12, color: C.muted }}>Cover en cours de chargement...</span>
+          ) : null}
+        </div>
+        <div style={{ fontSize: 11, color: C.muted, marginTop: 8, fontStyle: "italic" }}>Les liens expirent 1h après ouverture (signed URLs Supabase). Recharge la modale pour en générer de nouveaux.</div>
+      </div>
 
       <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 12 }}>
         <div><strong style={{ color: C.muted }}>ISRC :</strong> {track.isrc || "—"}</div>
